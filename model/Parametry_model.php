@@ -30,4 +30,25 @@ class Parametry_model extends Database_model {
     public function getParmSkrt(array $input=[':i'=>[0,'INT']]){
         return $this->Main->squery('SELECT `SKROT` FROM parametry WHERE ID=:i',$input)[0]['SKROT'];
     }
+    public function getColor(){
+        return $this->Main->squery('SELECT `ENG` as `n`,`HEX` as `v` FROM `slo_color` WHERE 1;');
+    }
+    public function getTextAlign(){
+        return $this->Main->squery('SELECT `PL` as n,`ENG` as `v` FROM `slo_style` WHERE `GROUP`=1 ORDER BY `NUMBER` ASC');
+    }
+    public function getTextDecoration(){
+        return $this->Main->squery('SELECT `PL` as n,`ENG` as `v` FROM `slo_style` WHERE `GROUP`=0 ORDER BY `NUMBER` ASC');
+    }
+    public function getMeasurement(){
+        return $this->Main->squery('SELECT `PL` as n,`ENG` as `v` FROM `slo_style` WHERE `GROUP`=2 ORDER BY `NUMBER` ASC');
+    }
+    public function getFontFamily(){
+        return $this->Main->squery('SELECT `NAME` as n,`NAME` as `v` FROM `slo_font_family` ORDER BY `NAME` ASC');
+    }
+    public function getLineSpacing(){
+        return $this->Main->squery('SELECT `NAME` as n,`VALUE` as `v` FROM `slo_list` WHERE `TYPE`=\'l\' ORDER BY `id` ASC');
+    }
+    public function getListType(){
+        return $this->Main->squery('SELECT `NAME` as n,`VALUE` as v FROM `slo_list_type` ORDER BY `VALUE` ASC');
+    }
 }

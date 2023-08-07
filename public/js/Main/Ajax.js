@@ -6,7 +6,7 @@ class Ajax
     formName='';
     static runTask='';
     static runObject;
-    
+
     constructor(){ 
         console.log('Ajax::constructor()');
         this.setUrl();
@@ -132,6 +132,7 @@ class Ajax
                     }
                     else{
                         runFunction(this.response);
+                        //window[this.runFunction](this.response);
                     }
                     break;
             default:

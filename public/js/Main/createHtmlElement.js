@@ -271,6 +271,24 @@ function createSelect(dataArray,fieldId,fieldName)
     //console.log(select);
     return select;
 }
+function createSelectFromObject2(d,n,v,sId,sC)
+{
+    /*
+     *  d => data
+     *  n => data property with option name to setup
+     *  v => data property with option value to setup
+     *  sId / sN => select ID / NAME
+     *  sC => select CLASS
+     */
+    var s=getSelectTag(sC,sId);
+    for(const property in d){
+        var o=document.createElement('option');  
+            o.innerText=d[property][n];
+            o.setAttribute("VALUE",d[property][v]);
+        s.appendChild(o);
+    }
+    return s;
+}
 function createSelectFromObject(d,n,sId,sC)
 {
     /*

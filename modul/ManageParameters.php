@@ -30,7 +30,7 @@ class ManageParameters {
         self::update();
         $this->Utilities->jsonResponse(['i'=>$this->inpArray['id']
                 ,'d'=>date('Y-m-d H:i:s')
-                ,'u'=>$_SESSION['username']
+                ,'u'=>$_SESSION['nazwiskoImie']
             ],'pUpdate');
     }
     private function verifyParameterId(array $sql=[':i'=>[0,'INT']]){
@@ -114,8 +114,17 @@ class ManageParameters {
         }
     }
     public function getModulParametersDefaults(){
-        //var_dump($_SESSION);
-        $this->Utilities->jsonResponse(['perm'=>$_SESSION['perm'],'parm'=>$this->Model->{'Parametry'}->getDefaults()],'runMain');
+        $this->Utilities->jsonResponse([
+            'perm'=>$_SESSION['perm']
+            ,'parm'=>$this->Model->{'Parametry'}->getDefaults()
+            ,'color'=>$this->Model->{'Parametry'}->getColor()
+            ,'text-align'=>$this->Model->{'Parametry'}->getTextAlign()
+            ,'text-decoration'=>$this->Model->{'Parametry'}->getTextDecoration()
+            ,'measurement'=>$this->Model->{'Parametry'}->getMeasurement()
+            ,'font-family'=>$this->Model->{'Parametry'}->getFontFamily()
+            ,'line-spacing'=>$this->Model->{'Parametry'}->getLineSpacing()
+            ,'list-type'=>$this->Model->{'Parametry'}->getListType()
+            ],'');
     }
     function __destruct(){}
 }
