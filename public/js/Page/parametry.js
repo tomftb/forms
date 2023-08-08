@@ -9,12 +9,12 @@
 
 class parametry{
     
-    static Ajax;
-    static Error;
-    static defaultTask='getAllParm';
-    static fieldDisabled='n';
-    static run='runMain';
-    static defaultTableColumns={
+     Ajax;
+     Error;
+     defaultTask='getAllParm';
+     fieldDisabled='n';
+     run='runMain';
+     defaultTableColumns={
         Skrót:{
             style:'width:70px;',
             scope:'col'
@@ -32,8 +32,8 @@ class parametry{
             scope:'col'
         }
     };
-    static defaultTableExceptionCol=new Array('i','md','mu','t','v');
-    static glossary={
+     defaultTableExceptionCol=new Array('i','md','mu','t','v');
+     glossary={
         color:new Array()
         ,'text-align':new Array()
         ,'measurement':new Array()
@@ -43,22 +43,21 @@ class parametry{
         ,parameters:new Array()
     };
     constructor() {
-        
+        this.init();
     }
     destructor(){
         
     }
-    static init(){
-        parametry.Ajax = new Ajax();
-        parametry.Ajax.setModul(parametry);
-        parametry.Ajax.setModulTask('runFunction');
-        parametry.Error = new Error();
-        parametry.defaultTask='getAllParm';
-        parametry.fieldDisabled='n';
-        parametry.run='sAll';
-        
+    init(){
+        this.Ajax = new Ajax();
+        this.Ajax.setModul(this);
+        this.Ajax.setModulTask('runFunction');
+        this.Error = new Error();
+        this.defaultTask='getAllParm';
+        this.fieldDisabled='n';
+        this.run='sAll';
     }
-    static runFunction(response){
+     runFunction(response){
         console.log('===runFunction()===');
         console.log(response);
         var jsonResponse={
@@ -68,58 +67,58 @@ class parametry{
         try{
             // RUN FUNCTION
             jsonResponse=JSON.parse(response);
-            parametry.Error.checkStatusExist(jsonResponse); 
+            this.Error.checkStatusExist(jsonResponse); 
             console.log('FUNCTION TO RUN:\n'+jsonResponse['data']['function']);
             console.log(jsonResponse['data']['function']);
-            console.log('run - ',parametry.run);
-            switch(parametry.run)
+            console.log('run - ',this.run);
+            switch(this.run)
             //switch(d['data']['function'])
             {
                 case 'pUpdate':     
                     /* update user and date */
-                    parametry.run='sAll';
-                    parametry.Error.checkStatusResponse(jsonResponse);
+                    this.run='sAll';
+                    this.Error.checkStatusResponse(jsonResponse);
                     var ele=document.getElementById('info_'+jsonResponse['data']['value']['i']);
                         ele.innerText='Update: '+jsonResponse['data']['value']['u']+', '+jsonResponse['data']['value']['d'];  
                     break;
                 case 'runMain':
                     if(jsonResponse['data']['value']['perm'].indexOf('EDIT_PARM')===-1){
-                        parametry.fieldDisabled='y';
+                        this.fieldDisabled='y';
                     };
-                    parametry.glossary.color=jsonResponse['data']['value']['color'];
-                    parametry.glossary['text-align']=jsonResponse['data']['value']['text-align'];
-                    parametry.glossary['measurement']=jsonResponse['data']['value']['measurement'];
-                    parametry.glossary['font-family']=jsonResponse['data']['value']['font-family'];
-                    parametry.glossary['line-spacing']=jsonResponse['data']['value']['line-spacing'];
-                    parametry.glossary['list-type']=jsonResponse['data']['value']['list-type'];
-                    parametry.glossary.parameters=jsonResponse['data']['value']['parm'];
-                    parametry.run='sAll';
+                    this.glossary.color=jsonResponse['data']['value']['color'];
+                    this.glossary['text-align']=jsonResponse['data']['value']['text-align'];
+                    this.glossary['measurement']=jsonResponse['data']['value']['measurement'];
+                    this.glossary['font-family']=jsonResponse['data']['value']['font-family'];
+                    this.glossary['line-spacing']=jsonResponse['data']['value']['line-spacing'];
+                    this.glossary['list-type']=jsonResponse['data']['value']['list-type'];
+                    this.glossary.parameters=jsonResponse['data']['value']['parm'];
+                    this.run='sAll';
                 case 'sAll': 
-                    parametry.displayAll(jsonResponse['data']['value']['parm']);
+                    this.displayAll(jsonResponse['data']['value']['parm']);
                     break;
                 default:
-                    parametry.Error.checkStatusResponse(jsonResponse);
+                    this.Error.checkStatusResponse(jsonResponse);
                     break;
             }
         }
         catch(e){
             jsonResponse['status']=1;
             jsonResponse['info']=e;
-            parametry.Error.checkStatusResponse(jsonResponse);
+            this.Error.checkStatusResponse(jsonResponse);
             console.log(e);
         }
     }
-    static displayAll(d)
+     displayAll(d)
     { 
         /* SETUP DEFAULT TABLE COLUMN */
         console.log('displayAll',d);
         var defaultTableCol=document.getElementById("colDefaultTable");
             removeHtmlChilds(defaultTableCol);
-        for (const c in parametry.defaultTableColumns)
+        for (const c in this.defaultTableColumns)
         {
             var th=createTag(c,'th','');
-            for(const atr in parametry.defaultTableColumns[c]){
-                th.setAttribute(atr,parametry.defaultTableColumns[c][atr]);
+            for(const atr in this.defaultTableColumns[c]){
+                th.setAttribute(atr,this.defaultTableColumns[c][atr]);
             }
             defaultTableCol.appendChild(th);
         }
@@ -130,23 +129,23 @@ class parametry{
         for(var i = 0; i < d.length; i++)
         {    
             var tr=createTag('','tr','');
-                parametry.assignDefaultTableData(tr,d[i]);
+                this.assignDefaultTableData(tr,d[i]);
             pd.appendChild(tr);
         }
         //console.log(pd);
     }
-    static assignDefaultTableData(tr,d)
+     assignDefaultTableData(tr,d)
     {
         /* d => object with data */
         for (const property in d){        
-            if(!parametry.defaultTableExceptionCol.includes(property)){
+            if(!this.defaultTableExceptionCol.includes(property)){
                 var td=createTag(d[property],'td','');
                 tr.appendChild(td);
             } 
         }
-        tr.appendChild(parametry.createTableEditField(d));
+        tr.appendChild(this.createTableEditField(d));
     }
-    static createTableEditField(d){
+     createTableEditField(d){
         var field={
             type:''
             ,input:'input'
@@ -160,25 +159,25 @@ class parametry{
          * SET INPUT TYPE:
          * input,select
          */
-        parametry.setInputType(field,d);
+        this.setInputType(field,d);
          /*
           * SET INPUT TYPE:
           * password,test,number,checkbox
           */
-        parametry.setFieldType(field,d['t']);
+        this.setFieldType(field,d['t']);
         /*
          * CREATE INPUT
          */
-        var input = parametry['create'+field.input](field,d);
+        var input = this['create'+field.input](field,d);
         
          /*
          * SET ON CHANGE
          */
-        parametry.setOnChange(input);
+        this.setOnChange(input);
         /*
          * SET ON CLICK
          */
-        parametry.setOnClick(field.type,input);
+        this.setOnClick(field.type,input);
         /*
          * CREATE TD
          */
@@ -189,15 +188,15 @@ class parametry{
             td.appendChild(info);     
         return td;
     }
-    static createSelect(field,d){
-        console.log('parametry.createSelect()');
+     createSelect(field,d){
+        console.log('this.createSelect()');
         return createSelectFromObject2(field.data,'n','v',d['i'],'form-control');
     }
-    static createInput(field,d){
-        console.log('parametry.createInput()');
-        return createInput(field.type,d['i'],d['v'],'form-control mb-1','',parametry.fieldDisabled);
+     createInput(field,d){
+        console.log('this.createInput()');
+        return createInput(field.type,d['i'],d['v'],'form-control mb-1','',this.fieldDisabled);
     }
-    static setFieldType(field,type){
+     setFieldType(field,type){
         switch(type){
             case 'c': /* checkbox */
                 field.type='checkbox';
@@ -214,35 +213,35 @@ class parametry{
                 break;
         }
     }
-    static setInputType(field,d){
+     setInputType(field,d){
        
         switch(d['t']){
             case 's-color':
-                field.data=parametry.getList(d,parametry.glossary.color);
+                field.data=this.getList(d,this.glossary.color);
                 field.input='Select';
                 break;
             case 's-text-align':
-                field.data=parametry.getList(d,parametry.glossary['text-align']);
+                field.data=this.getList(d,this.glossary['text-align']);
                 field.input='Select';
                 break;
             case 's-measurement':
                 //console.log('measurement');
-                field.data=parametry.getList(d,parametry.glossary['measurement']);
+                field.data=this.getList(d,this.glossary['measurement']);
                 field.input='Select';
                 break;
             case 's-font-family':
                 //console.log('measurement');
-                field.data=parametry.getList(d,parametry.glossary['font-family']);
+                field.data=this.getList(d,this.glossary['font-family']);
                 field.input='Select';
                 break;
             case 's-line-spacing':
                 //console.log('measurement');
-                field.data=parametry.getList(d,parametry.glossary['line-spacing']);
+                field.data=this.getList(d,this.glossary['line-spacing']);
                 field.input='Select';
                 break;
             case 's-list-type':
                 //console.log('measurement');
-                field.data=parametry.getList(d,parametry.glossary['list-type']);
+                field.data=this.getList(d,this.glossary['list-type']);
                 field.input='Select';
                 break;
             default:
@@ -250,7 +249,7 @@ class parametry{
                 break;
         }
     }
-    static setOnClick(type,input){
+     setOnClick(type,input){
         switch(type){
             case 'c': /* checkbox */
                 input.onclick=function(){
@@ -261,16 +260,23 @@ class parametry{
                 break;
         }           
     }
-    static setOnChange(input){
-        input.onchange=function (){
-            parametry.run='pUpdate';
+    setOnChange(input){
+        var self = this;
+        input.onchange=function (t){
+            //console.log(t);
+            //console.log(self);
+            /*
+             * t - this
+             * s - self
+             */
+            self.run='pUpdate';
             var form=createForm('POST','updateParm','form-horizontal','OFF');
                 form.appendChild(createInput('hidden','id',this.name,'',''));
                 form.appendChild(createInput('hidden','value',this.value,'',''));
-                parametry.Ajax.sendData(form,'POST');
+                self.Ajax.sendData(form,'POST');
         };
     }
-    static getList(d,glossary){
+     getList(d,glossary){
         var first=new Array();
         var rest=new Array();
         for(const prop in glossary){
@@ -283,23 +289,24 @@ class parametry{
         };
         return first.concat(rest);
     }
-    static findData(value){
+     findData(value){
         this.Ajax.getData(defaultTask+"&f="+value);
     }
-    static loadData(){
+     loadData(){
         console.log('---loadData()---');
         //ajax.getData(defaultTask);
-        console.log(parametry.Error);
-        parametry.Error.set('overAllErr');
-        parametry.run='runMain';
-        parametry.Ajax.getData('getModulParametersDefaults');
+        console.log(this.Error);
+        this.Error.set('overAllErr');
+        this.run='runMain';
+        this.Ajax.getData('getModulParametersDefaults');
     }   
 }
 /*
- * SET INIT VALUE
+ * SET
  */
-parametry.init();
+var Parameters = new parametry();
+
 /*
  * RUN DEFAULT TASK (METHOD)
  */
-parametry.loadData();
+Parameters.loadData();
