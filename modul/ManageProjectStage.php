@@ -1,6 +1,7 @@
 <?php
 class ManageProjectStage extends ManageProjectStageDatabase
 {
+    private ?object $Modul;
     private $stageData=array();
     private $lastStageId=0;
     private $dbLink;
@@ -10,10 +11,13 @@ class ManageProjectStage extends ManageProjectStageDatabase
     private $filter=array('getProjectStages','getProjectDeletedStages','getProjectHiddenStages','getProjectHiddenAndDeletedStages','getProjectAllStages');
     function __construct(){
         parent::__construct();
+        $this->Model=new \stdClass();
+        $this->Modul=new \stdClass();
         $this->utilities=NEW Utilities();
         $this->Items=NEW ManageProjectItems();
         /* TO DO -> MOVE dbLink tasks to get data from abstract class database */
         $this->dbLink=LoadDb::load();
+        $this->Modul->{'Parameters'}=new \ManageParameters();     
     }
     function __destruct(){
         parent::__destruct();
@@ -410,19 +414,11 @@ class ManageProjectStage extends ManageProjectStageDatabase
         $value=array();
         /* GET DEFAULT PARAMETERS */
         $value['list'] = parent::getStageGlossaryList();
-        $value['list']['parameter']=self::getGlossaryParameter('STAGE_LIST_%');
+        $value['list']['parameter']= $this->Modul->{'Parameters'}->getParameters('STAGE_LIST_');
         $value['text'] = parent::getStageGlossaryText();
-        $value['text']['parameter']=self::getGlossaryParameter('STAGE_TEXT_%');
+        $value['text']['parameter']= $this->Modul->{'Parameters'}->getParameters('STAGE_TEXT_');
         $value['image'] = parent::getStageGlossaryImage();
         return $value;
-    }
-    private function getGlossaryParameter($key='STAGE_TEXT_%'){
-         /* SETUP PARAMETER */
-        $parm=[];
-        foreach(parent::getStageParameters($key) as $v){
-            $parm[$v['s']]=['n'=>$v['n'],'v'=>$v['v']];
-        };
-        return $parm;
     }
     public function getNewStageDefaults(){
         $type=htmlentities(nl2br(filter_input(INPUT_GET,'type')), ENT_QUOTES,'UTF-8',FALSE);

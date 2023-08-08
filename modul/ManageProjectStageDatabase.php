@@ -42,7 +42,6 @@ class ManageProjectStageDatabase {
         $this->Log->log(0,"[".__METHOD__."]");
         return [
             'listType'=>$this->DatabaseUtilities->getListType()
-            
         ];
     }
     protected function getStageGlossaryImage(){
