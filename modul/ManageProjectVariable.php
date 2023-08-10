@@ -81,16 +81,16 @@ class ManageProjectVariable extends ManageProjectVariableDatabase{
         $this->Utilities->jsonResponse(parent::getSimpleAll());
     }
     public function getProjectVariables(){ 
-        self::returnVariables(self::getSelectedVariables("s.`hidden`='0' AND s.`deleted`='0' AND s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"));
+        self::returnVariables(self::getSelectedVariables("s.`hide_status`='0' AND s.`delete_status`='0' AND s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"));
     } 
     public function getProjectDeletedVariables(){ 
-        self::returnVariables(self::getSelectedVariables("s.`hidden`='0' AND s.`deleted`='1' AND s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"));
+        self::returnVariables(self::getSelectedVariables("s.`hide_status`='0' AND s.`delete_status`='1' AND s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"));
     }
     public function getProjectHiddenVariables(){ 
-        self::returnVariables(self::getSelectedVariables("s.`hidden`='1' AND s.`deleted`='0' AND s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"));
+        self::returnVariables(self::getSelectedVariables("s.`hide_status`='1' AND s.`delete_status`='0' AND s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"));
     }
     public function getProjectHiddenAndDeletedVariables(){ 
-        self::returnVariables(self::getSelectedVariables("(s.`hidden`='1' OR s.`deleted`='1') AND s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"));
+        self::returnVariables(self::getSelectedVariables("(s.`hide_status`='1' OR s.`delete_status`='1') AND s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"));
     }
     public function getProjectAllVariables(){ 
         self::returnVariables(self::getSelectedVariables("s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f)  ORDER BY s.`id` ASC"));
@@ -151,14 +151,14 @@ class ManageProjectVariable extends ManageProjectVariableDatabase{
     public function pvHide(){
         $this->Log->log(0,"[".__METHOD__."]");
         self::preapareData();
-        parent::changeState('1','hidden','hidden_reason');
+        parent::changeState('1','hide_status','hide_reason');
         self::block($this->newData['id'],$_SESSION['userid']);
         self::runFilter();
     }
     public function pvDelete(){
         $this->Log->log(0,"[".__METHOD__."]");
         self::preapareData();
-        parent::changeState('1','deleted','deleted_reason');
+        parent::changeState('1','delete_status','delete_reason');
         self::block($this->newData['id'],'');
         self::runFilter();
     }

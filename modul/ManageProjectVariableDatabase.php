@@ -17,14 +17,14 @@ abstract class ManageProjectVariableDatabase {
     public function __construct(){
         $this->Log=Logger::init(__METHOD__);
         $this->dbLink=LoadDb::load();
-        $this->dbUtilities=new DatabaseUtilities();
+        $this->dbUtilities=new \DatabaseUtilities();
         $this->date=date("Y-m-d H:i:s");
         $this->RA=filter_input(INPUT_SERVER,'REMOTE_ADDR');
-        $this->Items=NEW ManageProjectItems();
+        $this->Items=NEW \ManageProjectItems();
     }
     public function __destruct(){}
     protected function getVariables(){
-        return $this->dbLink->squery("SELECT * FROM `slo_project_stage_variable` s WHERE s.`deleted`='0' ORDER BY s.`id` ASC");
+        return $this->dbLink->squery("SELECT * FROM `slo_project_stage_variable` s WHERE s.`delete_status`='0' ORDER BY s.`id` ASC");
     }
     protected function checkUnique(&$error,$first,$key='',$value='',$column='name',$id=0){
         $this->Log->log(0,"[".__METHOD__."]\r\n KEY => ".$key."\r\n VALUE => ".$value);
@@ -73,11 +73,11 @@ abstract class ManageProjectVariableDatabase {
         return $data;
     }
     public function getSimpleAll(){
-        return $this->dbLink->squery("SELECT `id` as \"id_variable\",`name`,`value` FROM `slo_project_stage_variable` WHERE `deleted`='0' and `hidden`='0' ORDER BY `id` ASC;",[],'FETCH_OBJ','fetchAll'); 
+        return $this->dbLink->squery("SELECT `id` as \"id_variable\",`name`,`value` FROM `slo_project_stage_variable` WHERE `delete_status`='0' and `hide_status`='0' ORDER BY `id` ASC;",[],'FETCH_OBJ','fetchAll'); 
     }
     protected function getVariableData($id=0){
         $this->Log->log(0,"[".__METHOD__."] ID RECORD => ".$id);
-        $variable=$this->dbLink->squery("SELECT s.`id` as 'i',s.`name` as 'n',s.`value` as 'v',s.`create_user_full_name` as 'cu',s.`create_user_login` as 'cul',s.`create_date` as 'cd',s.`mod_user_login` as 'mu',s.`mod_date` as 'md',s.`buffer_user_id` as 'bu',s.`deleted` as 'wu',b.`login` as 'bl' FROM `slo_project_stage_variable` as s LEFT JOIN `uzytkownik` as b ON s.`buffer_user_id`=b.`id` WHERE s.`id`=:id AND s.`deleted`='0' LIMIT 0,1",[':id'=>[$id,'INT']]);
+        $variable=$this->dbLink->squery("SELECT s.`id` as 'i',s.`name` as 'n',s.`value` as 'v',s.`create_user_full_name` as 'cu',s.`create_user_login` as 'cul',s.`create_date` as 'cd',s.`mod_user_login` as 'mu',s.`mod_date` as 'md',s.`buffer_user_id` as 'bu',s.`delete_status` as 'wu',b.`login` as 'bl' FROM `slo_project_stage_variable` as s LEFT JOIN `uzytkownik` as b ON s.`buffer_user_id`=b.`id` WHERE s.`id`=:id AND s.`delete_status`='0' LIMIT 0,1",[':id'=>[$id,'INT']]);
         if(count($variable)===0){
             throw new Exception('VARIABLE DOES NOT EXIST ANYMORE!', 0);
         }
@@ -88,9 +88,9 @@ abstract class ManageProjectVariableDatabase {
     }
     protected function getVariableWithoutRecord($idRecord=0){
         $this->Log->log(0,"[".__METHOD__."] ID RECORD => ".$idRecord);
-        return $this->dbLink->squery("SELECT * FROM `slo_project_stage_variable` s WHERE s.`deleted`='0' AND s.id!=:id ORDER BY s.`id` ASC",[':id'=>[$idRecord,'INT']]);
+        return $this->dbLink->squery("SELECT * FROM `slo_project_stage_variable` s WHERE s.`delete_status`='0' AND s.id!=:id ORDER BY s.`id` ASC",[':id'=>[$idRecord,'INT']]);
     }
-    protected function changeState($state='1',$stateCol='hidden',$reasonCol='hidden_reason'){
+    protected function changeState($state='1',$stateCol='hide_status',$reasonCol='hide_reason'){
             $parm=[
                 ':id'=>[$this->newData['id'],'INT'],
                 ':state'=>[$state,'STR'],
