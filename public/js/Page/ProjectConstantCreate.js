@@ -50,7 +50,8 @@ class ProjectConstantCreate{
         catch(error){
             console.log('ProjectConstantCreate::details()');
             console.log(error);
-            this.Items.Table.setError('An Application Error Has Occurred!');
+            //this.Items.Table.setError('An Application Error Has Occurred!');
+            this.Items.Table.setError(error);
             return false;
         }
         /* IN ANOTHER BLOCK TRY CATCH TO PREVENT OPEN MODAL IF ERROR EXISTS TO HIDE ERROR SHOWED IN TABLE  */

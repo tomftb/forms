@@ -90,25 +90,25 @@ class ManageProjectConstant extends ManageProjectConstantDatabase{
         $value['nazwa']=mb_strtoupper($value['nazwa']);
         $value['id']=intval($value['id'],10);
         /* PARSE CONST UNIQUE */
-        parent::checkConstantUnique($key,$value['nazwa'],'nazwa',$value['id']);
-        parent::checkConstantUnique($key,$value['wartosc'],'wartosc',$value['id']);
+        parent::checkConstantUnique($key,$value['nazwa'],'name',$value['id']);
+        parent::checkConstantUnique($key,$value['wartosc'],'value',$value['id']);
     }
     public function getProjectConstants(){ 
-        self::returnConstants(self::getSelectedConstants("s.`wsk_v`='0' AND s.`wsk_u`='0' AND s.`id`>0 AND (s.`id`=:id OR s.`nazwa` LIKE :f OR s.`wartosc` LIKE :f) ORDER BY s.`id` ASC"));
+        self::returnConstants(self::getSelectedConstants("s.`hide_status`='0' AND s.`delete_status`='0' AND s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"));
     } 
     public function getProjectDeletedConstants(){ 
-        self::returnConstants(self::getSelectedConstants("s.`wsk_v`='0' AND s.`wsk_u`='1' AND s.`id`>0 AND (s.`id`=:id OR s.`nazwa` LIKE :f OR s.`wartosc` LIKE :f) ORDER BY s.`id` ASC"));
+        self::returnConstants(self::getSelectedConstants("s.`hide_status`='0' AND s.`delete_status`='1' AND s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"));
     }
     public function getProjectHiddenConstants(){ 
-        self::returnConstants(self::getSelectedConstants("s.`wsk_v`='1' AND s.`wsk_u`='0' AND s.`id`>0 AND (s.`id`=:id OR s.`nazwa` LIKE :f OR s.`wartosc` LIKE :f) ORDER BY s.`id` ASC"));
+        self::returnConstants(self::getSelectedConstants("s.`hide_status`='1' AND s.`delete_status`='0' AND s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"));
     }
     public function getProjectHiddenAndDeletedConstants(){ 
-        self::returnConstants(self::getSelectedConstants("(s.`wsk_v`='1' OR s.`wsk_u`='1') AND s.`id`>0 AND (s.`id`=:id OR s.`nazwa` LIKE :f OR s.`wartosc` LIKE :f) ORDER BY s.`id` ASC"));
+        self::returnConstants(self::getSelectedConstants("(s.`hide_status`='1' OR s.`delete_status`='1') AND s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"));
     }
     public function getProjectAllConstants(){ 
-        self::returnConstants(self::getSelectedConstants("s.`id`>0 AND (s.`id`=:id OR s.`nazwa` LIKE :f OR s.`wartosc` LIKE :f)  ORDER BY s.`id` ASC"));
+        self::returnConstants(self::getSelectedConstants("s.`id`>0 AND (s.`id`=:id OR s.`name` LIKE :f OR s.`value` LIKE :f)  ORDER BY s.`id` ASC"));
     }
-    private function getSelectedConstants($SQL="s.`id`>0 AND (s.`nazwa` LIKE :f OR s.`wartosc` LIKE :f) ORDER BY s.`id` ASC"){
+    private function getSelectedConstants($SQL="s.`id`>0 AND (s.`name` LIKE :f OR s.`value` LIKE :f) ORDER BY s.`id` ASC"){
         $this->Log->log(0,"[".__METHOD__."]");
         $POST=filter_input_array(INPUT_POST);
         $this->Log->log(0,$POST);
@@ -119,7 +119,7 @@ class ManageProjectConstant extends ManageProjectConstantDatabase{
         $this->Log->log(0,$SQL);
         $this->Log->log(0,$parm);
         $this->Items->unsetBlock($POST['b'],'slo_project_stage_const','buffer_user_id',$_SESSION['userid']);
-        $select="SELECT s.`id` as 'i', s.`nazwa` as 'n',s.`wartosc` as 'v',s.`buffer_user_id` as 'bu',b.`login` as 'bl' FROM `slo_project_stage_const` s LEFT JOIN `uzytkownik` as b ON s.`buffer_user_id`=b.`id`";
+        $select="SELECT s.`id` as 'i', s.`name` as 'n',s.`value` as 'v',s.`buffer_user_id` as 'bu',b.`login` as 'bl' FROM `slo_project_stage_const` s LEFT JOIN `uzytkownik` as b ON s.`buffer_user_id`=b.`id`";
         $response['data']=parent::getConstantsLike($select." WHERE ".$SQL,$parm);
         $response['headTitle']='Stałe';
         return $response;
@@ -128,26 +128,26 @@ class ManageProjectConstant extends ManageProjectConstantDatabase{
         return $this->Utilities->jsonResponse($response,'');
     }
     public function getProjectConstantHideSlo(){
-        $this->Log->log(0,"[".__METHOD__."]");
-        $this->newData=[
-            'id'=>filter_input(INPUT_GET,'id',FILTER_VALIDATE_INT)
-        ];
-        $this->newData['const']=parent::getConstantData($this->newData['id']);
-        $this->Items->checkBlock($this->newData['const']['bu'],$this->newData['const']['bl'],$_SESSION['userid']);
-        self::block($this->newData['id'],$_SESSION['userid']);
-        $this->newData['slo']=$this->Items->getSlo('pcHide');
-        $this->Utilities->jsonResponse($this->newData,'pcHide');  
+        $this->Log->log(0,"[".__METHOD__."]"); 
+         self::getSlo('pcHide');
     }
     public function getProjectConstantDelSlo(){
         $this->Log->log(0,"[".__METHOD__."]");
-        $this->newData=[
+        self::getSlo('pcDelete');
+    }
+    private function getSlo(string $glossary='pcDelete'){
+       (array) $data=[
             'id'=>filter_input(INPUT_GET,'id',FILTER_VALIDATE_INT)
-        ];
-        $this->newData['const']=parent::getConstantData($this->newData['id']);
-        $this->Items->checkBlock($this->newData['const']['bu'],$this->newData['const']['bl'],$_SESSION['userid']);
-        self::block($this->newData['id']);
-        $this->newData['slo']=$this->Items->getSlo('pcDelete');
-        $this->Utilities->jsonResponse($this->newData,'pcDelete');  
+           ,'const'=>[
+                'bu'=>''
+                ,'bl'=>''
+           ]
+           ,'slo'=>$this->Items->getSlo($glossary)
+        ]; 
+        $data['const']=parent::getConstantData($data['id']);
+        $this->Items->checkBlock($data['const']['bu'],$data['const']['bl'],$_SESSION['userid']);
+        self::block($data['id'],$_SESSION['userid']);
+        $this->Utilities->jsonResponse($data,$glossary);  
     }
     public function getProjectConstantDetails(){
         $this->Log->log(0,"[".__METHOD__."]");       

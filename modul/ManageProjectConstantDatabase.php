@@ -27,9 +27,9 @@ abstract class ManageProjectConstantDatabase {
     }
     public function __destruct(){}
     protected function getConstants(){
-        return $this->dbLink->squery("SELECT * FROM `slo_project_stage_const` s WHERE s.`wsk_u`='0' ORDER BY s.`id` ASC");
+        return $this->dbLink->squery("SELECT * FROM `slo_project_stage_const` s WHERE s.`delete_status`='0' ORDER BY s.`id` ASC");
     }
-    protected function checkConstantUnique($k='',$v='',$column='nazwa',$id=0){
+    protected function checkConstantUnique($k='',$v='',$column='name',$id=0){
         $this->Log->log(0,"[".__METHOD__."]\r\n KEY => ".$k."\r\n VALUE => ".$v);
          /*
           * PARAMTER MUST BY INSERTED WITHOUT CHAR => ' "
@@ -38,7 +38,7 @@ abstract class ManageProjectConstantDatabase {
             ':parm'=>[$v,'STR'],
             ':id'=>[$id,'INT']
         ];
-        if(intval($this->dbLink->squery("SELECT count(*) as c FROM `slo_project_stage_const` WHERE `".$column."`=:parm AND `id`!=:id ORDER BY `id` ASC",$parm)[0]['c'],10)>0){
+        if(intval($this->dbLink->squery("SELECT count(*) as `c` FROM `slo_project_stage_const` WHERE `".$column."`=:parm AND `id`!=:id ORDER BY `id` ASC",$parm)[0]['c'],10)>0){
             $this->error.="[".$k."] Wprowadzona wartość istnieje już w bazie danych.<br/>";
         }
     }
@@ -54,14 +54,14 @@ abstract class ManageProjectConstantDatabase {
         if($data['id']>0){
             $parm[':id']=[$data['id'],'INT'];
             $this->dbLink->query(
-                "UPDATE `slo_project_stage_const` SET `nazwa`=:n,`wartosc`=:w,".$this->dbUtilities->getAlterSql()." WHERE `id`=:id;"
+                "UPDATE `slo_project_stage_const` SET `name`=:n,`value`=:w,".$this->dbUtilities->getAlterSql()." WHERE `id`=:id;"
                 ,array_merge($parm,$this->dbUtilities->getAlterParm())
                 );
                 $this->Items->unsetBlock($data['id'],'slo_project_stage_const','buffer_user_id',$_SESSION['userid']);
         }
         else{
             $this->dbLink->query(
-                "INSERT INTO `slo_project_stage_const` (`nazwa`,`wartosc`,".$this->dbUtilities->getCreateSql()[0].",".$this->dbUtilities->getCreateAlterSql()[0].") VALUES (:n,:w,".$this->dbUtilities->getCreateSql()[1].",".$this->dbUtilities->getCreateAlterSql()[1].");"
+                "INSERT INTO `slo_project_stage_const` (`name`,`value`,".$this->dbUtilities->getCreateSql()[0].",".$this->dbUtilities->getCreateAlterSql()[0].") VALUES (:n,:w,".$this->dbUtilities->getCreateSql()[1].",".$this->dbUtilities->getCreateAlterSql()[1].");"
                 ,array_merge($parm, $this->dbUtilities->getCreateParm(),$this->dbUtilities->getAlterParm())
                 );
         }
@@ -77,35 +77,30 @@ abstract class ManageProjectConstantDatabase {
         }
         return $data;
     }
-
-    protected function getConstantData($id=0){
+    protected function getConstantData(int $id=0){
         $this->Log->log(0,"[".__METHOD__."] ID RECORD => ".$id);
-        $tmpData=$this->dbLink->squery("SELECT s.`id` as 'i',s.`nazwa` as 'n',s.`wartosc` as 'v',s.`create_user_full_name` as 'cu',s.`create_user_login` as 'cul',s.`create_date` as 'cd',s.`mod_user_login` as 'mu',s.`mod_date` as 'md',s.`buffer_user_id` as 'bu',s.`wsk_u` as 'wu',b.`login` as 'bl' FROM `slo_project_stage_const` as s LEFT JOIN `uzytkownik` as b ON s.`buffer_user_id`=b.`id` WHERE s.`id`=:id AND s.`wsk_u`='0' LIMIT 0,1",[':id'=>[$id,'INT']]);
-        if(count($tmpData)===0){
-            throw new Exception('CONST DOES NOT EXIST ANYMORE!', 0);
+        foreach($this->dbLink->squery("SELECT s.`id` as 'i',s.`name` as 'n',s.`value` as 'v',s.`create_user_full_name` as 'cu',s.`create_user_login` as 'cul',s.`create_date` as 'cd',s.`mod_user_login` as 'mu',s.`mod_date` as 'md',s.`buffer_user_id` as 'bu',s.`delete_status` as 'wu',b.`login` as 'bl' FROM `slo_project_stage_const` as s LEFT JOIN `uzytkownik` as b ON s.`buffer_user_id`=b.`id` WHERE s.`id`=:id AND s.`delete_status`='0' LIMIT 0,1",[':id'=>[$id,'INT']]) as $const){
+            return $const;
         }
-        return $tmpData[0];
+        Throw new \Exception('Const '.$id.' does not exist anymore!', 0);
     }
     protected function getConstantWithoutRecord($idRecord=0){
         $this->Log->log(0,"[".__METHOD__."] ID RECORD => ".$idRecord);
-        return $this->dbLink->squery("SELECT * FROM `slo_project_stage_const` s WHERE s.`wsk_u`='0' AND s.id!=:id ORDER BY s.`id` ASC",[':id'=>[$idRecord,'INT']]);
+        return $this->dbLink->squery("SELECT * FROM `slo_project_stage_const` s WHERE s.`delete_status`='0' AND s.id!=:id ORDER BY s.`id` ASC",[':id'=>[$idRecord,'INT']]);
     }
-    protected function hideConstant($hide='1'){
+    protected function hideConstant(string $status='1'){
+        self::updateState($status,'hide');
+    }
+    protected function deleteConstant($status='1'){
+        self::updateState($status,'delete');
+    }
+    private function updateState(string $value='1', string $column='hide'){
         $parm=[
             ':id'=>[$this->newData['id'],'INT'],
-            ':wsk_v'=>[$hide,'STR'],
+            ':status'=>[$value,'STR'],
             ':reason'=>[$this->newData['reason'],'STR']
         ];
-        $this->dbLink->setQuery("UPDATE `slo_project_stage_const` SET `wsk_v`=:wsk_v,`hide_reason`=:reason,".$this->dbUtilities->getAlterSql()." WHERE `id`=:id",array_merge($parm,$this->dbUtilities->getAlterParm()));
-        $this->dbLink->runTransaction();
-    }
-    protected function deleteConstant($delete='1'){
-        $parm=[
-                ':id'=>[$this->newData['id'],'INT'],
-                ':wsk_u'=>[$delete,'STR'],
-                ':reason'=>array($this->newData['reason'],'STR')
-            ];
-        $this->dbLink->setQuery("UPDATE `slo_project_stage_const` SET `wsk_u`=:wsk_u,`delete_reason`=:reason,".$this->dbUtilities->getAlterSql()." WHERE `id`=:id",array_merge($parm,$this->dbUtilities->getAlterParm()));
+        $this->dbLink->setQuery("UPDATE `slo_project_stage_const` SET `".$column."_status`=:status,`".$column."_reason`=:reason,".$this->dbUtilities->getAlterSql()." WHERE `id`=:id",array_merge($parm,$this->dbUtilities->getAlterParm()));
         $this->dbLink->runTransaction();
     }
 }
