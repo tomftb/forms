@@ -14,7 +14,7 @@
                     <h5 class="mt-3 text-secondary text-right"style="border:0px solid black;" >Szukaj :</h5>
                 </div>
                 <div class="col-8 pl-0 pr-0" style="border:0px solid red;">
-                    <input class="ml-1 form-control mt-2"  onchange="findData(this.value)"/>
+                    <input class="ml-1 form-control mt-2"  onchange="Parameters.findData(this.value)"/>
                 </div>
             </div>
         </div>

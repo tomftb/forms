@@ -9,12 +9,12 @@
 
 class parametry{
     
-     Ajax;
-     Error;
-     defaultTask='getAllParm';
-     fieldDisabled='n';
-     run='runMain';
-     defaultTableColumns={
+    Ajax = new Object();
+    Error = new Object();
+    defaultTask='getAllParm';
+    fieldDisabled='n';
+    run='runMain';
+    defaultTableColumns={
         Skrót:{
             style:'width:70px;',
             scope:'col'
@@ -32,8 +32,8 @@ class parametry{
             scope:'col'
         }
     };
-     defaultTableExceptionCol=new Array('i','md','mu','t','v');
-     glossary={
+    defaultTableExceptionCol=new Array('i','md','mu','t','v');
+    glossary={
         color:new Array()
         ,'text-align':new Array()
         ,'measurement':new Array()
@@ -49,35 +49,35 @@ class parametry{
         
     }
     init(){
+        this.Error = new Error();
+        this.Error.action='throwError';
         this.Ajax = new Ajax();
         this.Ajax.setModul(this);
         this.Ajax.setModulTask('runFunction');
-        this.Error = new Error();
         this.defaultTask='getAllParm';
         this.fieldDisabled='n';
         this.run='sAll';
     }
      runFunction(response){
-        console.log('===runFunction()===');
-        console.log(response);
+        console.log('parametry.runFunction()');
+        //console.log(response);
         var jsonResponse={
             status:1,
             info:''
         };
+         
         try{
             // RUN FUNCTION
             jsonResponse=JSON.parse(response);
+            //console.log(this.Error);
             this.Error.checkStatusExist(jsonResponse); 
-            console.log('FUNCTION TO RUN:\n'+jsonResponse['data']['function']);
-            console.log(jsonResponse['data']['function']);
+            this.Error.checkStatusResponse(jsonResponse);
             console.log('run - ',this.run);
             switch(this.run)
-            //switch(d['data']['function'])
             {
                 case 'pUpdate':     
                     /* update user and date */
                     this.run='sAll';
-                    this.Error.checkStatusResponse(jsonResponse);
                     var ele=document.getElementById('info_'+jsonResponse['data']['value']['i']);
                         ele.innerText='Update: '+jsonResponse['data']['value']['u']+', '+jsonResponse['data']['value']['d'];  
                     break;
@@ -102,16 +102,15 @@ class parametry{
             }
         }
         catch(e){
-            jsonResponse['status']=1;
-            jsonResponse['info']=e;
-            this.Error.checkStatusResponse(jsonResponse);
+            
             console.log(e);
+            this.Error.show('Application error occurred!');
         }
     }
-     displayAll(d)
+    displayAll(d)
     { 
         /* SETUP DEFAULT TABLE COLUMN */
-        console.log('displayAll',d);
+        //console.log('displayAll',d);
         var defaultTableCol=document.getElementById("colDefaultTable");
             removeHtmlChilds(defaultTableCol);
         for (const c in this.defaultTableColumns)
@@ -177,7 +176,7 @@ class parametry{
         /*
          * SET ON CLICK
          */
-        this.setOnClick(field.type,input);
+        this.setOnClick(d['t'],input);
         /*
          * CREATE TD
          */
@@ -189,14 +188,15 @@ class parametry{
         return td;
     }
      createSelect(field,d){
-        console.log('this.createSelect()');
+        //console.log('this.createSelect()');
         return createSelectFromObject2(field.data,'n','v',d['i'],'form-control');
     }
      createInput(field,d){
-        console.log('this.createInput()');
+        //console.log('this.createInput()');
         return createInput(field.type,d['i'],d['v'],'form-control mb-1','',this.fieldDisabled);
     }
-     setFieldType(field,type){
+    setFieldType(field,type){
+        //console.log("parametry.setFieldType()",type);
         switch(type){
             case 'c': /* checkbox */
                 field.type='checkbox';
@@ -213,8 +213,8 @@ class parametry{
                 break;
         }
     }
-     setInputType(field,d){
-       
+    setInputType(field,d){
+        //console.log("parametry.setInputType()",d['t']);
         switch(d['t']){
             case 's-color':
                 field.data=this.getList(d,this.glossary.color);
@@ -250,6 +250,7 @@ class parametry{
         }
     }
      setOnClick(type,input){
+        //console.log("parametry.setOnClick()",type);
         switch(type){
             case 'c': /* checkbox */
                 input.onclick=function(){
@@ -289,16 +290,15 @@ class parametry{
         };
         return first.concat(rest);
     }
-     findData(value){
-        this.Ajax.getData(defaultTask+"&f="+value);
+    findData(value){
+        this.Ajax.getData(this.defaultTask+"&f="+value);
     }
-     loadData(){
+    loadData(){
         console.log('---loadData()---');
-        //ajax.getData(defaultTask);
-        console.log(this.Error);
         this.Error.set('overAllErr');
         this.run='runMain';
         this.Ajax.getData('getModulParametersDefaults');
+        console.log(document.getElementById('search'));//console.log(document.getElementById('search'));
     }   
 }
 /*

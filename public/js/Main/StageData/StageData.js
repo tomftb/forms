@@ -26,7 +26,7 @@ class StageData{
         this.StageDataRefill=new StageDataRefill();
     }
     setProperty(Glossary,Property,type,tabstop,part){
-        //console.log('StageData::setProperty()');
+        console.log('StageData::setProperty()');
         this.Glossary = Glossary;
         this.Property=Property;
         //console.log(this.Property);
@@ -43,6 +43,7 @@ class StageData{
         this.Glossary=Glossary;
     }
     setType(type){
+        console.log('StageData::setType()');
         var typeProperty={
                 t:{
                     t:'t',
@@ -77,6 +78,7 @@ class StageData{
         if(typeProperty.hasOwnProperty(type)){
             this.type=typeProperty[type];
         }
+        console.log(this.type);
     }
     setDefault(){
         console.log('StageData::setDefault()');

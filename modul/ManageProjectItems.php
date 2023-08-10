@@ -79,7 +79,7 @@ class ManageProjectItems{
         /* $_SESSION['id']*/
     }
     public function getSlo($slo='psDelete'){
-        return $this->dbLink->squery("SELECT s.`id` as ID,s.`nazwa` AS Nazwa FROM `slo` s,`app_task` a WHERE s.`id_app_task`=a.`id` AND s.id>0 AND s.wsk_u='0' AND a.`name`=:n ORDER BY s.`id` ASC",[':n'=>[$slo,'STR']]);  
+        return $this->dbLink->squery("SELECT s.`id` as ID,s.`nazwa` AS Nazwa FROM `slo` s,`app_task` a WHERE s.`id_app_task`=a.`id` AND s.id>0 AND s.`delete_status`='0' AND a.`name`=:n ORDER BY s.`id` ASC",[':n'=>[$slo,'STR']]);  
     }
     public function setPostId(){
         $this->Log->log(0,"[".__METHOD__."]");

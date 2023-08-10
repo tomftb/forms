@@ -166,28 +166,37 @@ class ProjectItems{
             extraSelect.setAttribute('class','form-control mb-1');
             extraSelect.setAttribute('PLACEHOLDER','Wprowadź powód');
             extraSelect.style.display = "none";
+            /*
+             * IF EMPTY sloData
+             */
+            if(sloData.length<1){
+                extraSelect.style.display = "block";
+            }
             sloData.push({
                             'ID' : "0",
                             'Nazwa' : 'Inny:'
                         });
         var select=this.Html.createSelectFromObject(sloData,'Nazwa','reason','form-control mb-1');
-        var Items=this;
+        var self=this;
+        /*
+         * CLOSURE
+         */
             select.onchange = function() { 
-                Items.checkReason(this,'extra'); 
+                self.checkReason(this,extraSelect); 
             };
         ele.appendChild(p); 
         ele.appendChild(select); 
         ele.appendChild(extraSelect); 
         return '';
     }
-    checkReason(t,id){
+    checkReason(t,extraSelect){
         //console.log('ProjectItems::checkReason()');
         var splitValue=t.value.split("|");
         if(splitValue[0]==='0'){
-            document.getElementById(id).style.display = "block";
+            extraSelect.style.display = "block";
         }
         else{
-             document.getElementById(id).style.display = "none";
+            extraSelect.style.display = "none";
         };
     }
     setDefaultModal(){
@@ -441,6 +450,7 @@ class ProjectItems{
         //console.log(response);
         try {
             var json=this.Parse.getJson(response);
+            //Error.clear();
             //var data = JSON.parse(response);  
         }
         catch (e){
@@ -490,6 +500,7 @@ class ProjectItems{
         var confirmButton=this.Html.confirmButton(btnLabel,'btn btn-'+titleClass,f);   
             /* CLOSURE */
             confirmButton.onclick = function () {  
+                
                 let fdLocal = new FormData(form);
                 for(let prop of fd.entries()){
                     //console.log(prop[0],prop[1]);
@@ -519,7 +530,7 @@ class ProjectItems{
         $(this.Modal.link['main']).modal('hide');
     }
     setTableResponse(response){
-        //console.log('ProjectItems::setTableResponse()');
+        console.log('ProjectItems::setTableResponse()');
         //console.log(response);
         try {
             return this.parseResponse(response);
@@ -533,7 +544,7 @@ class ProjectItems{
         return {};
     }
     setModalResponse(response){
-        //console.log('ProjectItems::setModalResponse()');
+        console.log('ProjectItems::setModalResponse()');
         //console.log(response);
         var data={
             data:{
@@ -559,7 +570,7 @@ class ProjectItems{
         }
     }
     setFieldResponse(response){
-        //console.log('ProjectItems::setFieldResponse()');
+        console.log('ProjectItems::setFieldResponse()');
         try {
             return this.parseResponse(response);
             /* TO DO -> set value to field if ok */
@@ -713,4 +724,3 @@ if(error===false){
     }
     ,false); 
 }
-

@@ -226,7 +226,6 @@ class Table
             //link.onclick=function (){};
             return false;
         }
-        //link.onclick=runAjax();
         link.onclick=function (){
             try {
                 clearAdaptedModalData();

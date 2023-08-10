@@ -20,6 +20,7 @@ class ManageParameters {
     public function updateParm(){
         $this->Log->log(0,"[".__METHOD__."]");
         $this->inpArray=filter_input_array(INPUT_POST);
+        $this->Log->logMulti(2,$this->inpArray);
         $this->Utilities->validateKey($this->inpArray,'id',true,1);
         //$this->Utilities->validateKey($this->inpArray,'value',true,1);
         $sql[':i']=[$this->inpArray['id'],'INT'];
@@ -28,6 +29,7 @@ class ManageParameters {
         self::setParmSkrt($sql);
         self::parseParm();
         self::update();
+       
         $this->Utilities->jsonResponse(['i'=>$this->inpArray['id']
                 ,'d'=>date('Y-m-d H:i:s')
                 ,'u'=>$_SESSION['nazwiskoImie']

@@ -134,9 +134,9 @@ class ProjectStageTable{
         
         var btnGroup=document.createElement('DIV');
             btnGroup.setAttribute('class','btn-group pull-left');
-            btnGroup.appendChild(this.getShowButton(this.Xhr,value.i));
-            btnGroup.appendChild(this.getHideButton(this.Xhr,value.i));
-            btnGroup.appendChild(this.getDeleteButton(this.Xhr,value.i));
+            btnGroup.appendChild(this.getShowButton(this,value.i));
+            btnGroup.appendChild(this.getHideButton(this,value.i));
+            btnGroup.appendChild(this.getDeleteButton(this,value.i));
         /* ADD ROW WITH BLOCK USER INGO */
         
         return btnGroup;
@@ -147,30 +147,33 @@ class ProjectStageTable{
             btn.setAttribute('class','btn '+c);
         return btn;
     }
-    getShowButton(Ajax,id){
+    getShowButton(self,id){
         var btn  = this.getButton('Wyświetl','btn-info');
         var AjaxRun = this.getXhrRunProperty('psDetails&id='+id);
             AjaxRun.m=this.detailsTask;
             btn.onclick = function (){
-                Ajax.run(AjaxRun);
+                self.Table.unsetError();
+                self.Xhr.run(AjaxRun);
             };
         return btn;
     }
-    getHideButton(Ajax,id){
+    getHideButton(self,id){
         var btn  = this.getButton('Ukryj','btn-secondary');
         var AjaxRun = this.getXhrRunProperty('getProjectStageHideSlo&id='+id);
             btn.onclick = function (){
-                Ajax.run(AjaxRun);
+                self.Table.unsetError();
+                self.Xhr.run(AjaxRun);
             };
         return btn;
     }
-    getDeleteButton(Ajax,id){
+    getDeleteButton(self,id){
         var btn  = this.getButton('Usuń','btn-danger');
         var AjaxRun = this.getXhrRunProperty('getProjectStageDelSlo&id='+id);
             AjaxRun.m='remove';
             /* CLOSURE */
             btn.onclick = function (){
-                Ajax.run(AjaxRun);
+                self.Table.unsetError();
+                self.Xhr.run(AjaxRun);
             };
         return btn;
     }

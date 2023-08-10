@@ -917,6 +917,7 @@ class ProjectStageTool{
             input.setAttribute('type','checkbox');
             input.classList.add('form-check-input');
             input.onclick = function (){
+                console.log('ProjectStageTool.createTextToolCheckBox()',this.value);
                 if(this.value==='0'){
                     this.value='1';
                 }
@@ -939,7 +940,7 @@ class ProjectStageTool{
     setTextDecorationToolEntryProperties(decorationProp,subsectionRowAttr){
         console.log('ProjectStageTool::setTextDecorationToolEntryProperties()');
         if (!('v' in decorationProp) || !('n' in decorationProp)){
-            //console.log('Decoration Property don\'t have key v or n');
+            console.log('Decoration Property don\'t have key v or n');
             return false;
         };
         var fullProp={

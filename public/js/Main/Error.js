@@ -1,46 +1,57 @@
 class Error
 {
-    static error=true;
-    static div='';
-    static divId='';
-    
+    error=true;
+    div='';
+    divId='';
+    action = 'throwNoError';
+    msg='Application error occurred!';
+    //static action = 'throwError';
     constructor() {
         console.log('Error::constructor()');
     }
+    throwNoError(){
+        console.log('Error.throwNoError()');
+    }
+    throwError(){
+        console.log('Error.throwError()');
+        throw this.msg;
+    }
     checkStatusExist(d){
-        console.log('Error::checkStatusExist()');
+        console.log('Error.checkStatusExist()');
         if (!d.hasOwnProperty("status")) {
             throw 'Key `status` not exist';
         }
     }
-    checkStatusResponse  (d){
+    checkStatusResponse(d){
+        console.log('Error.checkStatusResponse()');
         /*
          * d => data
          * d['status'] => status
          */
-        //console.log(d);
-        console.log('Error::checkStatusResponse()\n STATUS: '+d['status']);
-        //console.log(d);
-        //this.clearError();
+        //console.log(this);
+        //console.log(typeof(d['status']));
+        this.msg='Application error occurred!';
+        if (d.hasOwnProperty("info")) {
+            this.msg=d['info'];
+        }
         if(d['status']===1){
-            Error.show(d['info']);
-            Error.error=true;
+            this.show();
+            this.error=true;
+            this[this.action]();
         }
         else if(d['status']===0){
-            Error.clear();
-            Error.error=false;
+            this.clear();
+            this.error=false;
         }
         else{
-            console.log('Error::checkStatusResponse() => wrong status => '+d['status']);
-            console.log(d);
-            //console.log(d);
-            //alert('Error::ERROR OCCURED!');
-            Error.show('Application error occurred!');
-            Error.error=true;
+            console.log('Error.checkStatusResponse()\nwrong status:\n',d['status']);
+            this.show('Application error occurred!');
+            this.error=true;
+            this[this.action]();
         }
-        return Error.error;
+        return this.error;
     }
-    static checkInfoResponse = function (d)
+    checkInfoResponse = function (d)
     {
         console.log('Error::checkInfoResponse()');
         if(d['info']==='undefined')
@@ -61,42 +72,39 @@ class Error
             //Error.parseType(d);
         }
     }
-    static clearError = function ()
-    {
-         Error.error=false;
+    clearError = function (){
+        this.error=false;
     }
-    set(id)
-    {
+    set(id){
         console.log('Error::set(id)');
-        Error.divId=id;
+        this.divId=id;
         //console.log(Error.divId);
     }
-    static show(value)
-    {
+    show(){
         console.log('Error::show(value)');
-        console.log(value);
+        console.log(this.msg);
         /* TO DO -> create virtual div*/
-        Error.getDiv();
+        this.getDiv();
         //console.log(Error.div);
-        Error.div.innerHTML=value;
-        Error.div.classList.remove("d-none");
-        Error.div.classList.add("d-block");
+        this.div.innerHTML=this.msg;
+        this.div.classList.remove("d-none");
+        this.div.classList.add("d-block");
     }
-    static clear = function (){
+    clear = function (){
         console.log('Error::clear()');
-        Error.getDiv();
-        Error.div.innerText='';
-        Error.div.classList.add("d-none");
-        Error.div.classList.remove("d-block");
+        this.getDiv();
+        this.div.innerText='';
+        this.div.classList.add("d-none");
+        this.div.classList.remove("d-block");
     }
-    static getDiv(){
-        Error.div=document.getElementById(Error.divId);
+    getDiv(){
+        this.div=document.getElementById(this.divId);
         //console.log(Error.div);
     }
     setField(field){
-        //console.log('Error::setField()');
+        console.log('Error.setField()');
         //console.log(field);
-        Error.div=field;
+        this.div=field;
     }
 }
 

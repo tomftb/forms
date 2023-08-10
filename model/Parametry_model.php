@@ -27,7 +27,7 @@ class Parametry_model extends Database_model {
         }
         catch (PDOException $e){
             $this->dbLink->rollback();
-            Throw New Exception ("[".__METHOD__."] Wystąpił błąd zapytania bazy danych: ".$e->getMessage(),1); 
+            Throw New \Exception ("[".__METHOD__."] Wystąpił błąd zapytania bazy danych: ".$e->getMessage(),1); 
         } 
     }
     public function getParmSkrt(array $input=[':i'=>[0,'INT']]){

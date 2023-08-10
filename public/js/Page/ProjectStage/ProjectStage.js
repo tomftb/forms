@@ -130,7 +130,8 @@ class ProjectStage{
         }
         catch(error){
             console.log(error);
-            this.StageTable.Table.setError('An Application Error Has Occurred!');
+            this.StageTable.Table.setError(error);
+            //this.StageTable.Table.setError('An Application Error Has Occurred!');
             return false;
         };
         /* RUN MODAL IN second try to prevent hide error */
@@ -149,7 +150,8 @@ class ProjectStage{
         }
         catch(error){
             console.log(error);
-            this.StageTable.Table.setError('An Application Error Has Occurred!');
+            this.StageTable.Table.setError(error);
+            //this.StageTable.Table.setError('An Application Error Has Occurred!');
             return false;
         };
         /* RUN MODAL IN second try to prevent hide error */

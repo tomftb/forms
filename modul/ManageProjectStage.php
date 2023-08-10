@@ -24,16 +24,16 @@ class ManageProjectStage extends ManageProjectStageDatabase
     }
     # RETURN ALL NOT DELETED PROJECT FROM DB
     public function getProjectStages(){ 
-        self::returnStages(self::getSelectedStages("AND s.`wsk_v`='0' AND s.`wsk_u`='0' AND s.`id`>0 AND (s.`id`=:id OR s.`title` LIKE :f) ORDER BY s.`id` ASC"));
+        self::returnStages(self::getSelectedStages("AND s.`hide_status`='0' AND s.`delete_status`='0' AND s.`id`>0 AND (s.`id`=:id OR s.`title` LIKE :f) ORDER BY s.`id` ASC"));
     } 
     public function getProjectDeletedStages(){ 
-        self::returnStages(self::getSelectedStages("AND s.`wsk_v`='0' AND s.`wsk_u`='1' AND s.`id`>0 AND (s.`id`=:id OR s.`title` LIKE :f) ORDER BY s.`id` ASC"));
+        self::returnStages(self::getSelectedStages("AND s.`hide_status`='0' AND s.`delete_status`='1' AND s.`id`>0 AND (s.`id`=:id OR s.`title` LIKE :f) ORDER BY s.`id` ASC"));
     }
     public function getProjectHiddenStages(){ 
-        self::returnStages(self::getSelectedStages("AND s.`wsk_v`='1' AND s.`wsk_u`='0' AND s.`id`>0 AND (s.`id`=:id OR s.`title` LIKE :f) ORDER BY s.`id` ASC"));
+        self::returnStages(self::getSelectedStages("AND s.`hide_status`='1' AND s.`delete_status`='0' AND s.`id`>0 AND (s.`id`=:id OR s.`title` LIKE :f) ORDER BY s.`id` ASC"));
     }
     public function getProjectHiddenAndDeletedStages(){ 
-        self::returnStages(self::getSelectedStages("AND (s.`wsk_v`='1' OR s.`wsk_u`='1') AND s.`id`>0 AND (s.`id`=:id OR s.`title` LIKE :f) ORDER BY s.`id` ASC"));
+        self::returnStages(self::getSelectedStages("AND (s.`hide_status`='1' OR s.`delete_status`='1') AND s.`id`>0 AND (s.`id`=:id OR s.`title` LIKE :f) ORDER BY s.`id` ASC"));
     }
     public function getProjectAllStages(){ 
         self::returnStages(self::getSelectedStages("AND s.`id`>0 AND (s.`id`=:id OR s.`title` LIKE :f) ORDER BY s.`id` ASC"));
@@ -73,15 +73,15 @@ class ManageProjectStage extends ManageProjectStageDatabase
             $f_int=intval($f,10);
             $parm[':id']=array($f_int,'INT');
             $parm[':number']=array($f_int,'INT');
-            $where="WHERE s.`part`=:part AND s.`wsk_u`=:wsk_u AND s.`wsk_v`=:wsk_v AND (s.`id` LIKE (:id) OR s.`number` LIKE (:number) OR s.`title` LIKE :title) ORDER BY s.`id` ASC";
+            $where="WHERE s.`part`=:part AND s.`delete_status`=:delete_status AND s.`hide_status`=:hide_status AND (s.`id` LIKE (:id) OR s.`number` LIKE (:number) OR s.`title` LIKE :title) ORDER BY s.`id` ASC";
         }
         else{
             $this->Log->log(0,"[".__METHOD__."] filter not numeric ");
-            $where="WHERE s.`part`=:part AND s.`wsk_u`=:wsk_u AND s.`wsk_v`=:wsk_v AND (s.`title` LIKE :title) ORDER BY s.`id` ASC";
+            $where="WHERE s.`part`=:part AND s.`delete_status`=:delete_status AND s.`hide_status`=:hide_status AND (s.`title` LIKE :title) ORDER BY s.`id` ASC";
         }
         $this->inpArray['wskb']=$this->Items->unsetBlock($this->Items->setGetWsk('b'),'slo_project_stage','buffer_user_id',$_SESSION['userid']);
-        $parm[':wsk_u']=[$this->Items->setGetWsk('d'),'STR'];
-        $parm[':wsk_v']=[$this->Items->setGetWsk('v'),'STR'];
+        $parm[':delete_status']=[$this->Items->setGetWsk('d'),'STR'];
+        $parm[':hide_status']=[$this->Items->setGetWsk('v'),'STR'];
         $parm[':part']=[$part,'STR'];
         $parm[':title']=['%'.$f.'%','STR'];
         /* 
@@ -499,10 +499,10 @@ class ManageProjectStage extends ManageProjectStageDatabase
         $stage=[];
 
         if($id>0){
-            $stage=$this->dbLink->squery("SELECT s.`id` FROM `slo_project_stage` s WHERE s.`title`=:t AND s.`id`!=:i AND s.`wsk_u`='0'",[':t'=>[$this->data->data->title,'STR'],':i'=>[$id,'INT']]);
+            $stage=$this->dbLink->squery("SELECT s.`id` FROM `slo_project_stage` s WHERE s.`title`=:t AND s.`id`!=:i AND s.`delete_status`='0'",[':t'=>[$this->data->data->title,'STR'],':i'=>[$id,'INT']]);
         }
         else{
-            $stage=$this->dbLink->squery("SELECT s.`id` FROM `slo_project_stage` s WHERE s.`title`=:t AND s.`wsk_u`='0'",[':t'=>[$this->data->data->title,'STR']]);
+            $stage=$this->dbLink->squery("SELECT s.`id` FROM `slo_project_stage` s WHERE s.`title`=:t AND s.`delete_status`='0'",[':t'=>[$this->data->data->title,'STR']]);
         }
         if(count($stage)>0){
             throw new exception ('TITLE ISN\'T UNIQUE',0);

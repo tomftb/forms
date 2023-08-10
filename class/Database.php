@@ -210,6 +210,7 @@ class Database {//extends PDO
         return self::$dbLink->PDO->sth->rowCount();
     }
     public function commit(){
+       
         self::$dbLink->PDO->commit();
     }
     public function lastInsertId(){

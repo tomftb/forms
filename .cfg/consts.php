@@ -23,4 +23,4 @@ define('APP_AUTHOR',"Autor: Tomasz Borczyński");
 	1 = advanced
 	2 = extra
 */
-define('LOG_LVL',0);
+define('LOG_LVL',2);

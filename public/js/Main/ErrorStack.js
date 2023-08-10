@@ -83,7 +83,7 @@ class ErrorStack{
         this.manageBlock(action);
     }
     unsetBlock(){
-        //console.log('ErrorStack::unsetBlock()');
+        console.log('ErrorStack::unsetBlock()');
         var action = function(t,b){
                 t.Html.removeClass(b,"disabled");
                 b.removeAttribute("disabled",'');

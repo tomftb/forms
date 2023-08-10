@@ -118,3 +118,15 @@ CREATE VIEW `v_upr_i_uzyt_v3` AS SELECT
 				
 ALTER TABLE `upr_i_slo_rola` ADD CONSTRAINT `FK_PermRole_Perm` FOREIGN KEY (`id_upr`) REFERENCES `uprawnienia` (`id`);
 ALTER TABLE `upr_i_slo_rola` ADD CONSTRAINT `FK_PermRole_Role` FOREIGN KEY (`id_rola`) REFERENCES `slo_rola` (`ID`);
+
+
+-- slo_project_stage_section
+
+ALTER TABLE `slo_project_stage_section` ADD CONSTRAINT `FK_SloSectionCreateUser` FOREIGN KEY (`create_user_id`) REFERENCES `uzytkownik`(`id`);
+ALTER TABLE `slo_project_stage_section` ADD CONSTRAINT `FK_SloSectionParent` FOREIGN KEY (`id_parent`) REFERENCES `slo_project_stage`(`id`);
+
+-- slo_project_stage_section_style
+
+ALTER TABLE `slo_project_stage_section_style` ADD CONSTRAINT `FK_SloSectionStyleCreateUser` FOREIGN KEY (`create_user_id`) REFERENCES `uzytkownik`(`id`);
+ALTER TABLE `slo_project_stage_section_style` ADD CONSTRAINT `FK_SloSectionStyleModifyUser` FOREIGN KEY (`mod_user_id`) REFERENCES `uzytkownik`(`id`);
+ALTER TABLE `slo_project_stage_section_style` ADD CONSTRAINT `FK_SloSectionStyleParent` FOREIGN KEY (`id_parent`) REFERENCES `slo_project_stage_section`(`id`);
