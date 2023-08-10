@@ -69,7 +69,7 @@ class ManageProjectStageDatabase {
     }
     public function getStageImageProperty(&$data,$table,$id=0){
         $this->Log->log(0,"[".__METHOD__."] ID PARENT -> ".$id);
-        foreach($this->Model->{'Slo_project_stage_model'}->getChildId($table,[':id'=>[$id,'INT']]) as $k => $v){
+        foreach($this->Model->{'Slo_project_stage'}->getChildId($table,[':id'=>[$id,'INT']]) as $k => $v){
             $data->{$k}=new stdClass();
             $data->{$k}->data=new stdClass();
             $data->{$k}->data->id=intval($v->id,10);
