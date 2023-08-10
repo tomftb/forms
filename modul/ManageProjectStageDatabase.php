@@ -1,18 +1,16 @@
 <?php
 /**
- * Description of ManageProjectConstsDatabase
+ * Description of ManageProjectStageDatabase
  *
  * @author tborczynski
  * 
- * MANAGE PROJECT CONSTS DATABASE QUERY
+ * MANAGE PROJECT STAGE DATABASE QUERY
  */
-//abstract
 class ManageProjectStageDatabase {
     private ?object $Model;
     private $dbLink;
     protected $DatabaseUtilities;
     protected $Log;
-    //protected $inpArray=array();
     protected $data=array();
     protected $error='';
     protected $stage;
@@ -25,6 +23,9 @@ class ManageProjectStageDatabase {
         $this->Model->{'Slo_project_stage'}=new \Slo_project_stage_model();
     }
     public function __destruct(){}
+    public function __call($m,$a){
+        Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
+    }
     protected function getStageGlossaryText(){
         $this->Log->log(0,"[".__METHOD__."]");
         return [
@@ -57,26 +58,23 @@ class ManageProjectStageDatabase {
     protected function getStageParameters($parm='STAGE_%'){
         return $this->DatabaseUtilities->getParam($parm);
     }
-    protected function getStages($where='',$parm=[]){
+    protected function getStages(string $where='',array $parm=[]):array{
         $this->Log->log(0,"[".__METHOD__."]");
-        $select="SELECT s.`id` as 'i',s.`title` as 't',b.`login` as 'bl' FROM `slo_project_stage` s LEFT JOIN `uzytkownik` as b ON s.`buffer_user_id`=b.`id`";
-        
-        $data=[];
-         /* */
-        foreach($this->dbLink->squery($select.$where,$parm) as $v){
+        (array) $data=[];
+        foreach($this->Model->{'Slo_project_stage'}->getStages($where,$parm) as $v){
             //array_push($data,array($v['i'],$v['n'],html_entity_decode($v['t']),html_entity_decode($v['v']),'bl'=>$v['bl']));
             array_push($data,['i'=>$v['i'],'t'=>html_entity_decode($v['t']),'bl'=>$v['bl']]);
         }
         return $data;
     }
-    public function getStageImageProperty(&$data,$tablePrefix,$id=0){
+    public function getStageImageProperty(&$data,$table,$id=0){
         $this->Log->log(0,"[".__METHOD__."] ID PARENT -> ".$id);
-        foreach($this->dbLink->squery("SELECT `id` FROM `".$tablePrefix."` WHERE `id_parent`=:id AND `delete_status`='0';",[':id'=>[$id,'INT']],'FETCH_OBJ','fetchAll') as $k => $v){
+        foreach($this->Model->{'Slo_project_stage_model'}->getChildId($table,[':id'=>[$id,'INT']]) as $k => $v){
             $data->{$k}=new stdClass();
             $data->{$k}->data=new stdClass();
             $data->{$k}->data->id=intval($v->id,10);
             $data->{$k}->data->tmp='n'; // FOR run function getTmpStageImage or getStageImage
-            self::assignAllProperty($data->{$k},$tablePrefix,$v->id);
+            self::assignAllProperty($data->{$k},$table,$v->id);
             /* FIX tmp_id */
             //$data->{$k}->property->tmpid=$k;
         }
@@ -213,22 +211,6 @@ class ManageProjectStageDatabase {
         $this->dbLink->query("UPDATE `slo_project_stage_section` SET `delete_status`='1',`delete_reason`='Removed by edit',`delete_date`=:delete_date,".$this->DatabaseUtilities->getAlterSql()." WHERE `id_parent`=:id AND `delete_status`='0'",
                 array_merge($parm,$this->DatabaseUtilities->getAlterParm()));
     }
-    private function deleteSubsection($id = 0){
-        $parm=[
-            ':id'=>[$id,'INT'],
-            ':delete_date'=>[$this->DatabaseUtilities->getDate(),'STR']
-        ];
-        $this->dbLink->query("UPDATE `slo_project_stage_subsection` SET `delete_status`='1',`delete_reason`='Removed by edit',`delete_date`=:delete_date,".$this->DatabaseUtilities->getAlterSql()." WHERE `id_parent`=:id AND `delete_status`='0'",
-                array_merge($parm,$this->DatabaseUtilities->getAlterParm()));
-    }
-    private function deleteSubsectionRow($id = 0){
-        $parm=[
-            ':id'=>[$id,'INT'],
-            ':delete_date'=>[$this->DatabaseUtilities->getDate(),'STR']
-        ];
-        $this->dbLink->query("UPDATE `slo_project_stage_subsection_row` SET `delete_status`='1',`delete_reason`='Removed by edit',`delete_date`=:delete_date,".$this->DatabaseUtilities->getAlterSql()." WHERE `id_parent`=:id AND `delete_date`='0'",
-                array_merge($parm,$this->DatabaseUtilities->getAlterParm()));
-    }
     private function getChangeStageParm(){
         return [
             ':id'=>[$this->data['id'],'INT'],
@@ -329,7 +311,6 @@ class ManageProjectStageDatabase {
         $id = random_int(1000000000, 1099511627776);
         $this->Model->{'Slo_project_stage'}->insertSection([':id'=>[$id,'INT'],':id_parent'=>[$idStage,'INT']]);
          /* INSERT SUBSECTION [COLUMNS] */
-       
         self::insertAttributes($id,$section,'slo_project_stage_section');    
         foreach($section->subsection as $v){
             self::insertSubsection($id,$v); 
@@ -337,22 +318,11 @@ class ManageProjectStageDatabase {
     }
     private function updateSection($v = []){
         $this->Log->log(0,"[".__METHOD__."]");   
-        $parm=[
-            ':id'=>[$v->data->id,'INT']
-        ];
-        $this->dbLink->query2(
-                "UPDATE `slo_project_stage_section` SET "
-                . "`delete_reason`=''"
-                . ",`delete_status`='0'"
-                . ",".$this->DatabaseUtilities->getAlterSql().""
-                . " WHERE"
-                . "`id`=:id;"
-                ,array_merge($parm,$this->DatabaseUtilities->getAlterParm())
-        );
+        $this->Model->{'Slo_project_stage'}->updateDeleteWithReason('slo_project_stage_section',[':id'=>[$v->data->id,'INT'],':reason'=>['','STR'],':status'=>['0','STR']]);
         self::deleteAttributes($v->data->id,'slo_project_stage_section');  
         self::insertAttributes($v->data->id,$v,'slo_project_stage_section');      
         /* SQL UPDATE (DELETE) STAGE SECTION ROW delete_status, update subsection row wil set delete_status=0 */
-        self::deleteSubsection($v->data->id);
+        $this->Model->{'Slo_project_stage'}->updateDeleteWithReason('slo_project_stage_subsection',[':id'=>[$v->data->id,'INT'],':reason'=>['Removed by edit','STR'],':status'=>['1','STR']]);
         /* MANAGE SUBSETION */
         self::manageSubSection($v->data->id,$v->subsection);
     }
@@ -483,6 +453,7 @@ class ManageProjectStageDatabase {
         $this->Model->{'Slo_project_stage'}->delete($table."_property",[':id'=>[$id,'INT']]);
     }
     private function insertAttributesProperty($parm=[],$data=[],$table='slo_project_stage_subsection_row_p_style'){
+        $this->Log->log(2,"[".__METHOD__."]\r\nTABLE: ".$table);
         foreach($data as $k => $v){
             $parm[':property']=[$k,'STR']; 
             $parm[':value']=[$v,'STR']; 
@@ -609,22 +580,12 @@ class ManageProjectStageDatabase {
     }
     private function updateSubSection($v = []){
         $this->Log->log(0,"[".__METHOD__."]");
-        $parm=[
-            ':id'=>[$v->data->id,'INT']          
-        ];
-        $this->dbLink->query2(
-                "UPDATE `slo_project_stage_subsection` SET "
-                . "".$this->DatabaseUtilities->getAlterSql().""
-                .",`delete_reason`=''"
-                .",`delete_status`='0'"
-                . " WHERE"
-                . "`id`=:id;"
-                ,array_merge($parm,$this->DatabaseUtilities->getAlterParm())
-        );
+        $this->Model->{'Slo_project_stage'}->updateDeleteWithReason('slo_project_stage_subsection',[':id'=>[$v->data->id,'INT'],':reason'=>['','STR'],':status'=>['0','STR']]);
         self::deleteAttributes($v->data->id,'slo_project_stage_subsection');
         self::insertAttributes($v->data->id,$v,'slo_project_stage_subsection');
         /* SQL UPDATE (DELETE) STAGE SECTION ROW delete_status, update subsection row wil set delete_status=0 */
-        self::deleteSubsectionRow($v->data->id);
+        $this->Log->log(0,"[".__METHOD__."] deleteSubsectionRow");
+        $this->Model->{'Slo_project_stage'}->updateDeleteWithReason('slo_project_stage_subsection_row',[':id'=>[$v->data->id,'INT'],':reason'=>['Removed by edit','STR'],':status'=>['1','STR']]);
         /* */
         self::manageSubSectionRow($v->data->id,$v->subsectionrow);
     }

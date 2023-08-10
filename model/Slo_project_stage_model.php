@@ -76,4 +76,14 @@ class Slo_project_stage_model extends Database_model {
          $this->Main->query("UPDATE `slo_project_stage` SET `hide_status`=:status,`hide_reason`=:reason,`hide_date`=:status_date,".parent::getUpdateSql()." WHERE `id`=:id",
                 array_merge($parm,parent::getStatusDate(),parent::getAlterUserParm()));
     }
+    public function updateDeleteWithReason(string $table='slo_project_stage_subsection_row', array $parm=[':id'=>[0,'INT'],':reason'=>['Removed by edit','STR'],':status'=>['1','STR']]){
+          $this->Main->query("UPDATE ".$table." SET `delete_status`=:status,`delete_reason`=:reason,`delete_date`=:status_date,".parent::getUpdateSql()." WHERE `id_parent`=:id AND `delete_status`='0'",
+                array_merge($parm,parent::getStatusDate(),parent::getAlterUserParm()));
+    }
+    public function getStages(string $where='',array $parm=[]):array{
+        return $this->Main->squery("SELECT s.`id` as 'i',s.`title` as 't',b.`login` as 'bl' FROM `slo_project_stage` s LEFT JOIN `uzytkownik` as b ON s.`buffer_user_id`=b.`id` ".$where,$parm);
+    }
+    public function getChildId(string $table='slo_project_stage_subsection_row_i',array $parm=[':id'=>[0,'INT']]):array{
+        return $this->Main->squery("SELECT `id` FROM `".$table."` WHERE `id_parent`=:id AND `delete_status`='0';",$parm,'FETCH_OBJ','fetchAll');
+    }
 }
