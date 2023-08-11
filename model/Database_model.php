@@ -7,8 +7,8 @@
  */
 abstract class Database_model {
     protected ?object $Main;
-    private ?string $date='';
-    private ?string $RA='';
+    private $date="1970-01-01 00:00:01";
+    private $RA='127.0.0.1';
     private ?array $addOn=[
         /* create */
         'create'=>[

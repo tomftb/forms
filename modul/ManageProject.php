@@ -31,6 +31,7 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
     private $projectChange=0;
     private $notify='n';
     private $modul=array();
+    private ?object $Model;
     private $taskPerm= ['perm'=>'','type'=>''];
     private $projectParm=array(
                         'dir'=>array(
@@ -117,6 +118,8 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
         $this->utilities=NEW Utilities();
         $this->response=NEW Response('Project');
         $this->dbLink=LoadDb::load();
+        $this->Model=new \stdClass();
+        $this->Model->{'Project'}=new \Project_model();
     }
     private function setInpArray(){
         $this->utilities->getPost(true,true);
@@ -869,22 +872,6 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
         //return ($this->response->setResponse(__METHOD__,$result,''));
         $this->utilities->jsonResponse($result,'sAll');
     }
-    private function getProjects(){
-        return($this->dbLink->squery('SELECT 
-                        `id` as "i",
-                        `numer_umowy` as "n",
-                        `klient` as "k",
-                        `temat_umowy` as "t",
-                        `typ` as "t2",
-                        `create_date` as "du",
-                        `nadzor` as "l",
-                        `kier_grupy` as "m",
-                        `term_realizacji` as "ds",
-                        `koniec_proj` as "dk",     
-                        (case when (`status` = "n") then "Nowy" when (`status` = "c") then "Zamknięty" when (`status` = "d") then "Usunięty" when (`status` = "m") then "W trakcie" else "Błąd" end) as "s"
-                 FROM `projekt_nowy` WHERE `wsk_u`=0 ORDER BY `id` desc'
-                ));
-    }
     # GET PROJECT DETAILS
     public function pDetails()
     {
@@ -1124,11 +1111,13 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
     }
     public function getModulProjectDefaults(){
         $this->Log->log(0,"[".__METHOD__."]");
-        $Stage=new ManageProjectStage();
-        $v['perm']=$_SESSION['perm'];
-        $v['data']=self::getProjects();
-        $v['glossary']=$Stage->getGlossary();
-        $this->utilities->jsonResponse($v,'runMain'); 
+        $Stage=new \ManageProjectStage();
+        $this->utilities->jsonResponse(
+                [
+                    'perm'=>$_SESSION['perm']
+                    ,'data'=>$this->Model->{'Project'}->getProjects()
+                    ,'glossary'=>$Stage->getGlossary()
+                ],'runMain'); 
     }
     function __destruct(){}
 }

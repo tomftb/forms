@@ -575,7 +575,7 @@ class ProjectStageCreate{
         return mainDiv;
     }
     createButtonCol(button){
-        //console.log('ProjectStageCreate::createButtonCol()');
+        console.log('ProjectStageCreate.createButtonCol()');
         /*
          * ADD BUTTON ROW
          */
@@ -592,6 +592,7 @@ class ProjectStageCreate{
         return mainDiv;
     }
     createButtonRow(button){
+        console.log('ProjectStageCreate.createButtonRow()');
         /*
          * ADD BUTTON ROW
          */
@@ -606,7 +607,7 @@ class ProjectStageCreate{
         return mainDiv;
     }
     addSubsectionRow(isection,isubsection,iRow,subsectionrow,helplink){
-        /* console.log('ProjectStageCreate::addSubsectionRow()'); */
+        console.log('ProjectStageCreate.addSubsectionRow()');
         var i=document.createElement('i');
             i.setAttribute('class','fa fa-plus');
             i.setAttribute("aria-hidden","true");
@@ -616,7 +617,7 @@ class ProjectStageCreate{
         /* SET CLASS OBJECT */
         var self=this;
             div.onclick=function(){       
-                console.log('ProjectStageCreate::addSubsectionRow() onclick()');//,'TabStop:',self.TabStop
+                console.log('ProjectStageCreate.addSubsectionRow() onclick()');//,'TabStop:',self.TabStop
 
                 /* ADD NEW stageData subsectionrow object */
                 subsectionrow[iRow]=self.StageData.createSubsectionRow(iRow);

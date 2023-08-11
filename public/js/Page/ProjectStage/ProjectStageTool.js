@@ -1412,7 +1412,7 @@ class ProjectStageTool{
         return(div); 
     }
     getSectionFooterTool(iSection,section){
-        //console.log('ProjectStageCreate::getSectionFooterTool()');
+        console.log('ProjectStageCreate::getSectionFooterTool()');
         //console.log('iSection');
         //console.log(iSection);
         //console.log('section');

@@ -1,8 +1,9 @@
 //console.log(loggedUserPerm);
 var ajax = new Ajax();
 var error = new Error();
-    //Error.setDiv('errDiv-Adapted-overall');
-    //Error.setModal('AdaptedModal');
+    //error.setDiv('errDiv-Adapted-overall');
+    //error.setModal('AdaptedModal');
+    //error.action='throwError';
 var overallErr = false; 
 var currentIdEmployee=0;
 const defaultTask='getEmployeesLike';
@@ -38,61 +39,57 @@ var inputAttribute= new Array(
         Array('no-disabled','')
         );
 var inputStyle=new Array();
-function runFunction(d)
-{
-   
-    //console.log(d);
+function runFunction(d){
     try{
-        d=JSON.parse(d);
-        error.checkStatusExist(d);
-        console.log('===runFunction()===');
-        //console.log(d['data']['function']);
-    
-    switch(d['data']['function'])
-    {
-        case 'runMain':
-                loggedUserPerm=d['data']['value']['perm'];
-                setButtonDisplay(document.getElementById('createData'),'ADD_EMPL');
-        case 'sEmployees':
-                setAllEmployees(d['data']['value']['data']);
-                error.checkStatusResponse(d);
-            break;
-        case 'cEmployee':            
-                cEmployee(d);
-            break;
-        case 'cModal':
-                reloadData();
+        console.log('runFunction()',d);
+        d=JSON.parse(d);       
+        switch(d['data']['function'])
+        {
+            case 'runMain':
+                    error.set('overAllErr');
+                    error.checkStatusExist(d);
+                    loggedUserPerm=d['data']['value']['perm'];
+                    setButtonDisplay(document.getElementById('createData'),'ADD_EMPL');
+            case 'sEmployees':
+                    setAllEmployees(d['data']['value']['data']);
+                    error.checkStatusResponse(d);
                 break;
-        case 'eEmployee':
-                clearAdaptedModalData();
-                eEmployee(d);
-            break;
-        case 'dEmployee':
-                dEmployee(d);
+            case 'cEmployee':            
+                    cEmployee(d);
                 break;
-        case 'eEmployeeSpec':
-                eEmployeeSpec(d);
+            case 'cModal':
+                    reloadData();
+                    break;
+            case 'eEmployee':
+                    eEmployee(d);
                 break;
-        case 'projects':
-                eEmployeeProject(d);  
-                break;         
-        default:  
-                error.checkStatusResponse(d);
-            break;
-    }
+            case 'dEmployee':
+                    dEmployee(d);
+                    break;
+            case 'eEmployeeSpec':
+                    eEmployeeSpec(d);
+                    break;
+            case 'projects':
+                    eEmployeeProject(d);  
+                    break;         
+            default:  
+                    //error.set('overAllErr');
+                    error.checkStatusResponse(d);
+                break;
+        }
     }
     catch(e){
+        console.log(e);
         d['status']=1;
         d['info']=e;
         error.checkStatusResponse(d);
     }
 }
-function cEmployee(d)
-{
+function cEmployee(d){
     console.log('cEmployee');
-
     clearAdaptedModalData();
-     error.set('errDiv-Adapted-overall');
+    error.set('errDiv-Adapted-overall');
+    error.checkStatusExist(d);
      /* 
       * [].ID
       * [].NAZWA
@@ -103,12 +100,11 @@ function cEmployee(d)
     setEmployeeBodyContent(d['data']['function'],1,'Dodaj');
     addLegendDiv();
 }
-function eEmployee(d)
-{
+function eEmployee(d){
     console.log('eEmployee');
-    
     clearAdaptedModalData();
-     error.set('errDiv-Adapted-overall');
+    error.set('errDiv-Adapted-overall');
+    error.checkStatusExist(d);
      /* 
       * [].ID
       * [].NAZWA
@@ -120,29 +116,30 @@ function eEmployee(d)
     setEmployeeBodyContent(d['data']['function'],0,'Edytuj');
     addLegendDiv();
 }
-function eEmployeeSpec(d)
-{
-    console.log('eEmployeeSpec');
+function eEmployeeSpec(d){
+    console.log('eEmployeeSpec()');
     clearAdaptedModalData();
-     error.set('errDiv-Adapted-overall');
+    error.set('errDiv-Adapted-overall');
+    error.checkStatusExist(d);
     currentEmployeeData=d['data']['value'][0];
     employeeSloSpecTab=d['data']['value'][1];
     // ALL SLO SPEC
     prepareModal('PRZYDZIAŁ PRACOWNIKA:','bg-info');
     setAlloacationEmployeeBodyContent(d['data']['function'],0,'Edytuj');
 }
-function eEmployeeProject(d)
-{
+function eEmployeeProject(d){
+    console.log('eEmployeeProject()');
     clearAdaptedModalData();
+    error.checkStatusExist(d);
     prepareModal('PROJEKTY:','bg-warning');
     setEmployeeProjectBodyContent(d['data']['function'],d['data']['value'][1],d['data']['value'][0]);
 }
 function dEmployee(d)
 {
     console.log('dEmployee\nRESPONSE:');
-    
     clearAdaptedModalData();
-     error.set('errDiv-Adapted-overall');
+    error.set('errDiv-Adapted-overall');
+    error.checkStatusExist(d);
     console.log(d);
     console.log(document.getElementById('AdaptedModal'));
     prepareModal('USUŃ PRACOWNIKA:','bg-danger','Usuń');
@@ -150,7 +147,8 @@ function dEmployee(d)
 }
 function setAllEmployees(data)
 {
-    console.log('---setAllEmployees()---');
+    console.log('setAllEmployees()');
+    console.log(data);
     //console.log(data);
                 /* 
              * [].ID
@@ -160,12 +158,8 @@ function setAllEmployees(data)
              * [].Email
              */
     employeeTab=data;
-
-    
     var docElement=document.getElementById("allUsersData");
     removeHtmlChilds(docElement);
-
-
     var btnConfig=new Array(
             new Array('btn-info','getEmployeeDetails&id=','Dane','SHOW_EMPL'),
             new Array('btn-info','getEmployeeSpec&id=','Przydział','SHOW_ALLOC_EMPL'),
@@ -177,6 +171,7 @@ function setAllEmployees(data)
     var td='';
     var tdOption='';
     var disabled='no-disabled';
+    var self=this;
     for(const i in data)
     {    
         tr=createTag('','tr','');
@@ -192,8 +187,7 @@ function setAllEmployees(data)
         var divBtnGroup=createTag('','div','btn-group pull-left'); 
         for(var z=0;z<btnConfig.length;z++)
         {
-            var btn=createTag('','button','btn '+btnConfig[z][0]+' '+disabled); 
-                       
+            var btn=createTag('','button','btn '+btnConfig[z][0]+' '+disabled);   
             if(loggedUserPerm.indexOf(btnConfig[z][3])===-1)
             {
                 btn.setAttribute('disabled','disabled');
@@ -209,7 +203,9 @@ function setAllEmployees(data)
 
             btn.innerText=btnConfig[z][2];
             btn.onclick=function(){
+                console.log('setAllEmployees.btn.onClick()');
                 clearAdaptedModalData();
+                self.error.set('errDiv-Adapted-overall');
                 ajax.getData(this.name);
             }; 
             divBtnGroup.appendChild(btn);

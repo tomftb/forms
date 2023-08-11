@@ -85,7 +85,7 @@ class Error
         console.log(this.msg);
         /* TO DO -> create virtual div*/
         this.getDiv();
-        //console.log(Error.div);
+        console.log(this.div);
         this.div.innerHTML=this.msg;
         this.div.classList.remove("d-none");
         this.div.classList.add("d-block");

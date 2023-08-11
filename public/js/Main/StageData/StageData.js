@@ -145,7 +145,7 @@ class StageData{
         return subsection;
     }
     createSubsection(tmpid){
-        console.log('StageData::createSubsection()');
+        console.log('StageData::createSubsection() tmpid - ',tmpid);
         return {
                 data:{
                     id:0
@@ -168,7 +168,7 @@ class StageData{
             return subsectionRow;
     }
     createSubsectionRow(tmpid){
-        console.log('StageData::createSubsectionRow()');
+        console.log('StageData::createSubsectionRow() tmpid',tmpid);
         /* RUN SET DEFAULT -> TO PREVENT REFERENCES */
         return {
                 data:{
