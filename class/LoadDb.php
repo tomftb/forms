@@ -10,11 +10,13 @@ final class LoadDb extends Database{
 			//echo $t;
 		//	throw New Exception($t,1);  
 			$Log->logMulti(0,"[".__METHOD__."]".$t);
+                        Throw New Exception($t->getMessage(),1);  
 			return null;
         } 
         catch (Exception $e) {// Executed only in PHP 5.x, will not be reached in PHP 7
 		//	throw New Exception($e,1);  
 			$Log->logMulti(0,"[".__METHOD__."]".$e);
+                        Throw New Exception($e->getMessage(),1);  
 			return null;
         }
 		/* TO DO -> BUILD FOR MORE THAN ONE DATABASE */

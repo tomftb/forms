@@ -40,10 +40,10 @@ final class Login extends Page{
     }
     public function checkLogin(){
         $this->Log->log(0,"[".__METHOD__."]");
-        $loginCheck=NEW ValidLogin();
-        if(!$loginCheck->checkLoginData()){
-            $this->loginBgColor=$loginCheck->getBgColorValue();
-            $this->loginErr=$loginCheck->getInfoValue();
+        $Authorization=NEW \Authorization_controller();
+        if(!$Authorization->checkLoginData()){
+            $this->loginBgColor=$Authorization->getBgColorValue();
+            $this->loginErr=$Authorization->getInfoValue();
             $this->Log->log(0,"[".__METHOD__."] login err => ".$this->loginErr);
             return 0;
         }

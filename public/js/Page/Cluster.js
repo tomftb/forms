@@ -116,7 +116,7 @@ class Cluster{
         };
     }
     bookCluster(){
-        //console.log('CLUSTER::bookCluster');
+        console.log('CLUSTER.bookCluster');
         Cluster.rebuildDataObject(Cluster['bookClusterLab']);
         Cluster.createList('bookClusterLab',Cluster['bookClusterLab'].d);
         Cluster.rebuildDataObject(Cluster['bookClusterNod0']);
@@ -126,12 +126,29 @@ class Cluster{
         this.update(document.getElementById('bookClusterBtn'));
     }
     setFirstBookClusterId(){
-        Cluster.bookClusterNod0.i=Cluster.data['data']['value']['clusters'][0]['i'];
-        Cluster.bookClusterNod0.n=Cluster.data['data']['value']['clusters'][0]['n'];
-        Cluster.bookClusterNod1.i=Cluster.data['data']['value']['clusters'][0]['i'];
-        Cluster.bookClusterNod1.n=Cluster.data['data']['value']['clusters'][0]['n'];
-        Cluster.bookClusterLab.i=Cluster.data['data']['value']['labs'][0]['i'];
-        Cluster.bookClusterLab.n=Cluster.data['data']['value']['labs'][0]['n'];
+        console.log('CLUSTER.setFirstBookClusterId');
+        //console.log(Cluster.data);
+        for(const prop in Cluster.data['data']['value']['clusters']){
+            //console.log(Cluster.data['data']['value']['clusters'][prop]);
+            Cluster.bookClusterNod0.i=Cluster.data['data']['value']['clusters'][prop]['i'];
+            Cluster.bookClusterNod0.n=Cluster.data['data']['value']['clusters'][prop]['n'];
+        }
+        for(const prop in Cluster.data['data']['value']['clusters']){
+            //console.log(Cluster.data['data']['value']['clusters'][prop]);
+            Cluster.bookClusterNod1.i=Cluster.data['data']['value']['clusters'][prop]['i'];
+            Cluster.bookClusterNod1.n=Cluster.data['data']['value']['clusters'][prop]['n'];
+        }
+        //Cluster.bookClusterNod0.i=Cluster.data['data']['value']['clusters'][0]['i'];
+        //Cluster.bookClusterNod0.n=Cluster.data['data']['value']['clusters'][0]['n'];
+        //Cluster.bookClusterNod1.i=Cluster.data['data']['value']['clusters'][0]['i'];
+        //Cluster.bookClusterNod1.n=Cluster.data['data']['value']['clusters'][0]['n'];
+        for(const prop in Cluster.data['data']['value']['labs']){
+            //console.log(Cluster.data['data']['value']['labs'][prop]);
+            Cluster.bookClusterLab.i=Cluster.data['data']['value']['labs'][prop]['i'];
+            Cluster.bookClusterLab.n=Cluster.data['data']['value']['labs'][prop]['n'];
+        }
+        //Cluster.bookClusterLab.i=Cluster.data['data']['value']['labs'][0]['i'];
+        //Cluster.bookClusterLab.n=Cluster.data['data']['value']['labs'][0]['n'];
     }
     static createNodeListGroup(label,data){
         var opt=document.createElement('optgroup');
@@ -237,13 +254,18 @@ class Cluster{
         
     }
     setBlock(permissions,permToCheck){
+        console.log('CLUSTER.setBlock');
         if(permissions.indexOf(permToCheck)!==-1){ return true;};
         var ele=[
             'bookClusterBtn','bookClusterNod0','bookClusterNod1','bookClusterLab'
         ];
         for (const prop in ele){
             console.log(ele[prop]);
-            let e = document.getElementById(ele[prop]);
+            console.log(document.getElementById(ele[prop]));
+             let e = document.getElementById(ele[prop]);
+            if(e===null){
+                throw (`document element ${ele[prop]} not exists`);
+            }
                 e.setAttribute('disabled','disabled');
                 e.classList.add('disabled');
                 e.classList.add('border');
@@ -269,8 +291,8 @@ class Cluster{
         };
     }
     setErr(info){
-        //console.log('CLUSTER::setErr');
-        //console.log(info);
+        console.log('CLUSTER::setErr');
+        console.log(info);
         var errDiv=document.getElementById('bookClusterDivErr');
             errDiv.innerHTML=info;
             //console.log(errDiv);

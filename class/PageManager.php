@@ -6,17 +6,22 @@
 class PageManager
 {
     private static $Log;
+    /*
+     * SET MAIN PERM FOR NEW OBJECT, anotherway IT LOAD DEFUALT PAGE
+     */
     private static $pagePerm=[
-        1=>'LOG_INTO_CLUSTR',
-        3=>'LOG_INTO_PROJ',
-        4=>'LOG_INTO_EMPL',
-        5=>'',
-        6=>'LOG_INTO_USER',
-        7=>'LOG_INTO_PERM',
-        8=>'LOG_INTO_ROLE',
-        9=>'LOG_INTO_OPCJ',
-        10=>'LOG_INTO_PARM',
-        11=>'LOG_INTO_STAGE'
+        1=>'LOG_INTO_CLUSTR'
+        ,3=>'LOG_INTO_PROJ'
+        ,4=>'LOG_INTO_EMPL'
+        ,5=>''
+        ,6=>'LOG_INTO_USER'
+        ,7=>'LOG_INTO_PERM'
+        ,8=>'LOG_INTO_ROLE'
+        ,9=>'LOG_INTO_OPCJ'
+        ,10=>'LOG_INTO_PARM'
+        ,11=>'LOG_INTO_STAGE'
+        ,12=>'LOG_INTO_FORM_PART'
+        ,13=>'LOG_INTO_FORM'
     ];
     public static function load($idPage=0){
         self::$Log=Logger::init(__METHOD__);
@@ -57,6 +62,14 @@ class PageManager
                         case 11:
                                 //New Etapy();
                                 New ProjectItems();
+                            break;
+                        case 12:
+                                //New Etapy();
+                                New Form_part();
+                            break;
+                        case 13:
+                                //New Etapy();
+                                New \Filled_form();
                             break;
 	endswitch;
     }

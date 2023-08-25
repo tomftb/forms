@@ -5,7 +5,7 @@ class Employee_model extends Database_model {
         parent::__construct();
     }
     public function __call($m,$a){
-        Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),0);
+        Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
     }
     public function getAll():array{
         return $this->Main->squery('SELECT * FROM `v_all_prac_v5` ORDER BY `ID` ASC'); 
@@ -31,5 +31,17 @@ class Employee_model extends Database_model {
            return $employee;
         }
         Throw New Exception ('Pracownik o id '.$id.' został usunięty.',0);
+    }
+    public function getProjectTeam(string|int $idProject=0):array{
+        return $this->Main->squery("SELECT `id_employee` as 'pers','name' as `imie`,'surname' as `nazwisko`,`percentage` as 'percent',concat(substr(`employee_project`.`start_date`,9,11),'.',substr(`employee_project`.`start_date`,6,2),'.',substr(`employee_project`.`start_date`,1,4)) as 'ds',concat(substr(`employee_project`.`end_date`,9,11),'.',substr(`employee_project`.`end_date`,6,2),'.',substr(`employee_project`.`end_date`,1,4)) as 'de' FROM `employee_project` WHERE `id_project`=:id",[':id'=>[$idProject,'INT']]);
+    }
+    public function getTeam(string|int $idProject=0){
+        return $this->Main->squery('SELECT `id_employee` as `idPracownik`, CONCAT(`name`,\' \',`surname`) as `ImieNazwisko`,`percentage` as `procentUdzial`,`start_date` as `datOd`,`end_date` as `datDo` FROM `employee_project` WHERE `id_project`=:id AND `delete_status`=\'0\'',[':id'=>[$idProject,'INT']]);
+    }
+    public function getMemeber(string|int $id=0):array{
+        foreach($this->Main->squery('SELECT `imie`,`nazwisko`,`email` FROM `employee` WHERE `id`=:id',[':id'=>[$id,'INT']]) as $employee){
+           return $employee;
+        }
+        Throw New Exception ('Pracownik o id '.$id.' nie istnieje. Został usunięty?',0);
     }
 }

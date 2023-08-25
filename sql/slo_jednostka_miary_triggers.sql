@@ -1,0 +1,3 @@
+DROP TRIGGER IF EXISTS `slo_jednostka_miary_def`;CREATE DEFINER=`admin`@`127.0.0.1` TRIGGER `slo_jednostka_miary_def` BEFORE INSERT ON `slo_jednostka_miary` FOR EACH ROW IF (NEW.DEF='t') THEN UPDATE `slo_jednostka_miary` SET `DEF`='n' WHERE `ID`<>NEW.ID; END IF;
+
+DROP TRIGGER IF EXISTS `slo_jednostka_miary_def_upd`;CREATE DEFINER=`admin`@`127.0.0.1` TRIGGER `slo_jednostka_miary_def_upd` BEFORE UPDATE ON `slo_jednostka_miary` FOR EACH ROW IF (NEW.DEF='t') THEN UPDATE `slo_jednostka_miary` SET `DEF`='n' WHERE `ID`<>NEW.ID; END IF;

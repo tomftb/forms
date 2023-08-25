@@ -4,8 +4,8 @@ final class PermManager{
 	private $Log;
     
     public function __construct(){
-		$this->Log = Logger::init(__FILE__);
-		$this->Log->log(0,"[".__METHOD__."]");
+	$this->Log = Logger::init(__FILE__);
+	$this->Log->log(0,"[".__METHOD__."]");
     }
     public function checkPermission($perm='')
     {	

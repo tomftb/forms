@@ -35,14 +35,18 @@ class Modal{
         }
     }
     closeModal(){
+        window.onbeforeunload = null;
+        this.unsetExitKeys();
         $(this.link['main']).modal('hide');
         this.clearData();
     }
     setLink(){
-        //console.log('Modal::setLink()');
+        console.log('Modal::setLink()');
         this.getModal();
+        console.log(this.link['main']);
         if(!this.exist){ return false; };
         this.link['head']=this.link['main'].childNodes[0].childNodes[0].childNodes[0]; 
+        this.link['body']=this.link['main'].childNodes[0].childNodes[0].childNodes[1];
         this.link['error']=this.link['main'].childNodes[0].childNodes[0].childNodes[1].childNodes[3];
         this.link['adapted']=this.link['main'].childNodes[0].childNodes[0].childNodes[1].childNodes[1].childNodes[0];
         this.link['button']=this.link['main'].childNodes[0].childNodes[0].childNodes[1].childNodes[2].childNodes[0].childNodes[0];
@@ -75,7 +79,7 @@ class Modal{
     }
     setHead(title,color){
         /*
-        console.log('Modal::setHead()');
+        console.log('Modal.setHead()');
         console.log(title);
         console.log(color);
          */
@@ -143,9 +147,87 @@ class Modal{
         };
         return xhrError;
     }
-    //setModalError(response){
-      //  console.log('ProjectItems::setModalError()');
-       // console.log(response);
-       // this.Html.showField(this.Modal.link['error'],response);
-    //}
+    prepareModal(title,titleClass){
+        console.log('Modal.prepareModal()');
+        //this.Modal.setLink();
+        
+        window.onbeforeunload = function() {
+            return "Opuścić okno bez zapisu?";
+        };
+        this.setExitKeys();
+        this.setHead(title,titleClass);
+        $(this.link['main']).modal({
+            show:true,
+            backdrop: 'static',
+            keyboard: false  // to prevent closing with Esc button
+        });
+        this.link['close'].parentNode.removeAttribute('data-dismiss');
+    }
+    setExitKeys(){
+        console.log('Modal.setExitKeys()');
+        var self= this;
+        var f5 = function (e){
+            //console.log('f5');
+            e = e || window.event;
+           if( self.wasPressed ) return; 
+            if (e.keyCode === 116) {
+                 //alert("f5 pressed");
+                
+            }else {
+                //alert("Window closed");
+            }
+        };
+        document.onkeydown = function(){
+            //console.log('onkeydown');
+            f5();
+        };
+        document.onkeypress = function(){
+            //console.log('onkeypress');
+            f5();
+        };
+        document.onkeyup = function(){
+            //console.log('onkeyup');
+            f5();
+        };
+    }
+    unsetExitKeys(){
+        console.log('Modal.unsetExitKeys()');
+        document.onkeydown =null;
+        document.onkeypress = null;
+        document.onkeyup = null;
+    }
+    setCloseModal(){
+        console.log('Modal.setCloseModal()');
+        /* CLOSURE */
+        var self = this;
+        var check = function (){
+                //if(self.ErrorStack.check()){
+                //    if (confirm('Opuścić okno bez zapisu?') === true) {
+                 //       self.closeModal();
+                //        return false;
+                //    }
+                //    else{ 
+                 //       return false;
+                 //   }
+               // }
+                //console.log('run');
+                //console.log(run);
+                if (confirm('Wyjść?') === true) {
+                    self.closeModal();
+                }
+                else{}
+        };
+        this.link['close'].onclick = function (){
+            /* TO DO */
+            check();
+        };
+         /* SET CLOSE VIA MOUSE */
+        this.link['main'].onclick = function (e){
+            if(e.target.id === 'AdaptedModal'){
+                //console.log('outside');
+                check();
+            }
+            else {}
+        };
+    }
 }

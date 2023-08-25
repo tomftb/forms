@@ -21,4 +21,23 @@ define('ldapParm',array
                 'user'=>'ldap_user',
                 'password'=>'ldap_password'
             ));
+define('email',[
+    'SMTPAuth'=>true,/* true/false */
+    'SMTPSecure' => 'tls',
+    'isSMTP'=>true, /* true/false */
+    'Host'=>"",
+    'Port'=>587,
+    'Username'=>"",
+    'Password'=>"",
+    'From'=>["powiadomienia", ''],
+    'exception'=>true,
+    'CharSet'=>'UTF-8',
+    'sendAttempts'=>5,
+    'sendAttemptsTimeout'=>5
+    ,'SMTPKeepAlive'=>true
+    ,'Timeout' => 10
+    ,'isHTML'=>false
+     ,'sendAttempts'=>5
+    ,'sendAttemptsTimeout'=>2
+]);
 //5DPbvuNiRbyoUBTN

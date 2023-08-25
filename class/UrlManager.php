@@ -142,8 +142,16 @@ final class UrlManager{
         ['pvHide','LOG_INTO_STAGE'],
         ['pvDelete','LOG_INTO_STAGE'],
         ['getProjectVariablesSimpleList','LOG_INTO_STAGE'],
-        ['saveProjectReport','SAVE_PROJ_REPORT'],
-        ['getProjectReportDoc','GEN_PROJ_REP_DOC']
+        ['saveProjectReport','SAVE_PROJ_REPORT']
+        ,['getProjectReportDoc','GEN_PROJ_REP_DOC']
+        ,['loadFormDefault','LOG_INTO_FORM']
+        ,['loadFilledFormDefault','LOG_INTO_FORM']
+        ,['getFilledForms','SHOW_LIST_FILLED_FORM']
+        ,['getFilledFormExcel','EXCEL_FILLED_FORM']
+        ,['downloadFilledFormExcelList','EXCEL_FILLED_FORM']
+        ,['getHideFormGlossary','HIDE_FORM']
+        ,['getRemoveFormGlossary','REMOVE_FORM']
+        ,['getFormPartDefaults','LOG_INTO_FORM_PART']
     ];
         
     public function __construct(){

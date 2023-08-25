@@ -1,7 +1,8 @@
 var avaTeam=new Object();
 var actTeamMember=0;
-function pTeam(input)
-{
+function pTeam(input){
+    console.log('pTeam()');
+    console.log(input);
     prepareModal('ZESPÓŁ PROJEKTOWY:','bg-warning');
     var form=createForm('POST',projectData['data']['function'],'form-horizontal','OFF');
     var add=document.getElementById('AdaptedDynamicData');
@@ -25,12 +26,11 @@ function pTeam(input)
     document.getElementById('AdaptedButtonsBottom').appendChild(functionBtn('cancel',createBtn('Anuluj','btn btn-dark','cancelBtn'),''));
     document.getElementById('AdaptedButtonsBottom').appendChild(functionBtn(projectData['data']['function'],createBtn('Edytuj Team','btn btn-warning',projectData['data']['function']),projectData['data']['function']));
     /* INFO */
-    document.getElementById('AdaptedModalInfo').appendChild(createTag("Project ID: "+actProject.i+", Create user: "+actProject.cu+" ("+actProject.cum+"), Create date: "+actProject.du,'small','text-left text-secondary ml-1'));
+    document.getElementById('AdaptedModalInfo').appendChild(createTag("Project ID: "+actProject.i+", Create user: "+actProject.cu+" ("+actProject.cum+"), Create date: "+actProject.cd,'small','text-left text-secondary ml-1'));
 }
 function showStaticTeam(ele)
 {  
-    console.log('---showStaticTeam()---');
-    
+    console.log('showStaticTeam()');
     if(projectData['data']['value']['team'].length===0)
     {
         ele.appendChild(createTitle('Brak przypisanych pracowników'));
@@ -57,7 +57,7 @@ function showStaticTeam(ele)
 }
 function showDynamicTeam(ele,divBtn)
 {
-    console.log('---showDynamicTeam()---');
+    console.log('showDynamicTeam()');
     ele.appendChild(createTitle('Wskaż pracowników:'));
     var i=0;
     /* set used team */
@@ -85,6 +85,7 @@ function showDynamicTeam(ele,divBtn)
     var addBtn=createAddButton('','');
         addBtn.onclick = function()
         {
+            console.log('showDynamicTeam().onclick()');
             /* GET FIRST AVA TEAM MEMBER */
             var ava=getAvaTeamMember();
             if(ava.exist)
@@ -108,12 +109,13 @@ function createTeamRow(ele,i,id,worker,usedPercent,avaPercent,dataod,datado)
     var selectTeamWorker=createWorkerArray(id,'pers_'+i,worker);
         selectTeamWorker.onclick=function()
         {
+            console.log('createTeamRow().onclick()');
             console.log('actual used team member');
             actTeamMember=parseInt(this.value,10);
         };
         selectTeamWorker.onchange=function()
         {
-            console.log('set new used team member');
+            console.log('createTeamRow().obchange() set new used team member');
             /* swap used team member */
             /* GET ROW i VALUE */
             console.log(this.name);
@@ -135,6 +137,7 @@ function createTeamRow(ele,i,id,worker,usedPercent,avaPercent,dataod,datado)
     var rmBtn=createRemoveButton(i,'n');
         rmBtn.onclick=function()
         {
+            console.log('createTeamRow().onclick()');
             correctAvaTeam(this.parentNode.parentNode.childNodes[0].childNodes[0].value,false);
             removeHtmlChilds(this.parentNode.parentNode);
         };
@@ -224,6 +227,8 @@ function correctAvaTeam(id,u)
 }
 function getAvaTeamMember()
 {
+    console.log('getAvaTeamMember()');
+    console.log(avaTeam);
     var avaMember=new Object();
         avaMember.exist=false;
 
@@ -239,8 +244,9 @@ function getAvaTeamMember()
     }
     return avaMember;
 }
-function setAvaTeam()
-{
+function setAvaTeam(){
+    console.log('setAvaTeam()');
+    console.log(projectData['data']['value']);
     avaTeam=projectData['data']['value']['ava'];
     for (const property in avaTeam)
     {   

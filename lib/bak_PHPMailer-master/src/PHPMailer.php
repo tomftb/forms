@@ -20,7 +20,6 @@
  */
 
 namespace PHPMailer\PHPMailer;
-
 /**
  * PHPMailer - PHP email creation and transport class.
  *
@@ -3628,10 +3627,13 @@ class PHPMailer
             //Is it a valid IPv4 address?
             return (bool) filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
         }
-        if (filter_var('http://' . $host, FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED)) {
-            //Is it a syntactically valid hostname?
+        if (empty(parse_url($host, PHP_URL_SCHEME))) { 
             return true;
-        }
+        } 
+        //if (filter_var('http://' . $host, FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED)) {
+            //Is it a syntactically valid hostname?
+         //   return true;
+       // }
 
         return false;
     }

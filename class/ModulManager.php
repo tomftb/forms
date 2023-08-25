@@ -88,6 +88,11 @@ final class ModulManager{
         array_push($this->modul,new ManageCluster());
         array_push($this->modul,new ManageProjectConstant());
         array_push($this->modul,new ManageProjectVariable());
+        array_push($this->modul,new \Form_controller());
+        array_push($this->modul,new \Form_part_controller());
+        array_push($this->modul,new \Filled_form_controller());
+        array_push($this->modul,new \Filled_form_excel_controller());
+       
     }
     
     public function loadMethod($method=''){

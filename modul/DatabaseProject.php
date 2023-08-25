@@ -20,11 +20,18 @@ class DatabaseProject {
     private $stageValueDbId=0;
     private $idProject=0;
     private $input=[];
+    private $date="1970-01-01 00:00:01";
+    private $RA='127.0.0.1';
+    private ?object $Model;
     
     protected function __construct(){
         $this->Log=Logger::init(__METHOD__);
+        $this->Model=new \stdClass();
         $this->dbLink=LoadDb::load();
-        $this->Utilities=NEW Utilities();
+        $this->Utilities=NEW \Utilities();
+        $this->date=date("Y-m-d H:i:s");
+        $this->RA=filter_input(INPUT_SERVER,'REMOTE_ADDR');
+        $this->Model->{'Dictionary_measurement_units'}= new \Dictionary_measurement_units_model();
     }
     protected function updateProjectDb($inp=[])
     {
@@ -47,17 +54,17 @@ class DatabaseProject {
             ':rodzaj_umowy'=>[$this->input['rodzaj_umowy'][1],'STR'],
             ':rodzaj_umowy_alt'=>[$this->input['rodzaj_umowy'][2],'STR'],
             ':numer_umowy'=>[$this->input['numer_umowy'],'STR'],
-             ':temat_umowy'=>[$this->input['temat_umowy'],'STR'],
-             ':kier_grupy'=>[$this->input['kier_grupy'][1],'STR'],
-             ':kier_grupy_id'=>[$this->input['kier_grupy'][0],'INT'],
+            ':temat_umowy'=>[$this->input['temat_umowy'],'STR'],
+            ':kier_grupy'=>[$this->input['kier_grupy'][1],'STR'],
+            ':kier_grupy_id'=>[$this->input['kier_grupy'][0],'INT'],
             ':term_realizacji'=>[$this->input['d-term_realizacji'],'STR'],
             ':harm_data'=>[$this->input['d-harm_data'],'STR'],
             ':koniec_proj'=>[$this->input['d-koniec_proj'],'STR'],
             ':nadzor'=>[$this->input['nadzor'][1],'STR'],
             ':nadzor_id'=>[$this->input['nadzor'][0],'INT'],
-             ':mod_user'=>[$_SESSION["username"],'STR'],
+            ':mod_user'=>[$_SESSION["username"],'STR'],
             ':mod_user_id'=>[$_SESSION["userid"],'INT'],
-            ':mod_host'=>[RA,'STR'],
+            ':mod_host'=>[$this->RA,'STR'],
             ':dat_kor'=>[CDT,'STR'],
             ':kier_osr'=>[$this->input['gl_kier'][1],'STR'],
             ':kier_osr_id'=>[$this->input['gl_kier'][0],'INT'],
@@ -72,7 +79,6 @@ class DatabaseProject {
             ':typ_id'=>[$this->input['typ_umowy'][0],'INT'],
             ':system_id'=>[$this->input['system_umowy'][0],'INT'],
             ':quota'=>[$this->input['quota'],'INT'],
-
             ":id"=>[$this->input['id'],'INT']
         ];
         $this->dbLink->query('UPDATE `projekt_nowy` SET '
@@ -109,7 +115,7 @@ class DatabaseProject {
         $sql);    
     }
     protected function getProjectDefaultValues(){
-        $valueToReturn['rodzaj_umowy']=$this->dbLink->squery('SELECT * FROM v_slo_um_proj ORDER BY ID ASC');
+        $valueToReturn['rodzaj_umowy']=$this->dbLink->squery('SELECT * FROM `v_slo_um_proj` ORDER BY ID ASC');
         $valueToReturn['nadzor']=$this->dbLink->squery('SELECT * FROM v_slo_lider_proj ORDER BY ImieNazwisko ASC ');
         $valueToReturn['kier_grupy']=$this->dbLink->squery('SELECT * FROM v_slo_kier_proj ORDER BY ImieNazwisko ASC ');
         $valueToReturn['dokPowiazane']=$this->dbLink->squery('SELECT * FROM v_slo_dok ORDER BY ID ASC ');
@@ -132,7 +138,8 @@ class DatabaseProject {
     private function getProjectUnitSlo()
     {
         $this->Log->log(0,"[".__METHOD__."]");
-        $sloIterator=New DataIterator($this->dbLink->squery("SELECT `NAZWA`,`DEF` FROM `slo_jednostka_miary` WHERE `ID`>0 AND `WSK_U`='0' ORDER BY ID ASC "));
+        
+        $sloIterator=New DataIterator($this->Model->{'Dictionary_measurement_units'}->getUpperCase());
         $def='';
         $all=array();
         
@@ -151,12 +158,15 @@ class DatabaseProject {
     }
     protected function addProjectDb($input=[])
     {
+        $this->Log->log(0,"[".__METHOD__."]");
         try{
             $sql=[
-                ':create_user'=>[$_SESSION["username"],'STR'],
+                ':create_user_id'=>[$_SESSION["userid"],'INT'],
+                ':create_user_login'=>[$_SESSION["username"],'STR'],
                 ':create_user_full_name'=>[$_SESSION["nazwiskoImie"],'STR'],
                 ':create_user_email'=>[$_SESSION["mail"],'STR'],
-                ':create_date'=>[CDT,'STR'],
+                ':create_date'=>[$this->date,'STR'],
+                ':create_host'=>[$this->RA,'STR'],
                 ':rodzaj_umowy'=>[$input['rodzaj_umowy'][1],'STR'],
                 ':rodzaj_umowy_alt'=>[$input['rodzaj_umowy'][2],'STR'],
                 ':numer_umowy'=>[$input['numer_umowy'],'STR'],
@@ -168,9 +178,12 @@ class DatabaseProject {
                 ':koniec_proj'=>[$input['d-koniec_proj'],'STR'],
                 ':nadzor'=>[$input['nadzor'][1],'STR'],
                 ':nadzor_id'=>[$input['nadzor'][0],'INT'],
-                ':mod_user'=>[$_SESSION["username"],'STR'],
+                ':mod_user_login'=>[$_SESSION["username"],'STR'],
                 ':mod_user_id'=>[$_SESSION["userid"],'INT'],
-                ':mod_host'=>[RA,'STR'],
+                ':mod_date'=>[$this->date,'STR'],
+                ':mod_host'=>[$this->RA,'STR'],
+                ':mod_user_email'=>[$_SESSION["mail"],'STR'],
+                ':mod_user_full_name'=>[$_SESSION["nazwiskoImie"],'STR'],
                 ':kier_osr'=>[$input['gl_kier'][1],'STR'],
                 ':kier_osr_id'=>[$input['gl_kier'][0],'INT'],
                 ':technolog'=>[$input['gl_tech'][1],'STR'],
@@ -185,14 +198,15 @@ class DatabaseProject {
                 ':system_id'=>[$input['system_umowy'][0],'INT'],
                 ':quota'=>[$input['quota'],'INT']
             ];
+            $id = random_int(1000000000, 1099511627776);
             $this->dbLink->beginTransaction(); //PHP 5.1 and new
-            $this->dbLink->query('INSERT INTO `projekt_nowy` 
-                   (create_user,create_user_full_name,create_user_email,create_date,rodzaj_umowy,rodzaj_umowy_alt,numer_umowy,temat_umowy,kier_grupy,kier_grupy_id,term_realizacji,harm_data,koniec_proj,nadzor,nadzor_id,mod_user,mod_user_id,mod_host,kier_osr,kier_osr_id,technolog,technolog_id,r_dane,j_dane,klient,typ,system,rodzaj_umowy_id,typ_id,system_id,quota) 
+            $this->dbLink->query('INSERT INTO `project` 
+                   (`id`,`create_user_id`,`create_user_login`,`create_user_full_name`,`create_user_email`,`create_date`,`create_host`,`rodzaj_umowy`,`rodzaj_umowy_alt`,`numer_umowy`,`temat_umowy`,`kier_grupy`,`kier_grupy_id`,`term_realizacji`,`harm_data`,`koniec_proj`,`nadzor`,`nadzor_id`,`mod_user_id`,`mod_user_login`,`mod_user_full_name`,`mod_user_email`,`mod_date`,`mod_host`,`kier_osr`,`kier_osr_id`,`technolog`,`technolog_id`,`r_dane`,`j_dane`,`klient`,`typ`,`system`,`rodzaj_umowy_id`,typ_id,system_id,quota) 
                     VALUES
-                    (:create_user,:create_user_full_name,:create_user_email,:create_date,:rodzaj_umowy,:rodzaj_umowy_alt,:numer_umowy,:temat_umowy,:kier_grupy,:kier_grupy_id,:term_realizacji,:harm_data,:koniec_proj,:nadzor,:nadzor_id,:mod_user,:mod_user_id,:mod_host,:kier_osr,:kier_osr_id,:technolog,:technolog_id,:r_dane,:j_dane,:klient,:typ,:system,:rodzaj_umowy_id,:typ_id,:system_id,:quota)'
+                    ('.$id.',:create_user_id,:create_user_login,:create_user_full_name,:create_user_email,:create_date,:create_host,:rodzaj_umowy,:rodzaj_umowy_alt,:numer_umowy,:temat_umowy,:kier_grupy,:kier_grupy_id,:term_realizacji,:harm_data,:koniec_proj,:nadzor,:nadzor_id,:mod_user_id,:mod_user_login,:mod_user_full_name,:mod_user_email,:mod_date,:mod_host,:kier_osr,:kier_osr_id,:technolog,:technolog_id,:r_dane,:j_dane,:klient,:typ,:system,:rodzaj_umowy_id,:typ_id,:system_id,:quota)'
                     ,$sql);
             /* Must BEFORE COMMIT, OTHERWISE LAST ID = 0 */
-            $this->idProject=$this->dbLink->lastInsertId();
+            $this->idProject=$id;
             $this->dbLink->commit();  //PHP 5 and new
         }
 	catch (PDOException $e){

@@ -45,14 +45,13 @@ var inputAttribute= new Array(
         );
 var inputStyle=new Array();
 function runFunction(d){
-    console.log('===runFunction()===');
+    console.log('runFunction()');
     try{
         d=JSON.parse(d);
         error.checkStatusExist(d);
         console.log('FUNCTION TO RUN:');
         console.log(d);
         console.log(d['data']['function']);
-        
         switch(d['data']['function'])
         {
             case 'cUser':
@@ -77,7 +76,6 @@ function runFunction(d){
                     break;
             case 'runMain':
                     /* SET PERM */
-                    
                     loggedUserPerm=d['data']['value']['perm'];
             case 'sAll':
                  setAllUsers(d);
@@ -88,13 +86,12 @@ function runFunction(d){
     }
     catch(e){
         console.log('error exists');
+        console.log(d);
         d['status']=1;
         d['info']=e;
-        
         error.checkStatusResponse(d);
         console.log(e);
     }
-   
 }
 function checkResponseFunction(d){
     console.log(d);
@@ -266,9 +263,10 @@ function setUserPermBodyContent(task,status,label,btnCol)
 }
 function setUserPermContent(whereAppend,status)
 {
-    console.log('---setUserPermContent()---');
+    console.log('setUserPermContent()');
     //userSloPerm,
     //currentIdUser
+    
     var divSm2Atr=new Array(
 	Array('class','col-sm-2')
 	);
@@ -459,7 +457,7 @@ function getForm()
 }
 function createCheckBoxList(data,status)
 {
-    console.log('---createCheckBoxList()---');
+    console.log('createCheckBoxList()');
     //console.log(data);
     console.log("LENGTH: "+data.length);
     /*

@@ -10,3 +10,4 @@ upload/*
 DOC/*
 PDF/*
 vendor/*
+.cert/*

@@ -29,9 +29,16 @@ function parseUrlId()
 }
 function addClass(id)
 {
+    console.log('addClass()',id);
+    var ele = document.getElementById("li-"+id);
     if(log) {console.log('addClass()\nid => '+id);};
+    
     // SET ADMINISTRATOR
-    if(id>=5)
+    if(!ele){
+        console.log('ele with `id-'+id+'` not exists');
+        return false;
+    }
+    if(id>=5 && id<13)
     {
         document.getElementById("li-5").setAttribute("class", "menu-active");
     }

@@ -37,7 +37,7 @@ abstract class Database_model {
             ':create_user_login'=>[$_SESSION['username'],'STR'],
             ':create_user_full_name'=>[$_SESSION['nazwiskoImie'],'STR'],
             ':create_user_email'=>[$_SESSION['mail'],'STR'],
-            ':create_date'=>[$this->date,'STR'],
+            ':create_date'=>[self::getDate(),'STR'],
             ':create_host'=>[$this->RA,'STR']
         ];
     }
@@ -47,7 +47,7 @@ abstract class Database_model {
             ':mod_user_login'=>[$_SESSION['username'],'STR'],
             ':mod_user_full_name'=>[$_SESSION['nazwiskoImie'],'STR'],
             ':mod_user_email'=>[$_SESSION['mail'],'STR'],
-            ':mod_date'=>[$this->date,'STR'],
+            ':mod_date'=>[self::getDate(),'STR'],
             ':mod_host'=>[$this->RA,'STR']
         ];
     }
@@ -66,13 +66,44 @@ abstract class Database_model {
     protected function getUserValue(){
         return $this->addOn['create']['p'].','.$this->addOn['modify']['p'];
     }
+    protected function getAlterKey(){
+        return $this->addOn['modify']['v'];
+    }
+    protected function getAlterValue(){
+        return $this->addOn['modify']['p'];
+    }
     protected function getUserParm(){
         return array_merge(self::getCreateUserParm(),self::getAlterUserParm());
     }
     public function lastInsertId(){
+        /* 
+         * Remember, if you use a transaction you should use lastInsertId BEFORE you commit
+         * otherwise it will return 0
+         */
         $this->Main->lastInsertId();
     }
     protected function getStatusDate(){
         return [':status_date'=>[$this->date,'STR']];
+    }
+    protected function getDate(){
+        return date("Y-m-d H:i:s");
+    }
+    protected function getRA(){
+        return $this->RA;
+    }
+    public function beginTransaction(){
+	$this->Main->beginTransaction(); //PHP 5.1 and new
+    }
+    public function rollback(){
+        $this->Main->rollback();
+    }
+    public function commit(){
+        $this->Main->commit();
+    }
+    public function getNewId(string $table=''):int{
+        foreach($this->Main->squery("SELECT (CASE WHEN max(`id`) is null then 1 else max(`id`)+1 END) as `max` FROM `".$table."`;",[],'FETCH_ASSOC','fetch') as $max){
+            return $max;
+        }
+        return 1;
     }
 }

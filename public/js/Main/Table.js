@@ -23,9 +23,10 @@ class Table
     //buttonsType='btnGroup';
     buttonsType;
     
-    constructor(Xhr) { 
-        //console.log('Table::constructor()');
-        this.Xhr = Xhr;
+    constructor() { 
+        console.log('Table.constructor()');
+        this.Xhr = new Xhr2();
+        //console.log(Xhr);
     }
     setAjaxLink(alink){
         //console.log('TABLE::setAjaxLink()');
@@ -180,7 +181,7 @@ class Table
         }
     }
     setGroupBtn(i){
-        //console.log('TABLE::setGroupBtn('+i+')');
+        console.log('TABLE.setGroupBtn('+i+')');
         var btnGroup=createTag('','div','btn-group pull-left');
             btnGroup.setAttribute('id',i);
         for (const property in this.buttons){        
@@ -201,14 +202,14 @@ class Table
         }
     }
     setBtnAction(btn,perm){
-        //console.log('TABLE::setBtnAction()'); 
+        console.log('TABLE.setBtnAction()'); 
         if(!perm){
             //btn.onclick=function () {};
             return false;
         }
         btn.onclick=function (){
             try {
-                console.log('Table::onclick()');
+                console.log('Table.setBtnAction.onclick()');
                 clearAdaptedModalData();
                 /* FROM EXTERNAL AJAX CLASS */
                 Table.errorLink.set([Table.errorDivId]);
@@ -216,7 +217,7 @@ class Table
                 Table.ajaxLink.getData(this.name+'&id='+this.parentNode.id);
             }
             catch (error) {
-                console.error('ERROR: '+error);
+                console.error('Table.ERROR: '+error);
                 alert('Something get wrong! Contact with administrator!');
             }
         };
@@ -248,6 +249,7 @@ class Table
         this.receive(o,m,'POST',u,true,d);
     }
     receive(o,m,t,u,c,d){
+        console.log('Table.receive()');
          /*
          * property:
          * o = object
@@ -274,7 +276,7 @@ class Table
         this.Xhr.run(xhrRun);
     }
     setHead(head){
-        //console.log('Table::setHead()');
+        console.log('Table.setHead()');
         //console.log(head);
         for (const c in head){
             var th=document.createElement('TH');
@@ -283,7 +285,7 @@ class Table
             th.innerHTML=head[c].title;
             this.link.head.appendChild(th);
         }
-        //console.log(this.link.head);
+        console.log(this.link.head);
     }
     setHeadProperty(th,headRow){
         if(!headRow.hasOwnProperty('attribute')){
@@ -302,7 +304,7 @@ class Table
         } 
     }
     setLink(){
-        //console.log('Table.setLink()');
+        console.log('Table.setLink()');
         var tableEle = document.getElementById('mainTableDiv');
         //console.log(tableEle);
         this.link={
@@ -335,7 +337,7 @@ class Table
         this.error=true;
     }
     unsetError(){
-        //console.log('Table::unsetError()');
+        console.log('Table.unsetError()');
         this.link['error'].classList.add("d-none");
         this.link['error'].innerHTML='';
         this.error=false;

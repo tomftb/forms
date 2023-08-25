@@ -3,20 +3,20 @@
 final class FileDownload{
     //put your code here
     private static $FileExtensionContentType=[
-        'docx'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'pdf'=>'application/pdf',
-        'jpg'=>'image/jpeg',
-        'jpeg'=>'image/jpeg',
-        'bmp'=>'image/bmp',
-        'gif'=>'image/gif',
-        'png'=>'image/png'
+        'docx'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ,'pdf'=>'application/pdf'
+        ,'jpg'=>'image/jpeg'
+        ,'jpeg'=>'image/jpeg'
+        ,'bmp'=>'image/bmp'
+        ,'gif'=>'image/gif'
+        ,'png'=>'image/png'
+        ,'xlsx'=>'application/vnd.ms-excel; charset=utf-8'
     ];
     private function __construct(){}
     public static function getFile($dir,$file){
-        
         self::setUpHeader(self::parseFile($dir,$file));
     }
-    private function parseFile($dir='',$file=''){
+    private static function parseFile($dir='',$file=''){
         if(trim($file)===''){
            die('NO FILE INPUT'); 
         }
@@ -32,7 +32,7 @@ final class FileDownload{
         self::checkFileReadable($dir.$file);
         return [$dir,$file,self::$FileExtensionContentType[$ext]];
     }
-    private function setUpHeader($file=[]){
+    private static function setUpHeader($file=[]){
         
         if(!$file[1] || !$file[0] || !$file[2]){
             var_dump($file);
@@ -47,12 +47,12 @@ final class FileDownload{
         //print file_get_contents($file[0].$file[1]);
          
     }
-    private function checkFileExist($file){
+    private static function checkFileExist($file){
         if(!file_exists($file)){
              die('FILE NOT EXIST'); 
         }
     }
-    private function checkFileReadable($file){
+    private static function checkFileReadable($file){
         if(!is_readable($file)){
              die('FILE NOT READABLE'); 
         }

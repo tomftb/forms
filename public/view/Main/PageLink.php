@@ -13,6 +13,7 @@
                   <ul class="nav-menu" onclick="setMenuActive()">
                     <li id="li-1"><i class="fa fa-server menu-active" aria-hidden="true"></i><a href="<?=APP_URL?>?id=1">Rezerwuj Klaster</a></li>
                     <li id="li-3"><i class="fa fa-address-card-o" aria-hidden="true"></i><a href="<?=APP_URL?>?id=3">Projekty</a></li>
+                    <li id="li-13"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a href="<?=APP_URL?>?id=13">Formularze</a></li>
                     <li id="li-4"><i class="fa fa-user-circle-o" aria-hidden="true"></i><a href="<?=APP_URL?>?id=4">Pracownicy</a></li>
                       <li id="li-5"><i class="fa fa-cog" aria-hidden="true"></i><a href="<?=APP_URL?>?id=5"> Administrator</a>
                           <ul  class="mt-0 ml-0 " onclick="setMenuActive()">
@@ -20,7 +21,8 @@
                             <li id="li-7"><a href="<?=APP_URL?>?id=7">Uprawnienia</a></li>
                             <li id="li-8"><a href="<?=APP_URL?>?id=8">Role</a></li>
                             <li id="li-10"><a href="<?=APP_URL?>?id=10">Parametry</a></li>
-                            <li id="li-11"><a href="<?=APP_URL?>?id=11">Elementy Projektu</a></li>
+                            <li id="li-11"><a href="<?=APP_URL?>?id=11">ETAPY projektu</a></li>
+                            <li id="li-12"><a href="<?=APP_URL?>?id=12">ETAPY formularza</a></li>
                           </ul>
                         </li>
                     <li><i class="fa fa-sign-out" aria-hidden="true"></i><a href="<?=APP_URL?>?logout=t"> Wyloguj</a></li>

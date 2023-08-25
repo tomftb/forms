@@ -463,10 +463,15 @@ function clearAdaptedModalData()
     removeHtmlChilds(document.getElementById('AdaptedButtonsBottom'));
     removeHtmlChilds(document.getElementById('AdaptedBodyExtra'));
     removeHtmlChilds(document.getElementById('AdaptedModalInfo'));
+    removeHtmlChilds(document.getElementById('errDiv-Adapted-overall'));
+    
     document.getElementById('errDiv-Adapted-overall').innerText='';
     //document.getElementById('errDiv-Adapted-overall').style.display='none';
     document.getElementById("AdaptedBgTitle").removeAttribute('class');
     document.getElementById("AdaptedBgTitle").classList.add('modal-header');
+    document.getElementById("AdaptedBgTitle").classList.add('modal-header');
+    document.getElementById("errDiv-Adapted-overall").classList.add('d-none');
+    document.getElementById("errDiv-Adapted-overall").classList.remove('d-block');
 }
 function prepareModal(title,titleBg)
 {

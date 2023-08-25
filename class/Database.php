@@ -8,7 +8,9 @@ class Database {//extends PDO
     private $pdoFetchAll=[
 			'FETCH_ASSOC'=>PDO::FETCH_ASSOC,
 			'FETCH_BOTH '=>PDO::FETCH_BOTH ,
-			'FETCH_OBJ'=>PDO::FETCH_OBJ
+			'FETCH_OBJ'=>PDO::FETCH_OBJ,
+                        'FETCH_DEFAULT'=>PDO::FETCH_DEFAULT,
+                        'FETCH_NUM'=>PDO::FETCH_NUM,
 		];
 	private ?object $PDO;
     private $pdoParam=[
@@ -45,7 +47,7 @@ class Database {//extends PDO
             $this->PDO->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // parametr ,a nastepnie wartosc dla paraemtru // PDO::ERRMODE_EXCEPTION
             $this->PDO->setAttribute( PDO::ATTR_EMULATE_PREPARES,true); // production set to - false
             $this->PDO->setAttribute( PDO::ATTR_PERSISTENT, 0); // false
-            //self::$dbLink->setAttribute( PDO::ATTR_AUTOCOMMIT,0);
+            
 		}
 		catch (PDOException $e){
             throw New Exception(__METHOD__.$e,1);
@@ -59,7 +61,11 @@ class Database {//extends PDO
             $pass=base64_decode($pass);
         }
     }
-    public function squery($sth,$param=[],$result='FETCH_ASSOC',$fetch='fetchAll'){ 
+    public function squery($sth,$param=[],$result='FETCH_ASSOC',$fetch='fetchAll'){
+        /*
+         * PDOStatement::fetchObject return object|false
+         * PDOStatement::fetchAll return array
+         */
         /*
          * PARAMETER MUST BY INSERTED WITHOUT CHAR => ' " IN STATEMATE TO PROPER BIND VALUE
          */
@@ -210,11 +216,16 @@ class Database {//extends PDO
         return self::$dbLink->PDO->sth->rowCount();
     }
     public function commit(){
-       
         self::$dbLink->PDO->commit();
     }
     public function lastInsertId(){
         self::$dbLink->PDO->lastInsertId();
     }
     function __destruct(){}
+    public function setAutoCommit(){
+        self::$dbLink->PDO->setAttribute( PDO::ATTR_AUTOCOMMIT,1);
+    }
+    public function unsetAutoCommit(){
+        self::$dbLink->PDO->setAttribute( PDO::ATTR_AUTOCOMMIT,0);
+    }
 }

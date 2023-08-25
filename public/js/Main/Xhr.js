@@ -89,13 +89,14 @@ class Xhr2 {
     LoadStart;
     uid=0;
     constructor(){
-        //console.log('Xhr2::constructor()\r\nUID:');
+        console.log('Xhr2.constructor()\r\nUID:');
         this.uid=Math.random();
         //console.log(this.uid);
     }
     run(property){
-       // console.log('Xhr2::run()\r\nUID:');
-        //console.log(this.uid);
+        console.log('Xhr2::run()\r\nUID:');
+        console.log(this.uid);
+        console.log(property);
         //console.log('TYPE:');
         //console.log(property.t);
         /*
@@ -120,10 +121,13 @@ class Xhr2 {
             req.open(property.t, property.u, property.c);
             
             req.onloadstart = function (e){
+                /*
+                 * NOTIFY ? LOAD GIF TO SETUP
+                 */
                 //console.log('Xhr2::onloadstart()');   
                 /*Request started transferring data! - TURN OF*/
                 if(typeof(LoadStart)!=='function'){
-                    console.log('Xhr2::onloadstart()\r\nLoadStart not setup');
+                    console.log('Xhr2.onloadstart()\r\nLoadStart not setup');
                     return true;
                 }
                 LoadStart();
@@ -162,7 +166,8 @@ class Xhr2 {
             };  
             req.onload = function(e) {
                 //console.log('Xhr2::onload()');
-                //console.log(property);
+                //console.log(e);
+                //console.log(typeof property.o[property.m]);
                 if(typeof property.o[property.m] !=='function'){
                     console.log("Xhr2::onload() Wrong Object or Method!");
                     console.log("Xhr2::onload() Object:");
@@ -171,7 +176,7 @@ class Xhr2 {
                     console.log(property.m);
                     console.log("Xhr2::onload() Method TYPE:");
                     console.log(Error);
-                    console.log(typeof property.o[property.m]);
+                    //console.log(typeof property.o[property.m]);
                     Error.o[Error.m]('Xhr2::onload() An Application Error Has Occurred!');
                 }
                 else{
@@ -179,12 +184,12 @@ class Xhr2 {
                 }
             };
             req.onerror =  function(e){
-                console.log('Xhr2::onerror()');
+                console.log('Xhr2.onerror()');
                 console.log("Podczas pobierania dokumentu wystąpił błąd " + e.target.status + ".");   
                 Error.o[Error.m](e);
             };
             req.onabort = function (e){
-                console.log("Xhr2::onabort() Request aborted!");
+                console.log("Xhr2.onabort() Request aborted!");
             };
             req.onreadystatechanged  = function() {
                 console.log('Xhr2::onreadystatechanged()');
@@ -197,12 +202,14 @@ class Xhr2 {
             req.send(property.d); 
     }  
     setOnError(property){
+        console.log('Xhr2.setOnError()');
         /*
          * property:
          * o = object
          * m = method
          */    
-        
+        console.log(property.o);
+        console.log(property.m);
         if(typeof property.o[property.m] !=='function'){  
                     console.log(property.o);
                     console.log(property.m);
@@ -212,6 +219,7 @@ class Xhr2 {
                     alert('Xhr2::setOnError() An Application Error Has Occurred!');
         }
         else{
+            console.log('Xhr2.setOnError() property');
             this.onError=property;
         }
     }

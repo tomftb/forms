@@ -1,4 +1,4 @@
-<?php if(!defined("DR")){ die('Direct access not permitted'); } ?>
+<?php if(!defined("APP_ROOT")){ die('Direct access not permitted'); } ?>
 <center>    
     <div class="container mt-5 w-100">
         <div class="row">

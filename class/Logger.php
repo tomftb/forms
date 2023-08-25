@@ -6,25 +6,27 @@ final class Logger{
     private static $logLink;
     private static $filename='';
     private static $logName='';
-    private static $dir=APP_ROOT."/log";
+    private static $dir=LOG_DIR;
+    private static $lvl=0;
     
     private function __construct($from){
+        self::check_LOG_DIR();
         self::setLogName();
         self::open(); 
-		self::log(0,'Logger construct => '.$from,__METHOD__);
+	self::log(0,'Logger construct => '.$from,__METHOD__);
     }
     public static function init($from=''){
-		/* CHECK AND INITIALISE Logger (Singleton) CLASS */
-		if(!isset(self::$logLink)){
-			/* INITIALISED NEW OBJECT */
-			self::$logLink=new Logger($from);
-		}
-		else{
-			// ALREADY INITIALISED
-			/* self::log(0,'Logger already initialised => init from => '.$from,__METHOD__); */
-		}
-		return self::$logLink;
+	/* CHECK AND INITIALISE Logger (Singleton) CLASS */
+	if(!isset(self::$logLink)){
+            /* INITIALISED NEW OBJECT */
+            self::$logLink=new Logger($from);
 	}
+	else{
+            // ALREADY INITIALISED
+            /* self::log(0,'Logger already initialised => init from => '.$from,__METHOD__); */
+	}
+	return self::$logLink;
+    }
     public function log($l=0,$d='',$m=''){
         /*
          * l -> lvl of log
@@ -41,7 +43,7 @@ final class Logger{
         else{}
     }
     private function open(){     
-		self::$filename = fopen(self::$logName, "a") or die(__METHOD__."Unable to open file!");
+	self::$filename = fopen(self::$logName, "a") or die(__METHOD__."Unable to open file!");
     }
     public static function getLogLvl(){
         /* PHP .config CONST */
@@ -49,57 +51,63 @@ final class Logger{
         //return $this->log;
     }
     protected function setLogName(){
-		self::setDir();
-        self::$logName=self::$dir."/log-".date("Y-m-d").".php";
+	self::setDir();
+        self::$logName=self::$dir."log-".date("Y-m-d").".php";
         //echo $this->logName;
     }
     public function logMulti($l,$data,$m=''){
         self::logMultidimensional($l,$data,$m);
     }
-    public function logMultidimensional($l,$data,$m,$nLvl=0){
+    public function logMultidimensional($l,$data,$m){
         /*
          * $l -> level of log
          * $data -> data to write
          * $m -> called method
-         * $nLvl -> nesting lvl
          */
         if(is_array($data)){  
-            self::log($l, "[${m}][$nLvl][A]");
-            $nLvl++;
-            self::logMultidimensionaA($l,$data,$m,$nLvl);
+            self::log($l, "[${m}][".self::$lvl."][A]");
+
+            self::logMultidimensionaA($l,$data,$m);
         }
         else if(is_object($data)){
-            self::log($l, "[${m}][$nLvl][O]");
-            $nLvl++;
-            self::logMultidimensional($l,get_object_vars($data),$m,$nLvl);
+            self::log($l, "[${m}][".self::$lvl."][O]");
+
+            self::logMultidimensional($l,get_object_vars($data),$m);
         }
         else if(is_resource($data)){
-            self::log($l, "[${m}][$nLvl][R]");
+            self::log($l, "[${m}][".self::$lvl."][R]");
         }
         else{
-            self::log($l, "[${m}][${nLvl}][V] ".$data);
+            self::log($l, "[${m}][".self::$lvl."][V] ".$data);
         }
     }
-    private function logMultidimensionaA($l,$data,$m,$nLvl){
+    private function logMultidimensionaA($l,$data,$m){
+        self::$lvl++;
         foreach($data as $k => $v){
-            self::log($l, "[${m}][${nLvl}][K] ".$k);
-            self::logMultidimensional($l,$v,$m,$nLvl);
+            self::log($l, "[${m}][".self::$lvl."][K] ".$k);
+            self::logMultidimensional($l,$v,$m);
+        }
+        self::$lvl--;
+    }
+    private function setDir(){
+        if(!file_exists(self::$dir)){
+            if(!is_dir(self::$dir)){
+		mkdir(self::$dir);
+            }
         }
     }
-	private function setDir(){
-		if(!file_exists(self::$dir)){
-			if(!is_dir(self::$dir)){
-				mkdir(self::$dir);
-			}
-		}
-	}
+    public static function check_LOG_DIR():void{
+        if(!defined("LOG_DIR")){
+            Throw New \Exception('Declare LOG_DIR constant!',1);
+        }
+    }
     private function __clone() { 
-		throw new \Exception("Cannot clone a singleton.");
+	throw new \Exception("Cannot clone a singleton.");
     }
     public function __wakeup(){
         throw new \Exception("Cannot unserialize a singleton.");
     }
-    function __destruct(){
-		fclose(self::$filename);
+    public function __destruct(){
+	fclose(self::$filename);
     }
 }

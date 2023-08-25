@@ -33,7 +33,7 @@ class Parametry_model extends Database_model {
     public function getParmSkrt(array $input=[':i'=>[0,'INT']]){
         return $this->Main->squery('SELECT `SKROT` FROM parametry WHERE ID=:i',$input)[0]['SKROT'];
     }
-    public function getParmValue(array $input=[':k'=>[0,'INT']]){
+    public function getParmValue(array $input=[':k'=>[0,'STR']]){
         return $this->Main->squery('SELECT `WARTOSC` as `v` FROM parametry WHERE `SKROT`=:k',$input);
     }
     public function getColor(){

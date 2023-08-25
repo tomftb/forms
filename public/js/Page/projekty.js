@@ -165,35 +165,31 @@ catch(e){
 function runFunction(response)
 {
     console.log('runFunction()');
-    //console.log(response);
+    var dJson={
+        'status':1,
+        'info':''
+    };
     try{
+        console.log(response);
         var dJson=JSON.parse(response);
             error.checkStatusExist(dJson);
-            projectData=dJson; 
-    }
-    catch(e){
-        console.log(response);
-        console.log(e);
-        return false;
-    }
-    try{
-        console.log('FUNCTION TO RUN:\n'+dJson['data']['function']);
+           
         switch(dJson['data']['function'])
         {
             case 'pCreate':
+                    projectData=dJson;
                     fieldDisabled='n';
                     projectManage('Dodaj','DODAJ PROJEKT:','info');
                 break;
             case 'pDetails':
-                    //pDetails(d,'Edytuj');
-                    actProject=dJson['data']['value']['project'];
+                    projectData=dJson;
                     fieldDisabled='y';
                     /* INFO */
-                    document.getElementById('AdaptedModalInfo').appendChild(createTag("Project ID: "+actProject.i+", Create user: "+actProject.cu+" ("+actProject.cum+"), Create date: "+actProject.du,'small','text-left text-secondary ml-1'));
+                    document.getElementById('AdaptedModalInfo').appendChild(createTag("Project ID: "+projectData['data']['value'].i+", Create user: "+projectData['data']['value'].cu+" ("+projectData['data']['value'].cum+"), Create date: "+projectData['data']['value'].du,'small','text-left text-secondary ml-1'));
                     projectManage('Edytuj','SZCZEGÓŁY PROJEKTU:','info');
                 break;
             case 'pDoc':
-                    actProject=dJson['data']['value']['project'];
+                    projectData=dJson;
                     fieldDisabled='y';
                     projectDocManage('Edytuj','DOKUMENTY PROJEKTU:','info');
                     break;
@@ -201,12 +197,14 @@ function runFunction(response)
                     reloadData();
                 break;
             case 'pEmail':
-                    pEmail();
+                    pEmail(dJson);
                 break;
             case 'pClose':
+                    projectData=dJson;
                     projectRemove('Zamknij','ZAMKNIJ PROJEKT:','secondary');
                 break;
             case 'pDelete':
+                    projectData=dJson;
                     projectRemove('Usuń','USUŃ PROJEKT:','danger');
                 break;
             case 'downloadProjectPdf':
@@ -217,11 +215,14 @@ function runFunction(response)
                     win.focus();
                 break;
             case 'pTeamOff':
+                    projectData=dJson;
                     actProject=dJson['data']['value']['project'];
+                    
                     pTeam(false);
                     break;
             case 'pTeam':
                     clearAdaptedModalData();
+                    projectData=dJson;
                     setAvaTeam();
                     pTeam(true);
                     break;
@@ -240,6 +241,7 @@ function runFunction(response)
                     
                     setButtonDisplay(document.getElementById('createData'),'ADD_PROJ');
             case 'sAll':
+                    
                     displayAll(dJson);
                 break;
             default:
@@ -261,8 +263,9 @@ function runFunction(response)
         error.checkStatusResponse(dJson);
     }
 }
-function pEmail()
+function pEmail(dJson)
 {
+     projectData=dJson; 
     prepareModal('RĘCZNE WYSŁANIE POWIADOMIENIA EMAIL:','bg-info');
     //console.log(projectData['data']['value']['email'][0].Pracownik);
     var form=createForm('POST',projectData['data']['function'],'form-horizontal','OFF');
@@ -330,19 +333,21 @@ function createTable(colTitle,tBody)
 }
 function projectDocManage(btnLabel,title,titleClass)
 {
+    console.log('projectDocManage()');
     prepareModal(title,'bg-'+titleClass);
     var form=createForm('POST',projectData['data']['function'],'form-horizontal','OFF');
     var add=document.getElementById('AdaptedDynamicData');
-    add.appendChild(createTag(actProject.t,'h5','text-info mb-3 text-center font-weight-bold'));
+    add.appendChild(createTag(projectData['data']['value']['project'].t,'h5','text-info mb-3 text-center font-weight-bold'));
     pDocCreateFields(form);
     add.appendChild(form);
     document.getElementById('AdaptedButtonsBottom').appendChild(functionBtn('cancel',createBtn('Anuluj','btn btn-dark','cancelBtn'),''));
     document.getElementById('AdaptedButtonsBottom').appendChild(functionBtn(projectData['data']['function'],createBtn(btnLabel,'btn btn-'+titleClass,projectData['data']['function']),projectData['data']['function']));
     /* INFO */
-    document.getElementById('AdaptedModalInfo').appendChild(createTag("Project ID: "+actProject.i+", Create user: "+actProject.cu+" ("+actProject.cum+"), Create date: "+actProject.du,'small','text-left text-secondary ml-1'));
+    document.getElementById('AdaptedModalInfo').appendChild(createTag("Project ID: "+projectData['data']['value']['project'].i+", Create user: "+projectData['data']['value']['project'].cu+" ("+projectData.cum+"), Create date: "+projectData['data']['value']['project'].cd,'small','text-left text-secondary ml-1'));
 }
 function projectRemove(btnLabel,title,titleClass)
 {
+     console.log('projectRemove()');
      /*
         * SLOWNIKI:
         * data[0] = ID
@@ -357,20 +362,21 @@ function projectRemove(btnLabel,title,titleClass)
     document.getElementById('AdaptedButtonsBottom').appendChild(functionBtn('cancel',createBtn('Anuluj','btn btn-dark','cancelBtn'),''));
     document.getElementById('AdaptedButtonsBottom').appendChild(functionBtn(projectData['data']['function'],createBtn(btnLabel,'btn btn-'+titleClass,projectData['data']['function']),projectData['data']['function']));
     /* INFO */
-    document.getElementById('AdaptedModalInfo').appendChild(createTag("Project ID: "+projectData['data']['value']['project'].i+", Create user: "+projectData['data']['value']['project'].cu+" ("+projectData['data']['value']['project'].cum+"), Create date: "+projectData['data']['value']['project'].du,'small','text-left text-secondary ml-1'));
+    document.getElementById('AdaptedModalInfo').appendChild(createTag("Project ID: "+projectData['data']['value']['project'].i+", Create user: "+projectData['data']['value']['project'].cu+" ("+projectData['data']['value']['project'].cum+"), Create date: "+projectData['data']['value']['project'].cd,'small','text-left text-secondary ml-1'));
 }
 function projectRemoveFields(ele)
 { 
-    console.log('---projectRemoveFields()---');
-    ele.appendChild(createInput('hidden','id',projectData['data']['value']['id'],'','','n'));
+    console.log('projectRemoveFields()');
+    console.log(projectData);
+    ele.appendChild(createInput('hidden','id',projectData['data']['value']['project']['i'],'','','n'));
     var p=createTag('Podaj Powód: ','p','text-left');
     var inp=createInput('text','extra','','form-control mb-1','Wprowadź powód','n');
         inp.style.display = "none";
     projectData['data']['value']['slo'].push({
-                                                'ID' : "0",
-                                                'Nazwa' : 'Inny:'
+                                                'id' : "0",
+                                                'nazwa' : 'Inny:'
                                             });
-    var select=createSelectFromObject(projectData['data']['value']['slo'],'Nazwa','reason','form-control mb-1');
+    var select=createSelectFromObject(projectData['data']['value']['slo'],'nazwa','reason','form-control mb-1');
         select.onchange = function() { checkReason(this,'extra'); };
     ele.appendChild(p); 
     ele.appendChild(select); 
@@ -392,7 +398,7 @@ function checkReason(t,id)
 }
 function projectManage(btnLabel,title,titleClass)
 {
-    console.log('===projectManage()===');
+    console.log('projectManage()');
     //MyError.checkStatusResponse(projectData);
     //console.log(projectData);
     /*
@@ -421,7 +427,7 @@ function projectManage(btnLabel,title,titleClass)
 }
 function pDocCreateFields(ele)
 {
-    console.log('---pDocCreateFields()---\n');
+    console.log('pDocCreateFields()');
     var pFields={
         'ID' : {
             'label' : '',
@@ -533,6 +539,7 @@ function displayAll(d)
 {
     console.log('===displayAll()===');
     console.log(d);
+    error.set('overAllErr');
     error.checkStatusResponse(d);
     /* SETUP DEFAULT TABLE COLUMN */
     table.showTable(d['data']['value']['data']);  
@@ -642,12 +649,14 @@ function createDokListField(value,i,divAll)
 }
 function functionBtn(f,btn,task)
 {
-    console.log('---functionBtn()---');
+    console.log('functionBtn()');
     console.log(f);
+    var self=this;
     switch(f)
     {
         case 'rmEmail':
                 btn.onclick = function(){ 
+                    console.log('functionBtn.onclick() rmEmail');
                     console.log(this);
                     removeHtmlChilds(this.parentNode.parentNode.parentNode);
                 };
@@ -655,23 +664,27 @@ function functionBtn(f,btn,task)
         case 'pDetails' :
                 btn.onclick = function()
                 { 
+                    console.log('functionBtn.onclick() pDetails');
                     projectData['data']['function']='pEdit';
                     projectData['data']['task']='pEdit';
                     projectData['status']=0;
                     fieldDisabled='n';
                     clearAdaptedModalData();
+                    self.error.set('errDiv-Adapted-overall');
                     projectManage('Zatwierdź','EDYCJA PROJEKTU:','warning');   
                 };
                 break;
         case 'cancel':
                 btn.onclick = function()
                 {
-                   reloadData();
+                    console.log('functionBtn.onclick() cancel');
+                    reloadData();
                 };
             break;
         case 'pDoc':
                 btn.onclick = function()
                 { 
+                    console.log('functionBtn.onclick() pDoc');
                     projectData['data']['function']='pDocEdit';
                     fieldDisabled='n';
                     clearAdaptedModalData();
@@ -689,7 +702,7 @@ function functionBtn(f,btn,task)
         case 'pEdit':
         case 'pCreate':
             btn.onclick = function() { 
-                console.log('onClick');
+                console.log('functionBtn.onClick() rest');
                 console.log(this); 
                 console.log(task); 
                 postData(this,task);
@@ -724,11 +737,12 @@ function postData(btn,nameOfForm)
 }
 function newProject()
 {
-    actProject.i='n/a';
-    actProject.du='n/a';
-    actProject.cu='n/a';
-    actProject.cum='n/a';
+    projectData.i='n/a';
+    projectData.cd='n/a';
+    projectData.cu='n/a';
+    projectData.cum='n/a';
     clearAdaptedModalData();
+    error.set('errDiv-Adapted-overall');
     ajax.getData('getProjectDefaultValues');
 }
 function setButtonAvaliable()
@@ -770,6 +784,7 @@ function findData(value)
     ajax.getData(defaultTask+'&filter='+value);
 }
 function checkResponseFunction(d){
+    console.log('checkResponseFunction()');
     console.log(d);
     if (!d.hasOwnProperty("data")) {
         console.log('data NOT Exists');
