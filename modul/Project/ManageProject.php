@@ -282,32 +282,34 @@ final class ManageProject implements ManageProjectCommand
         return ($this->inpArray[$field]);
         //return ($this->inpArray['system_umowy']);
     }
-    public function pEmail()
-    {
+    public function pEmail(){
         $this->Log->log(0,"[".__METHOD__."]");
         $this->inpArray=filter_input_array(INPUT_POST);
         $this->utilities->validateKey($this->inpArray,'id',true,1);
-        $data=$this->dbLink->squery('SELECT `create_user_full_name`,`create_user_email`,`rodzaj_umowy`,`numer_umowy`,`temat_umowy`,`kier_grupy`,`term_realizacji` as \'d-term_realizacji\',`harm_data`,`koniec_proj` as \'d-koniec_proj\',`nadzor`,`kier_osr`,`technolog`,`klient`,`typ` as \'typ_umowy\',`system`,`r_dane`,`j_dane`,`quota` FROM `project` WHERE `id`=:i AND `wsk_u`=0 ',[':i'=>[$this->inpArray['id'],'INT']]);
-        if(count($data)!==1){
-            Throw New Exception ("[".__METHOD__."] THERE IS MORE THAN ONE OR NO PROJECT WITH `ID`=".$this->inpArray['id']." AND `wsk_u`=0",1); 
-        }
-        self::setProjectEmailFields($data[0]);
-        $this->Log->logMulti(0,$data[0],__METHOD__);
-        $this->mail=NEW Email();
-        $this->mail->sendMail(
-                                $data[0]['subject'],
-                                self::projectBodyMailTemplate($data[0]['subject'],$data[0]),
+        $data=$this->Model->{'Project'}->getProjectForEmail($this->inpArray['id']);
+        self::setProjectEmailFields($data);
+        $this->Log->logMulti(0,$data,__METHOD__);
+        try{
+            $this->mail=NEW Email();
+            $this->mail->sendMail(
+                                $data['subject'],
+                                self::projectBodyMailTemplate($data['subject'],$data),
                                 self::getRecipient(),
                                 $this->infoArray['err_mail'][1],
                                 true
-        );
+            );
+        }
+        catch(\Exception $e){
+            $this->Log->logMulti(0,$e->getMessage());
+            Throw New \Exception($this->infoArray['err_mail'][1],0);
+        } 
         $this->utilities->jsonResponse('','cModal','POST'); 
     }
     private function getProjectDoc(){
         $this->Log->log(0,"[".__METHOD__."]");
         $tmp=''; 
-        foreach($this->Model->{'Project_document'}->getNamesByIdProject($id_project) as $v){
-            $tmp.="-&nbsp;".$v['nazwa']."<br/>";
+        foreach($this->Model->{'Project_document'}->getNamesByIdProject($this->inpArray['id']) as $v){
+            $tmp.="-&nbsp;".$v['name']."<br/>";
         }
         return $tmp;
     }
@@ -900,12 +902,9 @@ final class ManageProject implements ManageProjectCommand
     {
         $this->Log->log(0,"[".__METHOD__."]");
         $this->utilities->setGet('id',$this->inpArray);
-        $sql=[
-            ':id'=>[$this->inpArray['id'],'INT']
-        ];
         $v['id']=$this->inpArray['id'];
         $v['project']=$this->Model->{'Project'}->getProjectData($this->inpArray['id']);
-        $v['email']=$this->dbLink->squery('SELECT Pracownik,Pracownik_email AS Email FROM v_all_prac_proj_email WHERE Projekt_id=:id ORDER BY Projekt_id ASC',$sql);
+        $v['email']=$this->Model->{'Project'}->getProjectEmployeesEmail($this->inpArray['id']);
         $this->utilities->jsonResponse($v,'pEmail');  
     }
      # RETURN ALL AVAILABLE MEMBERS

@@ -304,7 +304,7 @@ function pEmail(dJson)
     document.getElementById('AdaptedButtonsBottom').appendChild(functionBtn('cancel',createBtn('Anuluj','btn btn-dark','cancelBtn'),''));
     document.getElementById('AdaptedButtonsBottom').appendChild(functionBtn(projectData['data']['function'],createBtn('Wyślij','btn btn-info','confirmData'),projectData['data']['function']));//projectData['data']['function']
     /* INFO */
-    document.getElementById('AdaptedModalInfo').appendChild(createTag("Project ID: "+projectData['data']['value']['project'].i+", Create user: "+projectData['data']['value']['project'].cu+" ("+projectData['data']['value']['project'].cum+"), Create date: "+projectData['data']['value']['project'].du,'small','text-left text-secondary ml-1'));
+    document.getElementById('AdaptedModalInfo').appendChild(createTag("Project ID: "+projectData['data']['value']['project'].i+", Create user: "+projectData['data']['value']['project'].cu+" ("+projectData['data']['value']['project'].cum+"), Create date: "+projectData['data']['value']['project'].cd,'small','text-left text-secondary ml-1'));
     console.log(document.getElementById('AdaptedButtonsBottom'));
 }
 

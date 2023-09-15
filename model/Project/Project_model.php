@@ -357,4 +357,53 @@ class Project_model extends Database_model {
                 )
         );
     }
+    public function getProjectEmployeesEmail(int $id_project=0):array{
+        return $this->Main->squery(''
+                . 'SELECT '
+                . 'CONCAT(`ep`.`name`,\' \',`ep`.`surname`) as `Pracownik`'
+                . ',`e`.`email` as `Email`'
+                . ' FROM '
+                . ' `employee` as `e`, `employee_project` as `ep` '
+                . 'WHERE '
+                . '`e`.`id`=`ep`.`id_employee` '
+                . 'AND `ep`.`id_project`=:id_project '
+                . 'ORDER BY `ep`.`surname` ASC'
+                ,[
+                    ':id_project'=>[$id_project,'INT']
+                ]
+        );
+    }
+    public function getProjectForEmail(int $id=0):array{
+         foreach($this->Main->squery(''
+                 . 'SELECT '
+                 . '`create_user_full_name`'
+                 . ',`create_user_email`'
+                 . ',`rodzaj_umowy`'
+                 . ',`numer_umowy`'
+                 . ',`temat_umowy`'
+                 . ',`kier_grupy`'
+                 . ',`term_realizacji` as \'d-term_realizacji\''
+                 . ',`harm_data`'
+                 . ',`koniec_proj` as \'d-koniec_proj\''
+                 . ',`nadzor`'
+                 . ',`kier_osr`'
+                 . ',`technolog`'
+                 . ',`klient`'
+                 . ',`typ` as \'typ_umowy\''
+                 . ',`system`'
+                 . ',`r_dane`'
+                 . ',`j_dane`'
+                 . ',`quota`'
+                 . ' FROM '
+                 . '`project` '
+                 . 'WHERE '
+                 . '`id`=:id '
+                 . 'AND `delete_status`=\'0\' '
+                ,[
+                    ':id'=>[$id,'INT']
+                ]) as $project){
+             return $project;
+        }
+        Throw New Exception ('Nie istnieje projekt o id '.$id.'. Został usunięt?',0);
+    }
 }
