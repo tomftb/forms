@@ -8,7 +8,18 @@ class Employee_model extends Database_model {
         Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
     }
     public function getAll():array{
-        return $this->Main->squery('SELECT * FROM `v_all_prac_v5` ORDER BY `ID` ASC'); 
+        return $this->Main->squery('SELECT '
+                . '`e`.`id` AS `ID`'
+                . ', concat(`e`.`imie`,\' \',`e`.`nazwisko`) AS `ImieNazwisko`'
+                . ', `e`.`stanowisko` AS `Stanowisko`'
+                . ', (SELECT (CASE WHEN SUM(`ep`.`percentage`) IS NULL THEN 0 ELSE SUM(`ep`.`percentage`) END) FROM `employee_project` as `ep`, `project` as `p` WHERE `ep`.`id_project`=`p`.`id` AND `p`.`delete_status`=\'0\' AND `ep`.`id_employee`=`e`.`id` ) AS `Procent` '
+                . ', `e`.`email` AS `Email`'
+                . 'FROM '
+                . ' `employee` as `e`'
+                . 'WHERE  '
+                . '`e`.`delete_status`=\'0\' '
+                . 'ORDER BY `e`.`id` ASC'
+        ); 
     }
     public function add(array $parm=[]):void{
        
@@ -19,7 +30,26 @@ class Employee_model extends Database_model {
         }
     }
     public function getEmployeesLike(string $filter=''):array{
-        return $this->Main->squery('SELECT * FROM `v_all_prac_v5` WHERE `ID` LIKE (:f) OR `ImieNazwisko` LIKE (:f) OR `Stanowisko` LIKE (:f) OR `Procent` LIKE (:f) OR `Email` LIKE (:f) ORDER BY `ID` asc',[':f'=>['%'.$filter.'%','STR']]); 
+        return $this->Main->squery('SELECT '
+                . '`e`.`id` AS `ID`'
+                . ', concat(`e`.`imie`,\' \',`e`.`nazwisko`) AS `ImieNazwisko`'
+                . ', `e`.`stanowisko` AS `Stanowisko`'
+                . ', (SELECT (CASE WHEN SUM(`ep`.`percentage`) IS NULL THEN 0 ELSE SUM(`ep`.`percentage`) END) FROM `employee_project` as `ep`, `project` as `p` WHERE `ep`.`id_project`=`p`.`id` AND `p`.`delete_status`=\'0\' AND `ep`.`id_employee`=`e`.`id` ) AS `Procent` '
+                . ', `e`.`email` AS `Email`'
+                . 'FROM '
+                . ' `employee` as `e` '
+                . 'WHERE  '
+                . '(`e`.`id` LIKE (:f) '
+                . 'OR  concat(`e`.`imie`,\' \',`e`.`nazwisko`) LIKE (:f) '
+                . 'OR `e`.`stanowisko` LIKE (:f) '
+                //. 'OR `Procent` LIKE (:f) '
+                . 'OR `e`.`email` LIKE (:f)) '
+                . 'AND `e`.`delete_status`=\'0\' '
+                . 'ORDER BY `e`.`id` asc',
+                [
+                    ':f'=>['%'.$filter.'%','STR']
+                ]
+        ); 
     }
     public function getEmployeeData(int $id=0):array{
         foreach($this->Main->squery('SELECT `id`,`imie`,`nazwisko`,`stanowisko`,`email` FROM `employee` WHERE `id`=:i AND `delete_status`=\'0\'',[':i'=>[$id,'INT']]) as $employee){
@@ -91,6 +121,10 @@ class Employee_model extends Database_model {
                     ]
                     ,parent::getAlterUserParm()
             ));
+    }
+    public function setDeleteStatus(int $id=0):void{
+            $this->Main->query('UPDATE `employee` SET `delete_status`=\'1\' WHERE `id`=:id',[':id'=>[$id,'STR']]);
+
     }
 }
 

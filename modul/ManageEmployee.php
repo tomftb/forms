@@ -33,6 +33,7 @@ class ManageEmployee
         $this->Model->{'Employee'}=new \Employee_model();
         $this->Model->{'Allocation'}=new \Allocation_model();
         $this->Model->{'Employee_allocation'}=new \Employee_allocation_model();
+        $this->Model->{'Employee_project'}=new \Employee_project_model();
         $this->date=date("Y-m-d H:i:s");
         $this->RA=filter_input(INPUT_SERVER,'REMOTE_ADDR');
     }
@@ -221,23 +222,14 @@ class ManageEmployee
         }
     }
     # DELETED EMPLOYEE IN DB
-    public function dEmployee()
-    {
+    public function dEmployee(){
         $this->Log->log(0,"[".__METHOD__."]");
         $this->inpArray=filter_input_array(INPUT_POST);
         $this->Utilities->validateKey($this->inpArray,'ID',true,1);
-        if(count(self::getEmplProj($this->inpArray['ID']))>0){
+        if(count($this->Model->{'Employee_project'}->getProjects($this->inpArray['ID']))>0){
             Throw New Exception ('Employee can\'t be deleted. This employee appears in projects.',0);
         }  
-        try{
-            $this->dbLink->beginTransaction(); //PHP 5.1 and new
-            $this->dbLink->query('UPDATE `employee` SET `delete_status`=1 WHERE `id`=:i',[':i'=>[$this->inpArray['ID'],'STR']]);
-            $this->dbLink->commit();  
-        }
-        catch (PDOException $e){
-            $this->dbLink->rollback();
-            Throw New Exception("[".__METHOD__."] Wystąpił błąd zapytania bazy danych: ".$e->getMessage(),1);
-        }
+        $this->Model->{'Employee'}->setDeleteStatus($this->inpArray['ID']);
         $this->Utilities->jsonResponse('','cModal');
     }
     public function getEmployeesSpecSlo(){
@@ -254,7 +246,7 @@ class ManageEmployee
     {      
         $this->Utilities->setGet('id',$this->inpArray);
         $data[0]=$this->inpArray['id'];
-        $data[1]=self::getEmplProj($this->inpArray['id']);
+        $data[1]=$this->Model->{'Employee_project'}->getProjects($this->inpArray['id']);
         $this->Utilities->jsonResponse($data,'projects');
     }
      # RETURN ALL NOT DELETED PROJECT FROM DB FOR DELETING EMPLOYY
@@ -267,13 +259,10 @@ class ManageEmployee
              * 
              */
         $data[0]=$this->inpArray['id'];
-        $data[1]=$this->dbLink->squery('SELECT `ID_Projekt`,`Numer_umowy`,`Temat_umowy`,`Procent_udziału`,`Data_od`,`Data_do` FROM `v_proj_prac_v4` WHERE `ID_Pracownik`=:i ORDER BY `ID_Projekt` ASC',[':i'=>[$this->inpArray['id'],'INT']]);       
+        $data[1]=$this->Model->{'Employee_project'}->getProjects($this->inpArray['id']);
         $this->Utilities->jsonResponse($data,'dEmployee');
     }
-    private function getEmplProj($id)
-    {
-        return ($this->dbLink->squery('SELECT `ID_Projekt`,`Numer_umowy`,`Temat_umowy`,`Procent_udziału`,`Data_od`,`Data_do` FROM `v_proj_prac_v4` WHERE `ID_Pracownik`=:i ORDER BY `ID_Projekt` ASC',[':i'=>[$id,'INT']]));
-    }
+
     public function getEmployeeSpec(){
         $this->Log->log(0,"[".__METHOD__."]");
         (int) $id=self::getId();

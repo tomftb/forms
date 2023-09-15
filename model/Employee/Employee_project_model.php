@@ -106,4 +106,25 @@ class Employee_project_model extends Database_model {
                 ,['id_project'=>[$id_project,'INT']]
         );
     }
+    public function getProjects(int $id=0):array{
+        return ($this->Main->squery('SELECT '
+                . '`ep`.`id_project` as `ID_Projekt`'
+                . ',`p`.`numer_umowy` as `Numer_umowy`'
+                . ',`p`.`temat_umowy` as `Temat_umowy`'
+                . ',`ep`.`percentage` as`Procent_udziału`'
+                . ',`ep`.`start_date` as `Data_od`'
+                . ',`ep`.`end_date` as `Data_do` '
+                . ' FROM '
+                . '`employee_project` as `ep`, `project` as `p`'
+                . 'WHERE '
+                . ' `ep`.`id_project`=`p`.`id` '
+                . ' AND `ep`.`id_employee`=:id '
+                . ' AND `p`.`delete_status`=\'1\' '
+                . 'ORDER BY `ep`.`id_project` ASC'
+                ,[
+                    ':id'=>[$id,'INT']
+                    ]
+                )
+        );
+    }
 }
