@@ -1,8 +1,23 @@
 <?php
-require(DR.'/lib/fpdf181/tfpdf.php');
+require(APP_ROOT.'/lib/fpdf181/tfpdf.php');
 
-define("_SYSTEM_TTFONTS", DR.'/lib/fpdf181/font/unifont/lato/');
-define("FPDF_FONTPATH",DR.'/lib/fpdf181/font/');
+define("_SYSTEM_TTFONTS", APP_ROOT.'/lib/fpdf181/font/unifont/lato/');
+define("FPDF_FONTPATH",APP_ROOT.'/lib/fpdf181/font/');
+
+/*
+ * EXCEPTION FOR PDF
+ */
+
+if (!function_exists('get_magic_quotes_runtime')) {
+    function get_magic_quotes_runtime() {
+        return true;
+    }
+}
+if (!function_exists('set_magic_quotes_runtime')) {
+    function set_magic_quotes_runtime($new_setting) {
+        return true;
+    }
+}
 
 class createPdf extends tFPDF
 {
@@ -14,19 +29,18 @@ class createPdf extends tFPDF
     protected $prMainTech=array();
     private $ROOT='';
     private $createDir='';
-    private $log;
+    private $Log;
     /*
      * I -> OPEN
      * D -> DOWNLOAD
      */
     
     protected $outputType='S';
-    function __construct($projectDetails,$projectDoc,$projectTeam,$root='',$createDir='')
-    {
+    function __construct($projectDetails,$projectDoc,$projectTeam,$root='',$createDir=''){
         parent::__construct();
         $this->ROOT=$root;
         $this->createDir=$createDir;
-        $this->log=Logger::init();
+        $this->Log=Logger::init();
         $this->prDetails=$projectDetails;
         $this->prDocs=$projectDoc;
         $this->prTeam=$projectTeam;
@@ -68,16 +82,16 @@ class createPdf extends tFPDF
         $this->Cell(0,6,'',0,1,'C');
         $this->Cell(0,0,'Zabrania się samowolnego dokonywania zmian, kopiowania i rozpowszechniania tego dokumentu',0,0,'C');   
     }
-    private function createDocument()
-    {
+    private function createDocument(){
+        $this->Log->log(2,"[".__METHOD__."]");
         self::setProjectDetails();
-        $this->setProjectDocuments();
-        $this->genDetailPdf();
-        $this->genProjectTeam();
+        self::setProjectDocuments();
+        self::genDetailPdf();
+        self::genProjectTeam();
     }
-    private function setProjectDetails()
-    {
-        $this->log->logMulti(0,$this->prDetails,__METHOD__);
+    private function setProjectDetails(){
+        $this->Log->log(2,"[".__METHOD__."]");
+        $this->Log->logMulti(0,$this->prDetails,__METHOD__);
         $this->SetTitle("Powołanie grupy realizującej",true);
         $this->SetAuthor("Tomasz Borczyński" ,true);
         $this->SetSubject("Powołanie grupy sejsmicznej" ,true);
@@ -103,19 +117,19 @@ class createPdf extends tFPDF
             array('n','Wykaz powiązanych dokumentów:')
         );
     }
-    function setProjectDocuments()
-    {
+    private function setProjectDocuments(){
+        $this->Log->log(2,"[".__METHOD__."]");
         // PROJECT DOCUMENTS DOCUMENT
-        $this->log->logMulti(0,$this->prDocs ,__METHOD__);
+        $this->Log->logMulti(0,$this->prDocs ,__METHOD__);
         foreach($this->prDocs as $valueToAdd)
         {
             //print_r($valueToAdd);
-            array_push($this->pdfBodyPartList,array('l',''.$valueToAdd['nazwa']));
+            array_push($this->pdfBodyPartList,array('l',''.$valueToAdd['name']));
         }
         //print_r($pdfBodyPartList);
     }
-    function genDetailPdf()
-    {
+    private function genDetailPdf(){
+        $this->Log->log(2,"[".__METHOD__."]");
         $this->SetFont('Lato','',11);
         $counter=1;
         $counterLetter=0;
@@ -126,7 +140,7 @@ class createPdf extends tFPDF
         {
             if($value[0]==='n')
             {
-                $this->Cell(0,10,$counter.". ".$value[1],0,1);
+                $this->Cell(0,10,strval($counter).". ".$value[1],0,1);
                 $counter++;
             }
             else if($value[0]==='l')
@@ -178,8 +192,9 @@ class createPdf extends tFPDF
         $this->SetRightMargin(20);
         $this->Cell(0,5,'..........................................................',0,0,'R');
     }
-    function genProjectTeam()
-    {
+    private function genProjectTeam(){
+        $this->Log->log(2,"[".__METHOD__."]");
+        
         // TEAM
         $this->AddPage();
         $this->SetFont('Lato','',14);
@@ -193,6 +208,7 @@ class createPdf extends tFPDF
         $this->Cell(0,6,'',0,1,'C');
         $this->Cell(0,1,'............................................................................................................................................................................',0,1,'R');
         $this->Cell(0,6,'',0,1,'C');
+       
         // Header
         $header = array('L.P.', 'NAZWISKO I IMIĘ', 'DATA OD','DATA DO', 'PODPIS I DATA');
         $width=34;  
@@ -214,11 +230,13 @@ class createPdf extends tFPDF
             }
             $this->Cell($width,10,$col,1,0,'C');
         }
+         
         $this->Ln();      
         // Data
         $lp=1;
         foreach($this->prTeam as $row){
-            $this->Cell(10,7,$lp,1,0,'C');
+            $this->Cell(10,7,strval($lp),1,0,'C');
+          
             foreach($row as $id =>$col){
                 switch($id){
                     case 'NazwiskoImie':
@@ -250,8 +268,9 @@ class createPdf extends tFPDF
         }
     }
     public function getPdf(){
+        $this->Log->log(2,"[".__METHOD__."]\r\n APP_ROOT - ".$this->ROOT."\r\n CREATE DIR - ".$this->createDir);
         $pdfName='projekt.pdf';
-        $this->Output($this->ROOT.$this->createDir.$pdfName,'F');
+        $this->Output($this->createDir.$pdfName,'F');
         return ($pdfName);
     }
     function __destruct(){}

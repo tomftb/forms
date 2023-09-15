@@ -9,6 +9,8 @@ date_default_timezone_set('Europe/Warsaw');
  */
 define('APP_ROOT',substr(filter_input(INPUT_SERVER,"DOCUMENT_ROOT"),0,-6));
 
+
+
 require(APP_ROOT.'.cfg/consts.php');
 require(APP_ROOT.'.cfg/config.php');
 require(APP_ROOT."class/AutoLoad.php");

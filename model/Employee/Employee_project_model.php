@@ -94,5 +94,16 @@ class Employee_project_model extends Database_model {
          return $this->Main->query('SELECT `id_employee` as `idPracownik`,CONCAT(`name`,\' \',`surname`) as `ImieNazwisko`,`percentage` as `procentUdzial`,`start_date` as `datOd`,`end_date` as `datDo` FROM `employee_project` WHERE `id_employee`=:id and `delete_status`=\'0\'',[':id'=>[$id,'INT']]);
          
     }
-   
+    public function getTeamPdfInput(int $id_project=0):array{
+        return $this->Main->squery('SELECT '
+                . 'CONCAT(`ep`.`name`,\' \',`ep`.`surname`) as `NazwiskoImie`'
+                . ',`ep`.`start_date` as `DataOd`'
+                . ',`ep`.`end_date` as `DataDo` '
+                . ' FROM '
+                . ' `employee_project` as `ep` '
+                . 'WHERE '
+                . '`id_project`=:id_project'
+                ,['id_project'=>[$id_project,'INT']]
+        );
+    }
 }

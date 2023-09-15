@@ -2,6 +2,9 @@
 /*
  * RECEIVER
  */
+
+
+
 interface ManageProjectCommand
 {
     public function pDelete();
@@ -136,6 +139,7 @@ final class ManageProject implements ManageProjectCommand
         $this->Model->{'Project_glossary_implementation'}=new \Project_glossary_implementation_model();
         $this->Model->{'Project_glossary_system'}=new \Project_glossary_system_model();
         $this->Model->{'Employee_allocation'}= new \Employee_allocation_model();
+        $this->Model->{'Employee_project'}= new \Employee_project_model();
         $this->Model->{'Parametry'}= new \Parametry_model();
         $this->Model->{'Dictionary_measurement_units'}=new \Dictionary_measurement_units_model();
         $this->Model->{'Slo'}=new \Slo_model();
@@ -159,15 +163,13 @@ final class ManageProject implements ManageProjectCommand
         $this->Log->log(0,"[".__METHOD__."] inpArrayDok:");
         $this->Log->logMulti(0,$this->inpArrayDok,"L::".__LINE__."::".__METHOD__);
     }
-    public function pPDF()
-    {
+    public function pPDF(){
         $this->Log->log(0,"[".__METHOD__."]");
         $id_project=filter_input(INPUT_GET,'id',FILTER_VALIDATE_INT);
         $this->utilities->isValueEmpty($id_project);
-        $parm[':id_project']=[$id_project,'INT'];
-        $projectDetails=$this->dbLink->squery('SELECT `create_date`,`create_user_full_name`,`create_user_email`,`rodzaj_umowy`,`numer_umowy`,`temat_umowy`,`kier_grupy`,`term_realizacji` as \'d-term_realizacji\',`harm_data`,`koniec_proj` as \'d-koniec_proj\',`nadzor`,`kier_osr`,`technolog`,`klient`,`typ` as \'typ_umowy\',`system`,`r_dane`,`j_dane`,`quota` FROM `project` WHERE `id`=:id_project AND `delete_status`=0',$parm)[0];
+        $projectDetails=$this->Model->{'Project'}->getProjectDataForPdf($id_project);   
         $projectDoc=$this->Model->{'Project_document'}->getNamesByIdProject($id_project);   
-        $projectTeam=$this->dbLink->squery('SELECT `NazwiskoImie`,`DataOd`,`DataDo` FROM `v_proj_prac_v_pdf` WHERE `idProjekt`=:id_project',$parm); 
+        $projectTeam=$this->Model->{'Employee_project'}->getTeamPdfInput($id_project); 
         $PDF = new \createPdf($projectDetails,$projectDoc,$projectTeam,APP_ROOT,UPLOAD_PROJECT_PDF_DIR);
         $this->utilities->jsonResponse($PDF->getPdf(),'downloadProjectPdf');
     }
