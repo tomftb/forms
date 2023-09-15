@@ -439,4 +439,38 @@ class Project_model extends Database_model {
         }
         Throw New Exception ('Nie istnieje projekt o id '.$id.'. Został usunięt?',0);
     }
+    public function getProjectDataForDoc(int $id=0):array{
+        foreach($this->Main->squery('SELECT '
+                . '`create_date`'
+                . ',`create_user_full_name`'
+                . ',`create_user_email`'
+                . ',`rodzaj_umowy`'
+                . ',`numer_umowy`'
+                . ',`temat_umowy`'
+                . ',`klient`'
+                . ',`kier_grupy`'
+                . ',`term_realizacji` as \'d-term_realizacji\''
+                . ',`harm_data`'
+                . ',`koniec_proj` as \'d-koniec_proj\''
+                . ',`nadzor`'
+                . ',`kier_osr`'
+                . ',`technolog`'
+                . ',`klient`'
+                . ',`typ` as \'typ_umowy\''
+                . ',`system`'
+                . ',`r_dane`'
+                . ',`j_dane`'
+                . ',`quota` '
+                . ' FROM '
+                . '`project` '
+                . 'WHERE '
+                . '`id`=:id '
+                . 'AND `delete_status`=\'0\' '
+                ,[
+                    ':id'=>[$id,'INT']
+                ]) as $project){
+             return $project;
+        }
+        Throw New Exception ('Nie istnieje projekt o id '.$id.'. Został usunięt?',0);
+    }
 }

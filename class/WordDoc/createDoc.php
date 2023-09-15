@@ -397,6 +397,7 @@ final class createDoc extends createDocAbstract {
         $this->section->addText( 'System: '.$this->projectData['system']);
         $this->Log->log(0,"[".__METHOD__."] AFTER multiply addText");
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($this->phpWord,'Word2007');
+        $this->Log->log(0,"[".__METHOD__."]\r\n DOC DIR - ".$this->docDir."\r\n FILE NAME - ".$this->fileName);
         $objWriter->save($this->docDir.$this->fileName);
         return true;
     }

@@ -177,9 +177,13 @@ final class ManageProject implements ManageProjectCommand
         $this->Log->log(0,"[".__METHOD__."]");
         $id=filter_input(INPUT_GET,'id',FILTER_VALIDATE_INT);
         $this->utilities->isValueEmpty($id);
-        $sql[':id']=[$id,'INT'];
-        $projectDetails=$this->dbLink->squery('SELECT `create_date`,`create_user_full_name`,`create_user_email`,`rodzaj_umowy`,`numer_umowy`,`temat_umowy`,`klient`,`kier_grupy`,`term_realizacji` as \'d-term_realizacji\',`harm_data`,`koniec_proj` as \'d-koniec_proj\',`nadzor`,`kier_osr`,`technolog`,`klient`,`typ` as \'typ_umowy\',`system`,`r_dane`,`j_dane`,`quota` FROM `project` WHERE `id`=:id AND `wsk_u`=0 ',$sql)[0];
-        $doc = new \WordDoc\createDoc($projectDetails,$_FILES,'Project'.$this->utilities->getData(),'.docx',UPLOAD_PROJECT_REPORT_DOC_DIR,$this->Log);
+        $doc = new \WordDoc\createDoc($this->Model->{'Project'}->getProjectDataForDoc($id)
+                ,$_FILES
+                ,'Project'
+                ,'.docx'
+                ,UPLOAD_PROJECT_DOC_DIR
+                ,$this->Log
+        );
         $doc->createProjectReport();
         $this->utilities->jsonResponse($doc->getDocName(),'downloadProjectDoc');
     }
@@ -1013,7 +1017,9 @@ final class ManageProject implements ManageProjectCommand
     }
     public function downloadProjectDoc(){
         $this->Log->log(0,"[".__METHOD__."]");
-        FileDownload::getFile(UPLOAD_PROJECT_DOC_DIR,filter_input(INPUT_GET,"file"));
+        $file=filter_input(INPUT_GET,"file");
+        $this->Log->log(0,"\r\n UPLOAD_PROJECT_DOC_DIR - ".UPLOAD_PROJECT_DOC_DIR."\r\n FILE - ".$file);
+        FileDownload::getFile(UPLOAD_PROJECT_DOC_DIR,$file);
     }
     public function showProjectReportFile(){
         $this->Log->log(0,"[".__METHOD__."]");
