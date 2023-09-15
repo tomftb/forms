@@ -20,11 +20,11 @@ var errInputValue= new Array();
 var employeeTab=new Array();
 var employeeSloSPecTab=new Array();
 var employeeFields=new Array(
-        new Array('hidden','','ID'),
-        new Array('t','Imię:','Imie'),
-        new Array('t','Nazwisko:','Nazwisko'),
-        new Array('t','Stanowisko:','Stanowisko'),
-        new Array('t','Email:','Email'),
+        new Array('hidden','','ID'),//ID
+        new Array('t','Imię:','Imie'),//Imie
+        new Array('t','Nazwisko:','Nazwisko'),//Nazwisko
+        new Array('t','Stanowisko:','Stanowisko'),//Stanowisko
+        new Array('t','Email:','Email'),//Email
         new Array('c-przydzial','Przydział:','Przydzial')
     );
 // GLOBAL INPUT PROPERTIES
@@ -494,19 +494,17 @@ function createCheckBoxList(data,status)
             );
     var divR='';;
     var divOverAll=createHtmlElement('div',divOverAllAtr,null,null);
-    for(var i = 0; i < data.length; i++)
-    {    
-        
+    for(var i = 0; i < data.length; i++){    
         //console.log(data[i].ID+' '+data[i].NAZWA+' '+data[i].DEFAULT);
         divR=createHtmlElement('div',divRAtr,null);
-        labelAtr[1][1]='cbox-'+data[i].ID;
+        labelAtr[1][1]='cbox-'+data[i].i;
         label=createHtmlElement('label',labelAtr,null,null);
-        label.innerText=data[i].NAZWA;
-        cboxAtr[2][1]='cbox-ID:'+data[i].ID+'-NAME:'+data[i].NAZWA;
-        cboxAtr[3][1]='cbox-'+data[i].ID;
+        label.innerText=data[i].n;
+        cboxAtr[2][1]='cbox-ID:'+data[i].i+'-NAME:'+data[i].n;
+        cboxAtr[3][1]='cbox-'+data[i].i;
         // VALUE = 0 not send
         // VALUE = 1 ok
-        if(data[i].DEFAULT==='t')
+        if(data[i].d==='y')
         {
             cboxAtr[4][1]=1;
             cboxAtr[5][0]='checked';

@@ -40,3 +40,7 @@ define('AUTOS_API_AD_INTERNAL','https://api-internal.autos.com.pl/ad/auth');
  */
 define('AUTOS_API_AD_SSL_INTERNAL','yes');
 define('AUTOS_SSL_CERT',APP_ROOT.".cert/autos_com_pl.pem");
+/*
+ * WordDoc 
+ */
+define('COMPANY_NAME','Przedsiębiorstwo Wielobranżowe Autos Sp. z o.o.');

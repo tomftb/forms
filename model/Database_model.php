@@ -21,7 +21,13 @@ abstract class Database_model {
             ,'p'=>':mod_user_id,:mod_user_login,:mod_user_full_name,:mod_user_email,:mod_date,:mod_host'
         ],
         /* SQL UPDATE */
-        'update'=>'`mod_user_id`=:mod_user_id,`mod_user_login`=:mod_user_login,`mod_user_full_name`=:mod_user_full_name,`mod_user_email`=:mod_user_email,`mod_date`=:mod_date,`mod_host`=:mod_host',
+        'update'=>''
+                    . '`mod_user_id`=:mod_user_id'
+                    . ',`mod_user_login`=:mod_user_login'
+                    . ',`mod_user_full_name`=:mod_user_full_name'
+                    . ',`mod_user_email`=:mod_user_email'
+                    . ',`mod_date`=:mod_date'
+                    . ',`mod_host`=:mod_host'
     ];
     protected function __construct(){
         $this->Main=\LoadDb::load();
@@ -75,12 +81,15 @@ abstract class Database_model {
     protected function getUserParm(){
         return array_merge(self::getCreateUserParm(),self::getAlterUserParm());
     }
-    public function lastInsertId(){
+    public function lastInsertId():int{
         /* 
          * Remember, if you use a transaction you should use lastInsertId BEFORE you commit
          * otherwise it will return 0
          */
-        $this->Main->lastInsertId();
+        //$stmt = $this->Main->squery("SELECT LAST_INSERT_ID()");
+        //echo var_dump($this->Main->squery("SELECT LAST_INSERT_ID()"));
+        //$lastId = $stmt->fetchColumn();
+        return $this->Main->lastInsertId();
     }
     protected function getStatusDate(){
         return [':status_date'=>[$this->date,'STR']];
@@ -105,5 +114,11 @@ abstract class Database_model {
             return $max;
         }
         return 1;
+    }
+    public function unsetAutoCommit(){
+        $this->Main->unsetAutoCommit();
+    }
+    public function setAutoCommit(){
+        $this->Main->setAutoCommit();
     }
 }

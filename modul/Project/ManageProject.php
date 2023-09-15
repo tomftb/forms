@@ -15,8 +15,19 @@ interface ManageProjectCommand
     public function pClose();
     public function getProjectCloseSlo();
 }
-final class ManageProject extends DatabaseProject implements ManageProjectCommand
+final class ManageProject implements ManageProjectCommand
 {
+    private $dbLink;
+    private $Utilities;
+    private $Log;
+    private $stageDbId=0;
+    private $projectStageDb=[];
+    private $stageValueDbId=0;
+    private $idProject=0;
+    private $input=[];
+    private $date="1970-01-01 00:00:01";
+    private $RA='127.0.0.1';
+    private ?object $Model;
     private $responseType='POST';
     private $inpArray=array();
     private $inpArrayDok=array();
@@ -26,12 +37,11 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
     private $mail='';
     private $valueToReturn=null;
     private $projectDocList='';
-    private $idProject=null;
+
     private $projPrac=array();
     private $projectChange=0;
     private $notify='n';
     private $modul=array();
-    private ?object $Model;
     private $taskPerm= ['perm'=>'','type'=>''];
     private $projectParm=array(
                         'dir'=>array(
@@ -95,8 +105,8 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
                 ),
                 "err_mail"=>array
                 (
-                    "Projekt został utworzony/zaktualizowany. Pojawiły się błędy w wysłaniu powiadomienia.",
-                    "Pojawiły się błędy w wysłaniu powiadomienia."
+                    "Projekt został utworzony/zaktualizowany.<br/>Niestety pojawił się błąd przy próbie wysłania powiadomienia e-mail.<br/>Zamknij to okno przyciskiem Anuluj.",
+                    "Pojawiły się błąd przy próbie wysłania powiadomienia e-mail.<br/> Zamknij to okno przyciskiem Anuluj i spróbuj póżniej."
                 )
             );
     
@@ -104,13 +114,8 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
     const spanBlack="<span style=\"font-weight:bold;color:#000000\">";
     const sGreen="<span style=\"font-weight:bold;color:#008000\">";
     const sEnd="</span>";
-    private $Log;
-    private $dbLink;
-    private ?string $date='';
-    private ?string $RA='127.0.0.1';
     
     public function __construct(){
-        parent::__construct();
         $this->Log=Logger::init(__METHOD__);
         $this->Log->log(0,"[".__METHOD__."]");
         $this->notify='n';
@@ -120,69 +125,40 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
         $this->utilities=NEW Utilities();
         $this->response=NEW Response('Project');
         $this->dbLink=LoadDb::load();
-        $this->Model=new \stdClass();
-        $this->Model->{'Project'}=new \Project_model();
-        $this->Model->{'Dictionary_measurement_units'}=new \Dictionary_measurement_units_model();
-        $this->Model->{'Project_document'}=new \Project_document_model();
-        $this->Model->{'Slo'}=new \Slo_model();
         $this->date=date("Y-m-d H:i:s");
         $this->RA=filter_input(INPUT_SERVER,'REMOTE_ADDR');
+
+        $this->Model=new \stdClass();
+        $this->Model->{'Project'}=new \Project_model();
+        $this->Model->{'Project_document'}=new \Project_document_model();
+        $this->Model->{'Project_glossary_type'}=new \Project_glossary_type_model();
+        $this->Model->{'Project_glossary_document'}=new \Project_glossary_document_model();
+        $this->Model->{'Project_glossary_implementation'}=new \Project_glossary_implementation_model();
+        $this->Model->{'Project_glossary_system'}=new \Project_glossary_system_model();
+        $this->Model->{'Employee_allocation'}= new \Employee_allocation_model();
+        $this->Model->{'Parametry'}= new \Parametry_model();
+        $this->Model->{'Dictionary_measurement_units'}=new \Dictionary_measurement_units_model();
+        $this->Model->{'Slo'}=new \Slo_model();
     }
     public function __call($m,$a){
         Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
     }
-    private function setInpArray(){
+    private function setInput(){
+        $this->Log->log(0,"[".__METHOD__."]");
         $this->utilities->getPost(true,true);
-        if($this->utilities->getStatus()===0)
-        {
+        if($this->utilities->getStatus()==='0'){
             $this->inpArray=$this->utilities->getData();
         }
         else{
-            Throw New Exception ($this->utilities->getInfo(),1);
+            Throw New \Exception ($this->utilities->getInfo(),1);
         }
+        
         $this->inpArrayDok=$this->utilities->getDoc();
-
         $this->Log->log(0,"[".__METHOD__."] inpArray:");
         $this->Log->logMulti(0,$this->inpArray,"L::".__LINE__."::".__METHOD__);
         $this->Log->log(0,"[".__METHOD__."] inpArrayDok:");
         $this->Log->logMulti(0,$this->inpArrayDok,"L::".__LINE__."::".__METHOD__);
     }
-    private function checkDateTypePost($k,$v)
-    {
-        $tmpArray=array();
-        if(preg_match('/^(d-).*/i',$k))
-        //if(substr($k, 0,2)==='d-')
-        {
-            if($v!=='')
-            {
-                /*
-                 * CHECK SEPARATOR
-                 */
-                $this->Log->log(1,"[".__METHOD__."] FOUND NOT EMPTY DATE => ".$v);
-                $tmpArray=explode('.',$v);
-                $this->inpArray[$k]=trim($tmpArray[2])."-".trim($tmpArray[1])."-".trim($tmpArray[0]);
-            }
-            else
-            {
-                $this->Log->log(1,"[".__METHOD__."] DATE => ".$v." => SET DEFAULT 0000-00-00");
-                $this->inpArray[$k]='0000-00-00';
-            }
-        }
-    }
-    private function checkDokTypePost($k,$v)
-    {
-        if(preg_match('/^(dok-).*/i',$k))
-        //if(substr($k, 0,7)==='orgDok-')
-        {
-            if($v!=='')
-            {
-                $this->Log->log(1,"[".__METHOD__."] FOUND NOT EMPTY DOCUMENT => ".$v);
-                $this->inpArrayDok[$k]=$v;
-            }
-            UNSET($this->inpArray[$k]);
-        }
-    }
-
     public function pPDF()
     {
         $this->Log->log(0,"[".__METHOD__."]");
@@ -190,7 +166,7 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
         $this->utilities->isValueEmpty($id_project);
         $parm[':id_project']=[$id_project,'INT'];
         $projectDetails=$this->dbLink->squery('SELECT `create_date`,`create_user_full_name`,`create_user_email`,`rodzaj_umowy`,`numer_umowy`,`temat_umowy`,`kier_grupy`,`term_realizacji` as \'d-term_realizacji\',`harm_data`,`koniec_proj` as \'d-koniec_proj\',`nadzor`,`kier_osr`,`technolog`,`klient`,`typ` as \'typ_umowy\',`system`,`r_dane`,`j_dane`,`quota` FROM `project` WHERE `id`=:id_project AND `delete_status`=0',$parm)[0];
-        $projectDoc=$this->dbLink->squery('SELECT `name` FROM `project_document` WHERE `id_project`=:id_project AND `delete_status`=0 ',$parm);   
+        $projectDoc=$this->Model->{'Project_document'}->getNamesByIdProject($id_project);   
         $projectTeam=$this->dbLink->squery('SELECT `NazwiskoImie`,`DataOd`,`DataDo` FROM `v_proj_prac_v_pdf` WHERE `idProjekt`=:id_project',$parm); 
         $PDF = new \createPdf($projectDetails,$projectDoc,$projectTeam,APP_ROOT,UPLOAD_PROJECT_PDF_DIR);
         $this->utilities->jsonResponse($PDF->getPdf(),'downloadProjectPdf');
@@ -204,10 +180,6 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
         $doc = new \WordDoc\createDoc($projectDetails,$_FILES,'Project'.$this->utilities->getData(),'.docx',UPLOAD_PROJECT_REPORT_DOC_DIR,$this->Log);
         $doc->createProjectReport();
         $this->utilities->jsonResponse($doc->getDocName(),'downloadProjectDoc');
-    }
-    public function getProjectDefaultValues(){
-        $this->Log->log(0,"[".__METHOD__."]");
-        $this->utilities->jsonResponse(parent::getProjectDefaultValues(),'pCreate');
     }
     private function getIdDataPost(&$v)
     {
@@ -224,8 +196,8 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
         }
         $v=array($id,$value);
     }
-    private function getIdDataProjectPost()
-    {
+    private function getIdDataProjectPost(){
+         $this->Log->log(0,"[".__METHOD__."]");
         /*
          * GET AND EXPLODE ID WITH DATA ON |
          */
@@ -237,12 +209,17 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
         self::getIdDataPost($this->inpArray['gl_tech']);
         self::getIdDataPost($this->inpArray['gl_kier']);
         self::getIdDataPost($this->inpArray['nadzor']);
+        $this->Log->logMulti(0,$this->inpArray);
+        
+        if(!array_key_exists('rodzaj_umowy', $this->inpArray)){
+            Throw New Exception('Wskaż punkt `Do realizacji`',0);
+        }
+        //die();
         $this->inpArray['rodzaj_umowy']=explode('|',$this->inpArray['rodzaj_umowy']);
     }
-    public function pCreate()
-    {
+    public function pCreate(){
         $this->Log->log(0,"[".__METHOD__."]");
-        self::setInpArray();
+        self::setInput();
         $this->response->setType('POST');
         self::isEmpty('Numer',$this->inpArray['numer_umowy']);
         self::isEmpty('Temat',$this->inpArray['temat_umowy']);
@@ -254,9 +231,26 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
         self::setProjectParm($this->inpArray);
         self::setProjectSizeQuota();
         self::setProjPrac();
-        parent::addProjectDb($this->inpArray);
-        self::parseResponse($this->modul['DOCUMENT']->addDok(parent::getProjectId(),$this->inpArrayDok));
-        $this->projectChange=1;
+        try{
+            $this->inpArray['id'] = random_int(1000000000, 1099511627776);
+            $this->Model->{'Project'}->beginTransaction(); //PHP 5.1 and new
+            $this->Model->{'Project'}->insert($this->inpArray);
+            /*
+            * SET CHANGE
+            */
+            $this->projectChange=1;
+            
+            /*
+            * SET PROEJCT DOCUMENTS
+            */
+            self::parseResponse($this->modul['DOCUMENT']->addDok($this->inpArray['id'],$this->inpArrayDok));
+            /* Must BEFORE COMMIT, OTHERWISE LAST ID = 0 */
+            $this->Model->{'Project'}->commit();  //PHP 5 and new
+        }
+	catch (\PDOException $e){
+            $this->Model->{'Project'}->rollback(); 
+            throw New \Exception("DATABASE ERROR: ".$e->getMessage(),1); 
+	}
         $this->notify='y';
         self::sendNotify(
                         "Zgłoszenie na utworzenie Projektu :: ".$this->inpArray['klient'].', '.$this->inpArray['temat_umowy'].', '.$this->inpArray['typ_umowy'][1],
@@ -309,11 +303,10 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
         );
         $this->utilities->jsonResponse('','cModal','POST'); 
     }
-    private function getProjectDoc()
-    {
+    private function getProjectDoc(){
+        $this->Log->log(0,"[".__METHOD__."]");
         $tmp=''; 
-        foreach($this->dbLink->squery('SELECT `name` FROM `project_document` WHERE `id_project`=:id_project AND `delete_status`=\'0\' ',[':id_project'=>[$this->inpArray['id'],'INT']]) as $v)
-        {
+        foreach($this->Model->{'Project_document'}->getNamesByIdProject($id_project) as $v){
             $tmp.="-&nbsp;".$v['nazwa']."<br/>";
         }
         return $tmp;
@@ -386,22 +379,29 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
             $sql=[
                     ':id'=>[$value[0],'INT']
             ];
-            $pracEmail=$this->dbLink->squery("SELECT `Email` FROM `v_all_prac_v5` WHERE id=:id",$sql);
-            if(count($pracEmail)){
-                $pracEmail=array($pracEmail[0]['Email'],$value[1]);
-                array_push($recEmail,$pracEmail);
+            foreach($this->dbLink->squery("SELECT `Email` FROM `employee` WHERE id=:id",$sql) as $v){
+                //$pracEmail=array($v['Email'],$value[1]);
+                array_push($recEmail,array($v['Email'],$value[1]));
             }
+            //$pracEmail=;
+            //if(count($pracEmail)){
+               // $pracEmail=array($pracEmail[0]['Email'],$value[1]);
+              //  array_push($recEmail,$pracEmail);
+           // }
         }
+        $this->Log->log(0,"[".__METHOD__."] employees EMAILS:");
+        $this->Log->logMulti(1,$recEmail);
         return ($recEmail);
     }
     private function getAdminEmail($admin,&$recEmail=[]){
         $this->Log->log(0,"[".__METHOD__."] ");
         if(!$admin){ return false; }
-        $ad=$this->dbLink->squery("SELECT `WARTOSC` FROM `parametry` WHERE `SKROT`='MAIL_RECIPIENT'");
-        $adminUsers=explode(';',$ad[0]['WARTOSC']);
-        foreach($adminUsers as $user){
-            $this->Log->log(0,"[".__METHOD__."] ".$user);
-            array_push($recEmail,array($user,'Admin'));
+        $this->Log->log(0,"[".__METHOD__."] ADMINS:");
+        foreach(explode(';',$this->Model->{'Parametry'}->getParmViaShortcut('PROJECT_ADMIN_MAIL_RECIPIENT')) as $user){
+            $this->Log->log(0,"[".__METHOD__."] user - ".$user);
+            if(trim($user)!==''){
+                array_push($recEmail,array($user,'Admin'));
+            }
         }
     }
     private function cNewProjSubjectMail($head){
@@ -436,16 +436,6 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
         $this->Log->log(0,$mailBody);
         return ($mailBody);
     }
-    private function getLastProjectData()
-    {
-        $this->Log->log(0,"[".__METHOD__."]");
-        $data=$this->dbLink->squery('SELECT * FROM `v_project_post_compare` WHERE `idProject`=:i',['i'=>[$this->inpArray['id'],'INT']]);
-        if(count($data)!==1){
-            Throw New Exception("[".__METHOD__."] THERE IS MORE THAN ONE PROJECT WITH ID, OR THERE NO PROJECT WITH THIS ID => ".$this->inpArray['id'],1);
-        }
-        $this->lastProjectData=$data[0];
-        $this->Log->logMulti(2,$this->lastProjectData,__METHOD__." lastProjectData"); 
-    }
     private function parseLastProjectData()
     {
         if(count($this->lastProjectData)===0) { return false;}
@@ -459,26 +449,25 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
         $this->projectChange=count($this->projectDiff);
         $this->Log->log(0,"[".__METHOD__."][POST<->DB] count diff => ".$this->projectChange);
     }
-    public function pEdit()
-    {
+    public function pEdit(){
         $this->Log->log(0,"[".__METHOD__."]");
-        //$this->inpArray=filter_input_array(INPUT_POST);
-        self::setInpArray();
+        self::setInput();
         $this->utilities->keyExist($this->inpArray,'id');
         $this->utilities->isEmptyKeyValue($this->inpArray,'id',true,0);
         $this->utilities->keyExist($this->inpArray,'numer_umowy');
         $this->utilities->isEmptyKeyValue($this->inpArray,'numer_umowy',true,0);
         $this->utilities->keyExist($this->inpArray,'temat_umowy');
         $this->utilities->isEmptyKeyValue($this->inpArray,'temat_umowy',true,0);
-
         $this->inpArray['numer_umowy']=trim($this->inpArray['numer_umowy']);
         $this->inpArray['temat_umowy']=trim($this->inpArray['temat_umowy']);
-        
         $this->dbLink->checkMaxValuelength('numer_umowy',$this->inpArray['numer_umowy'],'project');
         $this->dbLink->checkMaxValuelength('temat_umowy',$this->inpArray['temat_umowy'],'project');
-        self::projectExist('numer_umowy',$this->inpArray['id']);
-        self::projectExist('temat_umowy',$this->inpArray['id']);
-        self::getLastProjectData();
+        self::projectExists('numer_umowy');
+        self::projectExists('temat_umowy');
+        $this->lastProjectData=$this->Model->{'Project'}->getProjectPostField($this->inpArray['id']);
+        //$this->Log->logMulti(2,$this->inpArray,__METHOD__." inpArray"); 
+        //$this->Log->logMulti(2,$this->lastProjectData,__METHOD__." lastProjectData"); 
+        //die();
         self::setQuotaField($this->lastProjectData['quota']);
         self::parseLastProjectData();
         self::setProjectParm($this->lastProjectData);
@@ -487,8 +476,7 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
         self::setProjectDir();
         self::setProjectSizeQuota();
         self::setProjPrac();
-        parent::updateProjectDb($this->inpArray); 
-        self::parseResponse($this->modul['DOCUMENT']->updateDoc($this->inpArray['id'],$this->inpArrayDok));    
+        self::updateProject(); 
         self::parseNotifyFields();
         self::sendNotify(
                         "Zgłoszenie aktualizacji Projektu :: ".$this->inpArray['klient'].', '.$this->inpArray['temat_umowy'].', '.$this->inpArray['typ_umowy'][1],
@@ -497,17 +485,33 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
              
         $this->utilities->jsonResponse('','cModal');
     }
-    private function projectExist($field='',$id=0){
+    private function updateProject(){
+        try{
+            $this->Log->log(0,"[".__METHOD__."]");
+            $this->Log->logMulti(0,$this->inpArray,__METHOD__);
+            $this->Model->{'Project'}->beginTransaction(); //PHP 5.1 and new
+            /*
+             * UPDATE PROJECT
+             */
+            $this->Model->{'Project'}->update($this->inpArray);
+            $this->Model->{'Project'}->commit();  //PHP 5 and new
+        }
+        catch (\PDOException $e){
+            $this->Model->{'Project'}->rollback(); 
+            throw New \Exception(__METHOD__.$e,1);
+	}
+        /*
+         * UPDATE PROJECT DOCUMENTS
+         */
+        self::parseResponse($this->modul['DOCUMENT']->updateDoc($this->inpArray['id'],$this->inpArrayDok));
+    }
+    private function projectExists(string $field=''){
         $this->Log->log(0,"[".__METHOD__."] ".$field." => ".$this->inpArray[$field]);  
         if(empty($this->inpArray[$field])){
             return false;
         }
-        $sql=[
-            ':id'=>[$id,'INT'],
-            ':field'=>[$this->inpArray[$field],'STR'],
-            ];
-        if (count($this->dbLink->squery('SELECT * FROM `project` WHERE id!=:id AND `'.$field.'`=:field AND wsk_u=0',$sql))>0){
-            Throw New Exception($this->infoArray[$field][1],0);
+        foreach($this->Model->{'Project'}->projectExists($field,$this->inpArray[$field],$this->inpArray['id']) as $project){
+            Throw New \Exception($this->infoArray[$field][1],0);
         }
     }
     private function setQuotaField($quota)
@@ -519,7 +523,7 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
     public function pDocEdit()
     {
         $this->Log->log(0,"[".__METHOD__."]");
-        $this->setInpArray(filter_input_array(INPUT_POST));
+        $this->setInput(filter_input_array(INPUT_POST));
         $this->utilities->validateKey($this->inpArray,'id',true,1);
         self::parseResponse($this->modul['DOCUMENT']->updateDoc($this->inpArray['id'],$this->inpArrayDok)); 
         
@@ -814,14 +818,25 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
          */
         self::setDataForBodyEmailTemplate($data);
         if($this->response->getError()) { return false; }
-        $this->mail=NEW Email();    
-        if($this->mail->sendMail($subject,self::projectBodyMailTemplate($body,$data),self::cNewProjRecMail(1),$this->infoArray['err_mail'][0],true)!=='')
-        {
-            $this->response->setError(0, $this->mail->getErr());        
-        }   
+        $this->mail=NEW \Email();            
+        /*
+         * SET IN BLOCK BECAUSE = Email library can send lvl 2 and this execute die in ErrorHandler
+         */
+        try{
+            $this->mail->sendMail(
+                $subject
+                ,self::projectBodyMailTemplate($body,$data)
+                ,self::cNewProjRecMail(1)
+                ,$this->infoArray['err_mail'][0]
+                ,true
+            );
+        }
+        catch(\Exception $e){
+            $this->Log->logMulti(0,$e->getMessage());
+            Throw New \Exception($this->infoArray['err_mail'][0],0);
+        }         
     }
-    private function setDataForBodyEmailTemplate(&$d)
-    {
+    private function setDataForBodyEmailTemplate(&$d){
         $this->Log->logMulti(0,$d,__METHOD__);
         $d['typ_umowy']=self::setupInputValue('typ_umowy');
         $d['size']=$this->projectParm['size']['new_size'];
@@ -851,80 +866,35 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
     public function pDetails(){
         $this->Log->log(0,"[".__METHOD__."] ");
         (int)$id=filter_input(INPUT_GET,'id',FILTER_VALIDATE_INT);
-        $v=$this->Model->{'Project'}->get_v_all_proj_v10($id);       
-        $v['rodzaj_umowy']=self::setProjectRodzajUmowy($this->Model->{'Project'}->getProjectRodzajUmowy($id),$this->Model->{'Project'}->get_v_slo_um_proj($id));               
-        $v['nadzor']=self::setProjectMember($this->Model->{'Project'}->getProjectNadzor($id),$this->dbLink->squery('SELECT * FROM v_slo_lider_proj ORDER BY ImieNazwisko ASC'));
-        $v['kier_grupy']=self::setProjectMember($this->Model->{'Project'}->getProjectKierownikGrupy($id),$this->dbLink->squery('SELECT * FROM v_slo_kier_proj ORDER BY ImieNazwisko ASC'));
-        $v['gl_tech']=self::setProjectMember($this->Model->{'Project'}->getProjectTechnolog($id),$this->dbLink->squery('SELECT * FROM v_slo_glow_tech_proj ORDER BY ImieNazwisko ASC'));
-        $v['gl_kier']=self::setProjectMember($this->Model->{'Project'}->getProjectKierownikOsrodka($id),$this->dbLink->squery('SELECT * FROM v_slo_kier_osr_proj ORDER BY ImieNazwisko ASC'));      
-        $v['typ_umowy']=self::setProjectDict($this->Model->{'Project'}->getProjectTyp($id),$this->dbLink->squery('SELECT * FROM v_slo_typ_um ORDER BY ID ASC'));
-        $v['system_umowy']=self::setProjectDict($this->Model->{'Project'}->getProjectSystem($id),$this->dbLink->squery('SELECT * FROM v_slo_sys_um ORDER BY ID ASC'));
-        $v['unitSlo']=self::setProjectMeasurementDictionary($this->Model->{'Project'}->getProjectSystem($id));
+        $v=$this->Model->{'Project'}->get_v_all_proj_v10($id); 
+        /*
+         * SET DATEPICKER INPUT FIELD
+         */
+        $v['term_realizacji']=$this->utilities->getDatePickerDate($v['term_realizacji']);
+        $v['harm_data']=$this->utilities->getDatePickerDate($v['harm_data']);
+        $v['koniec_proj']=$this->utilities->getDatePickerDate($v['koniec_proj']);
+        $this->Log->logMulti(0,$v);
+        $v['rodzaj_umowy']=$this->Model->{'Project_glossary_implementation'}->getProjectOnTop($id);               
+        $v['nadzor']=array_merge([$this->Model->{'Project'}->getProjectNadzor($id)],$this->Model->{'Employee_allocation'}->getExceptEmployeesLike('Lider',$v['nadzor'],intval($v['nadzor_id'],10)));
+        $v['kier_grupy']=array_merge([$this->Model->{'Project'}->getProjectKierownikGrupy($id)],$this->Model->{'Employee_allocation'}->getExceptEmployeesLike('Manager',$v['kier_grupy'],intval($v['kier_grupy_id'],10)));
+        $v['gl_tech']=array_merge([$this->Model->{'Project'}->getProjectTechnolog($id)],$this->Model->{'Employee_allocation'}->getExceptEmployeesLike('Główny technolog',$v['technolog'],intval($v['technolog_id'],10)));
+        $v['gl_kier']=array_merge([$this->Model->{'Project'}->getProjectKierownikOsrodka($id)],$this->Model->{'Employee_allocation'}->getExceptEmployeesLike('Kierownik ośrodka',$v['kier_osr'],intval($v['kier_osr_id'],10)));      
+        $v['typ_umowy']=$this->Model->{'Project_glossary_type'}->getProjectOnTop($id);
+        $v['system_umowy']=$this->Model->{'Project_glossary_system'}->getProjectOnTop($id);
+        $v['unitSlo']=self::setProjectMeasurementDictionary($v['j_dane']);
         $v['project']=$this->Model->{'Project'}->getProjectData($id);
         $v['dokPowiazane']=$this->Model->{'Project_document'}->getById($id);
         echo json_encode($this->response->setResponse(__METHOD__,$v,'pDetails','POST')); 
     }
-    private function setProjectMeasurementDictionary(array $j_dane=['ID'=>0,"Nazwa"=>''])
-    {
+    private function setProjectMeasurementDictionary(string $nazwa=''):array{
+        $this->Log->log(0,"[".__METHOD__."] ");
         /* Project first */
-        $all=array($j_dane);
+        $all=[$nazwa];
         /* SET Rest */
-        foreach($this->Model->{'Dictionary_measurement_units'}->getRemaining($j_dane['Nazwa'])  as $v){
-            array_push($all,$v['Nazwa']);
+        foreach($this->Model->{'Dictionary_measurement_units'}->getExceptName($nazwa)  as $v){
+            array_push($all,$v['name']);
         }
         return $all;
-    }
-
-    private function setProjectDict(array $pData=[],array $dic=[]):array
-    {
-        $this->Log->logMulti(0,$pData,__LINE__."::".__METHOD__." Project DATA");
-        $this->Log->logMulti(0,$dic,__LINE__."::".__METHOD__." Project dictionary");
-        /*
-         * check exist, if exist remove
-         */
-        foreach($dic as $id => $value)
-        {
-            if($pData['ID']===$value['ID'] && $pData['Nazwa']===$value['Nazwa'] )
-            {
-                $this->Log->log(0,"[".__METHOD__."] FOUND identical");
-                UNSET($dic[$id]);
-            }
-        }
-        return array_merge($pData,$dic);
-    }
-    private function setProjectRodzajUmowy(array $pData=[],array $dic=[]):array
-    {
-        $this->Log->logMulti(0,$pData,__LINE__."::".__METHOD__." Project DATA");
-        $this->Log->logMulti(0,$dic,__LINE__."::".__METHOD__." Project dictionary");
-        /*
-         * check exist, if exist remove
-         */
-        foreach($dic as $id => $value)
-        {
-            if($pData['ID']===$value['ID'] && $pData['Nazwa']===$value['Nazwa'] && $pData['NazwaAlt']===$value['NazwaAlt'] )
-            {
-                $this->Log->log(0,"[".__METHOD__."] FOUND identical");
-                UNSET($dic[$id]);
-            }
-        }
-        return array_merge($pData,$dic);
-    }
-    private function setProjectMember(array $pData=[],array $dic=[]):array
-    {
-        $this->Log->logMulti(0,$pData,__LINE__."::".__METHOD__." Project DATA");
-        $this->Log->logMulti(0,$dic,__LINE__."::".__METHOD__." Project dictionary");
-         /*
-         * check exist, if exist remove
-         */
-        foreach($dic as $id => $value)
-        {
-            if($pData['id']===$value['id'] && $pData['ImieNazwisko']===$value['ImieNazwisko'])
-            {
-                $this->Log->log(0,"[".__METHOD__."] FOUND identical");
-                UNSET($dic[$id]);
-            }
-        }
-        return array_merge($pData,$dic);
     }
     public function getProjectEmailData()
     {
@@ -943,56 +913,35 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
     {
         $this->valueToReturn=$this->query('SELECT * FROM v_udzial_sum_procent_prac WHERE sumProcentowyUdzial<? ORDER BY idPracownik ASC ',100);
     }
-    public function pDelete()
-    {
-        self::setNewProjectStatus('d');
+    public function pDelete(){
+        $this->Log->log(0,"[".__METHOD__."]");
+        $this->setInput();
+        $this->utilities->keyExistEmpty('id',$this->inpArray);
+        self::setReason();
+        $this->Model->{'Project'}->setDeleteStatus($this->inpArray);
         $this->utilities->jsonResponse('','cModal'); 
     }
     public function pClose(){
         $this->Log->log(0,"[".__METHOD__."]");
-        self::setNewProjectStatus('c');
+        $this->setInput();
+        $this->utilities->keyExistEmpty('id',$this->inpArray);
+        self::setReason();
+        $this->Model->{'Project'}->setCloseStatus($this->inpArray);
         $this->utilities->jsonResponse('','cModal'); 
     }
-    # SET NEW PROJECT STATUS
-    private function setNewProjectStatus($status)
-    {
+    private function setReason(){
         $this->Log->log(0,"[".__METHOD__."]");
-        $this->setInpArray(filter_input_array(INPUT_POST));
-        $this->date=date("Y-m-d H:i:s");
-        if($this->utilities->checkKeyExistEmpty('id',$this->inpArray)['status']!==0){
-            Throw New Exception($this->utilities->getInfo(),1);
-        }
         $reason=explode("|",$this->inpArray['reason']);
-        if($reason[0]==='0')
-        {
+        if($reason[0]==='0'){
             $reason[1]=$this->inpArray['extra'];
         }
         if(trim($reason[1])===''){
             Throw New Exception('Podaj powód!',0);
         }
-        $sql=[
-            ':id'=>[$this->inpArray['id'],'INT'],
-            ':reason'=>[$reason[1],'STR'],
-            ':mod_user_id'=>[intval($_SESSION['userid'],10),'INT'],
-            ':mod_user_login'=>[$_SESSION['username'],'STR'],
-            ':mod_user_full_name'=>[$_SESSION['nazwiskoImie'],'STR'],
-            ':mod_user_email'=>[$_SESSION['mail'],'STR'],
-            ':mod_date'=>[$this->date,'STR'],
-            ':mod_host'=>[$this->RA,'STR']
-        ];
-        switch($status)
-        {
-            case 'c': # CLOSE PROJECT IN DB
-                $sql[':status']=['c','STR'];
-                $this->dbLink->query('UPDATE `project` SET `status`=:status,`status_info`=:reason,`mod_date`=:mod_date,`mod_user_id`=:mod_user_id,`mod_user_login`=:mod_user_login,`mod_host`=:mod_host,`mod_user_full_name`=:mod_user_full_name,`mod_user_email`=:mod_user_email WHERE `id`=:id',$sql);
-                break;
-            case 'd':# DELETED PROJECT IN DB
-                $sql[':status']=['d','STR'];
-                $this->dbLink->query('UPDATE `project` SET `status`=:status,`delete_status`=\'1\',`delete_reason`=:reason,`delete_date`=:mod_date,`mod_date`=:mod_date,`mod_user_login`=:mod_user_login,`mod_user_id`=:mod_user_id,`mod_host`=:mod_host,`mod_user_full_name`=:mod_user_full_name,`mod_user_email`=:mod_user_email WHERE `id`=:id',$sql);
-                break;
-            default:
-                Throw New Exception('WRONG TASK!',1);
-        }
+        /*
+         * OVERRIDE
+         */
+        $this->inpArray['reason']=$reason[1];
     }
     public function getReturnedValue()
     {
@@ -1026,7 +975,9 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
     }
     private function parseResponse($response)
     {
-        if($response['status']===0)
+        $this->Log->log(0,"[".__METHOD__."]");
+        $this->Log->logMulti(0,$response);
+        if($response['status']==='0')
         {
             /*
              * NO CHANGE IN DOCUMENT'S
@@ -1040,13 +991,13 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
             }
             $this->projectDocList=$response['info'];
         }
-        else if($response['status']===1){
+        else if($response['status']==='1'){
             // CHANGE    
             $this->projectDiff['dok']=1;
             $this->projectChange=1;
             $this->projectDocList=$response['info'];
         }
-        else if($response['status']===2){
+        else if($response['status']==='2'){
             // ERROR
             Throw New Exception ($response['info'],0);
         }
@@ -1082,6 +1033,64 @@ final class ManageProject extends DatabaseProject implements ManageProjectComman
                     ,'data'=>$this->Model->{'Project'}->getProjects()
                     ,'glossary'=>$Stage->getGlossary()
                 ],'runMain'); 
+    }
+    private function updateProjectDb($inp=[]){
+        $this->Log->log(0,"[".__METHOD__."]");
+        $this->input=$inp;
+        try{
+            $this->dbLink->beginTransaction(); //PHP 5.1 and new
+            self::update();
+            $this->dbLink->commit();  //PHP 5 and new
+        }
+        catch (PDOException $e){
+            $this->dbLink->rollback(); 
+            throw New Exception(__METHOD__.$e,1);
+	}          
+    }
+    public function getProjectDefaultValues(){
+        $this->Log->log(0,"[".__METHOD__."]");
+        $valueToReturn['rodzaj_umowy']=$this->Model->{'Project_glossary_implementation'}->get();
+        $valueToReturn['nadzor']=$this->Model->{'Employee_allocation'}->getEmployeesLike('Lider');
+        $valueToReturn['kier_grupy']=$this->Model->{'Employee_allocation'}->getEmployeesLike('Manager');
+        $valueToReturn['dokPowiazane']=$this->Model->{'Project_glossary_document'}->get();
+        $valueToReturn['gl_tech']=$this->Model->{'Employee_allocation'}->getEmployeesLike('Główny technolog');
+        $valueToReturn['gl_kier']=$this->Model->{'Employee_allocation'}->getEmployeesLike('Kierownik ośrodka');
+        $valueToReturn['typ_umowy']=$this->Model->{'Project_glossary_type'}->get();
+        $valueToReturn['system_umowy']=$this->Model->{'Project_glossary_system'}->get();
+        $valueToReturn['unitSlo']=self::getProjectUnitSlo();
+        $valueToReturn['quota']=$this->Model->{'Parametry'}->getParmViaShortcut('PROJ_QUOTA');
+        $valueToReturn['r_dane']=$this->Model->{'Parametry'}->getParmViaShortcut('PROJ_BASE_FILE_SIZE');
+        $valueToReturn['id']='';
+        $valueToReturn['numer_umowy']='';
+        $valueToReturn['klient']='';
+        $valueToReturn['temat_umowy']='';
+        $valueToReturn['term_realizacji']=date("d.m.Y");  
+        $valueToReturn['harm_data']=date("d.m.Y"); 
+        $valueToReturn['koniec_proj']=date("d.m.Y"); 
+        $this->utilities->jsonResponse($valueToReturn,'pCreate');
+    }
+    private function getProjectUnitSlo(){
+        $this->Log->log(0,"[".__METHOD__."]");
+        
+        $sloIterator=New \DataIterator($this->Model->{'Dictionary_measurement_units'}->getUpperCase());
+        $def='';
+        $all=array();
+        
+        while ($sloIterator->valid()) {
+            $current = $sloIterator->current();
+            if($current['DEF']==='t') {
+                $def=$current['NAZWA'];
+            }
+            else{
+                array_push($all,$current['NAZWA']);
+            }
+            $sloIterator->next();
+        }
+        array_unshift ($all,$def);
+        return $all;
+    }
+    protected function getProjectId(){
+        return $this->idProject;
     }
     function __destruct(){}
 }

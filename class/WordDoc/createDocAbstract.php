@@ -78,7 +78,9 @@ class createDocAbstract {
         return \PhpOffice\PhpWord\Shared\Converter::cssToPoint($size.$measurement);
     }
      
-    protected function setFont($rStyle){
+    protected function getFont($rStyle){
+        $this->Log->log(0,"[".__METHOD__."]");
+        //$this->Log->log(0,$rStyle);
         /* TO DO -> CHECK EXISTS */
         /* AVAILABLE
         $textrun->addText('color', array('color' => '996699'));
@@ -112,7 +114,7 @@ class createDocAbstract {
         ];
     }
     protected function setAlign($style){
-        //$this->Log->log(0,"[".__METHOD__."] Style:");
+        $this->Log->log(0,"[".__METHOD__."]");
         //$this->Log->log(0,$style);
         //'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
         //$this->phpWord->addFontStyle('r2Style', array('bold'=>false, 'italic'=>false, 'size'=>12));
@@ -258,6 +260,7 @@ class createDocAbstract {
             }
     }
     private function setTextStyle($style='1'){
+        $this->Log->log(0,'['.__METHOD__.'] value - '.$style);
         if($style==='1'){
             return true;
         }

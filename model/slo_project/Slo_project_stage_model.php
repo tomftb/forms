@@ -7,43 +7,22 @@ class Slo_project_stage_model extends Database_model {
     public function __call($m,$a){
         Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
     }
-    public function insertStage(array $parm=[]):void{
-        $this->Main->query2(
-                "INSERT INTO `slo_project_stage` (`id`,`departmentId`,`departmentName`,`title`,`type`,`new_page`,`part`,".parent::getUserKey().") VALUES (:id,:departmentId,:departmentName,:title,:type,:new_page,:part,".parent::getUserValue().");"
-                ,array_merge($parm, parent::getUserParm()));
-    }
-    public function insertSection(array $parm=[':id'=>[0,'INT'],':id_parent'=>[0,'INT']]):void{
-        $this->Main->query2(
-            "INSERT INTO `slo_project_stage_section` (`id`,`id_parent`,".parent::getUserKey().") VALUES (:id,:id_parent,".parent::getUserValue().");"
-            ,array_merge($parm,parent::getUserParm()));   
-    }
-    public function insertSubsection(array $parm=[':id'=>[0,'INT'],':id_parent'=>[0,'INT']]):void{
-        $this->Main->query2(
-            "INSERT INTO `slo_project_stage_subsection` (`id`,`id_parent`,".parent::getUserKey().") VALUES (:id,:id_parent,".parent::getUserValue().");"
-            ,array_merge($parm,parent::getUserParm()));   
-    }
+
+
+
     public function insertSubsectionRow(array $parm=[':id'=>[0,'INT'],':id_parent'=>[0,'INT']]):void{
         $this->Main->query2(
             "INSERT INTO `slo_project_stage_subsection_row` (`id`,`id_parent`,".parent::getUserKey().") VALUES (:id,:id_parent,".parent::getUserValue().");"
             ,array_merge($parm,parent::getUserParm()));   
     }
-    public function insertSubsectionRowImage(array $parm=[':id'=>[0,'INT'],':id_parent'=>[0,'INT']]):void{
-        $this->Main->query2(
-            "INSERT INTO `slo_project_stage_subsection_row_i` (`id`,`id_parent`,".parent::getUserKey().") VALUES (:id,:id_parent,".parent::getUserValue().");"
-            ,array_merge($parm,parent::getUserParm()));   
-    }
+
     public function insertTabStop(array $parm=[]):void{
         $this->Main->query2(
                     "INSERT INTO `slo_project_stage_subsection_row_p_tabstop` (`id_parent`,`lp`,`position`,`measurement`,`measurementName`,`alignment`,`alignmentName`,`leadingSign`,`leadingSignName`,".parent::getUserKey().") VALUES (:id_parent,:lp,:position,:measurement,:measurementName,:alignment,:alignmentName,:leadingSign,:leadingSignName,".parent::getUserValue().");"
                     ,array_merge($parm,parent::getUserParm())
                 );
     }
-    public function insertVariable(array $parm=[]){
-        $this->Main->query2(
-                    "INSERT INTO `slo_project_stage_subsection_row_p_variable` (`id_parent`,`id_variable`,`name`,`value`,`type`,".parent::getUserKey().") VALUES (:id,:id_variable,:name,:value,:type,".parent::getUserValue().");"
-                    ,array_merge($parm,parent::getUserParm())
-                );
-    }
+
     public function insertProperty(string $table='',array $parm=['id_parent'=>[0,'INT'],'property'=>['','STR'],'value'=>['','STR']]):void{
         $this->Main->query2(
                  "INSERT INTO `".$table."` (`id_parent`,`property`,`value`,".parent::getUserKey().") VALUES (:id_parent,:property,:value,".parent::getUserValue().");"
@@ -77,13 +56,67 @@ class Slo_project_stage_model extends Database_model {
                 array_merge($parm,parent::getStatusDate(),parent::getAlterUserParm()));
     }
     public function updateDeleteWithReason(string $table='slo_project_stage_subsection_row', array $parm=[':id'=>[0,'INT'],':reason'=>['Removed by edit','STR'],':status'=>['1','STR']]){
-          $this->Main->query("UPDATE ".$table." SET `delete_status`=:status,`delete_reason`=:reason,`delete_date`=:status_date,".parent::getUpdateSql()." WHERE `id_parent`=:id AND `delete_status`='0'",
+          $this->Main->query("UPDATE ".$table." SET `delete_status`=:status,`delete_reason`=:reason,`delete_date`=:status_date,".parent::getUpdateSql()." WHERE `id`=:id AND `delete_status`='0'",
                 array_merge($parm,parent::getStatusDate(),parent::getAlterUserParm()));
     }
     public function getStages(string $where='',array $parm=[]):array{
         return $this->Main->squery("SELECT s.`id` as 'i',s.`title` as 't',b.`login` as 'bl' FROM `slo_project_stage` s LEFT JOIN `uzytkownik` as b ON s.`buffer_user_id`=b.`id` ".$where,$parm);
     }
-    public function getChildId(string $table='slo_project_stage_subsection_row_i',array $parm=[':id'=>[0,'INT']]):array{
-        return $this->Main->squery("SELECT `id` FROM `".$table."` WHERE `id_parent`=:id AND `delete_status`='0';",$parm,'FETCH_OBJ','fetchAll');
+
+    public function insertStage(int $id=0,int $departmentId=0,string $departmentName='',string $title='',string $type='tx',string $new_page='n', string $part=''):void{ 
+        $this->Main->query2(
+                "INSERT INTO `slo_project_stage` ("
+                . "`id`"
+                . ",`departmentId`"
+                . ",`departmentName`"
+                . ",`title`"
+                . ",`type`"
+                . ",`new_page`"
+                . ",`part`"
+                . ",".parent::getUserKey().""
+                . ") VALUES ("
+                . ":id"
+                . ",:departmentId"
+                . ",:departmentName"
+                . ",:title"
+                . ",:type"
+                . ",:new_page"
+                . ",:part"
+                . ",".parent::getUserValue().");"
+                ,array_merge(
+                        [
+                        ':id'=>[$id,'INT']
+                        ,':departmentId'=>[$departmentId,'INT']
+                        ,':departmentName'=>[$departmentName,'STR']
+                        ,':title'=>[$title,'STR']
+                        ,':type'=>[$type,'STR']
+                        ,':new_page'=>[$new_page,'STR']
+                        ,':part'=>[$part,'STR']
+                        ]
+                        , parent::getUserParm()
+                        )
+                );
+    }
+    public function updateStage(int $id=0,int $departmentId=0,string $departmentName='',string $title='',string $type='tx',string $new_page='n'):void{       
+        $this->Main->query2(
+                "UPDATE `slo_project_stage` SET "
+                . "`departmentId`=:departmentId"
+                . ",`departmentName`=:departmentName"
+                . ",`title`=:title"
+                . ",`type`=:type"
+                . ",`new_page`=:new_page"
+                . ",".parent::getUpdateSql().""
+                . " WHERE"
+                . "`id`=:id;"
+                ,array_merge([
+                    ':id'=>[$id,'INT']
+                    ,':departmentId'=>[$departmentId,'INT']
+                    ,':departmentName'=>[$departmentName,'STR']
+                    ,':title'=>[$title,'STR']
+                    ,':type'=>[$type,'STR']
+                    ,':new_page'=>[$new_page,'STR']
+                    ],parent::getAlterUserParm()
+                )
+        );
     }
 }

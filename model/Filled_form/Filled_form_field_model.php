@@ -36,4 +36,10 @@ class Filled_form_field_model extends Database_model {
                         FROM `filled_form_field` WHERE `delete_status`=\'0\' AND `id_filled_form`=:id_filled_form AND `id_form_field`=:id_form_field Limit 0,1',[':id_filled_form'=>[$id_filled_form,'INT'],':id_form_field'=>[$id_form_field,'INT']]
                 ,'FETCH_ASSOC','fetchAll');
     }
+    public function getByIdFilledFormNameFormField(string|int $id_filled_form=0,string|int $name="-input-"):array{
+        return $this->Main->squery('SELECT 
+                        `value` as `v`
+                        FROM `filled_form_field` WHERE `delete_status`=\'0\' AND `id_filled_form`=:id_filled_form AND `name` LIKE (:name) Limit 0,1',[':id_filled_form'=>[$id_filled_form,'INT'],':name'=>["%-input-".$name,'STR']]
+                ,'FETCH_ASSOC','fetchAll');
+    }
 }

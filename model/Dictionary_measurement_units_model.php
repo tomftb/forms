@@ -19,4 +19,12 @@ class Dictionary_measurement_units_model extends Database_model {
     public function getUpperCase(){
         return $this->Main->squery("SELECT `name` as `NAZWA`,`default_unit` as `DEF` FROM `dictionary_measurement_units` WHERE `id`>0 AND `delete_status`='0' ORDER BY `id` ASC ");
     }
+    public function getExceptName(string $name=''):array{
+        return $this->Main->squery("SELECT `name` FROM `dictionary_measurement_units` WHERE `id`>0 AND `delete_status`='0' AND `name`!=:name ORDER BY `id` ASC ",[":name"=>[$name,'STR']]);
+    }
+   // public function getProjectOnTop(string $name=''):array{
+      //  return $this->Main->squery("SELECT `name` as `Nazwa` FROM `dictionary_measurement_units` WHERE `id`>0 AND `delete_status`='0' AND `name`!=:name ORDER BY `id` ASC ",[':name'=>[$name,'STR']],'FETCH_ASSOC','fetchAll');
+    //`id` as \"ID\",
+        
+   // }
 }

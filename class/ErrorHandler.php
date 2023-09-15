@@ -9,9 +9,11 @@ interface ErrorHandlerInterface{
  */
 class ErrorHandler implements ErrorHandlerInterface{
     private $error='';
+    private $status='0';
     private $Log;
     public function __construct(){
         $this->Log=Logger::init();
+        $this->status='0';
     }
     public function setError($data,$errLvl=0){
         /*
@@ -19,6 +21,7 @@ class ErrorHandler implements ErrorHandlerInterface{
          * lvl = 1 appliaction error
 	 * lvl = 2 critical error die()      
          */
+        $this->status='1';
         $this->parseErrLvl($data,$errLvl);
     }
     private function parseErrLvl($d='',$l=0)
@@ -47,5 +50,8 @@ class ErrorHandler implements ErrorHandlerInterface{
             $sep='<br/>';
         }
         $this->error.=$sep.$d;
+    }
+    public function getStatus():string{
+        return $this->status;
     }
 }

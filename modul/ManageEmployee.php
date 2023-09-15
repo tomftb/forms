@@ -31,6 +31,8 @@ class ManageEmployee
         $this->Log->log(0,"[".__METHOD__."]");
         $this->Utilities=NEW \Utilities();
         $this->Model->{'Employee'}=new \Employee_model();
+        $this->Model->{'Allocation'}=new \Allocation_model();
+        $this->Model->{'Employee_allocation'}=new \Employee_allocation_model();
         $this->date=date("Y-m-d H:i:s");
         $this->RA=filter_input(INPUT_SERVER,'REMOTE_ADDR');
     }
@@ -41,24 +43,18 @@ class ManageEmployee
         $this->Log->log(0,"[".__METHOD__."]");
         $this->inpArray=filter_input_array(INPUT_POST);
         self::checkEmployeeValueLength();
-        self::employeeExist();
+        $this->Model->{'Employee'}->employeeExists($this->inpArray['Imie'],$this->inpArray['Nazwisko'],0); 
+
         self::addEmployee();     
         $this->Utilities->jsonResponse('','cModal');
-    }
-    private function employeeExist(){
-        $this->Log->log(0,"[".__METHOD__."]");  
-        $this->Model->{'Employee'}->employeeExist([':imie'=>[$this->inpArray['Imie'],'STR'],':nazwisko'=>[$this->inpArray['Nazwisko'],'STR']]);
-    }
-    private function employeeExistId(){
-        $this->Log->log(0,"[".__METHOD__."]");  
-        $this->Model->{'Employee'}->employeeExistId([':imie'=>[$this->inpArray['Imie'],'STR'],':nazwisko'=>[$this->inpArray['Nazwisko'],'STR'],':id'=>[$this->inpArray['ID'],'INT']]); 
     }
     public function eEmployeeOn(){
         $this->Log->log(0,"[".__METHOD__."]");   
         $this->inpArray=filter_input_array(INPUT_POST);
         $this->Utilities->validateKey($this->inpArray,'ID',true,1);
+        $this->Log->log(0," ID - ".$this->inpArray['ID']); 
         self::checkEmployeeValueLength();
-        self::employeeExistId();
+        $this->Model->{'Employee'}->employeeExists($this->inpArray['Imie'],$this->inpArray['Nazwisko'],$this->inpArray['ID']); 
         self::updateEmployee();
         $this->Utilities->jsonResponse('','cModal');          
     }
@@ -66,58 +62,38 @@ class ManageEmployee
         $this->Log->log(0,"[".__METHOD__."]");   
         // CHECK AVALIABLE DICTIONARY
         $specPost=self::getSpecTabId();
-        $specDb=self::getSpec();
-        $this->checkSpecInDb($specPost,$specDb);
-        self::setSpec($specDb,$specPost,$idEmployee);
+        $this->checkSpecInDb($specPost);
+        $this->Model->{'Employee_allocation'}->deleteByIdEmployee($idEmployee);
+        foreach($specPost as $a){
+            $this->Model->{'Employee_allocation'}->insertByIdEmployee($idEmployee,intval($a,10));
+        }
     }
-    private function setSpec($t1,$t2,$idEmployee)
-    {
-        /*
-         * SET SLO
-         * t1 => DATABASE
-         * t2 => POST
-         */
-        foreach($t1 as $v)
-        {
-            $sql=[
-              'idp'=>[$idEmployee,'INT'],
-              'ids'=>[$v,'INT']
-            ];
-            if(in_array($v,$t2)){
-                SELF::addEmployeeAllocation($sql);
-            }
-            else{
-                self::removeEmployeeAllocation($sql);
-            }
-        } 
-    }
-    public function eEmployeeSpecOn()
-    {
+    public function eEmployeeSpecOn(){
         $this->Log->log(0,"[".__METHOD__."]");   
         $this->inpArray=filter_input_array(INPUT_POST);
         $this->Utilities->validateKey($this->inpArray,'ID',true,1);
-        self::setEmployeeAllocation($this->inpArray['ID']);
+        $this->Log->log(0," ID - ".$this->inpArray['ID']); 
+        self::setEmployeeAllocation(intval($this->inpArray['ID'],10));
         $this->Utilities->jsonResponse('','cModal');          
     }
-    protected function checkSpecInDb($t1,$t2)
-    {
+    protected function checkSpecInDb($t1){
         /*
          * CHECK EXIST IN DB
          * t1 => POST
-         * t2 => DATABASE
          */
-        $this->Log->log(0,"[".__METHOD__."]");   
+        $this->Log->log(0,"[".__METHOD__."]");  
+        $specDb=self::getSpec();
         foreach($t1 as $v){
             $this->Log->log(0,"[".__METHOD__."] ID => ".$v); 
-            if(!in_array($v,$t2)){  
+            if(!in_array($v,$specDb)){  
                 Throw New Exception ("DICTIONARY ID => ".$v." NOT FOUND IN DB",1);
             }         
         }
     }
     private function getSpec(){
         $db=array(); 
-        foreach($this->dbLink->squery('SELECT `ID` FROM `v_slo_u_spec`',[],'FETCH_ASSOC','fetchAll') as $v){
-            array_push($db,$v['ID']);
+        foreach($this->Model->{'Allocation'}->getIdList() as $v){
+            array_push($db,$v['id']);
         }
         $this->Log->logMulti(2,$db,__LINE__."::".__METHOD__." db");
         return ($db);
@@ -126,6 +102,8 @@ class ManageEmployee
     {
         $this->Log->log(0,"[".__METHOD__."]");
         $err='';
+        $this->inpArray['Imie']=trim($this->inpArray['Imie']);
+        $this->inpArray['Nazwisko']=trim($this->inpArray['Nazwisko']);
         if(strlen($this->inpArray['Imie'])<3 || strlen($this->inpArray['Nazwisko'])<3){
             $err.=$this->infoArray['imie_nazwisko'][0]."<br/>";
         }
@@ -133,7 +111,7 @@ class ManageEmployee
              $err.=$this->infoArray['imie_nazwisko'][2]."<br/>";
         }
         if($err){
-            Throw New Exception($err,0);
+            Throw New \Exception($err,0);
         }
     }
     protected function addEmployee(){
@@ -175,52 +153,17 @@ class ManageEmployee
       
     }
     protected function updateEmployee(){
+        $this->Log->log(0,"[".__METHOD__."]");
         try{
-            $this->dbLink->beginTransaction(); //PHP 5.1 and new
-            $sql=[
-                ':imie'=>[$this->inpArray['Imie'],'STR'],
-                ':nazwisko'=>[$this->inpArray['Nazwisko'],'STR'],
-                ':stanowisko'=>[$this->inpArray['Stanowisko'],'STR'],
-                ':email'=>[$this->inpArray['Email'],'STR'],
-                ':id'=>[$this->inpArray['ID'],'INT'],
-                ':mod_user_id'=>[intval($_SESSION['userid'],10),'INT'],
-                ':mod_user_login'=>[$_SESSION['username'],'STR'],
-                ':mod_user_full_name'=>[$_SESSION['nazwiskoImie'],'STR'],
-                ':mod_user_email'=>[$_SESSION['mail'],'STR'],
-                ':mod_date'=>[$this->date,'STR'],
-                ':mod_host'=>[$this->RA,'STR']
-            ];
-            $this->dbLink->query('UPDATE `pracownik` SET `imie`=:imie, `nazwisko`=:nazwisko, `stanowisko`=:stanowisko,`email`=:email,`mod_user_id`=:mod_user_id,`mod_user_login`=:mod_user_login,`mod_user_full_name`=:mod_user_full_name,`mod_user_email`=:mod_user_email,`mod_date`=:mod_date,`mod_host`=:mod_host WHERE `id`=:id'
-            ,$sql);
+            $this->Model->{'Employee'}->beginTransaction();
+            $this->Model->{'Employee'}->update($this->inpArray['Imie'],$this->inpArray['Nazwisko'],$this->inpArray['Stanowisko'],$this->inpArray['Email'],$this->inpArray['ID']);
             self::setEmployeeAllocation($this->inpArray['ID']);
-            $this->dbLink->commit();  
+            $this->Model->{'Employee'}->commit();  
         }
         catch (PDOException $e){
-            $this->dbLink->rollback();
-            Throw New Exception ("[".__METHOD__."] Wystąpił błąd zapytania bazy danych: ".$e->getMessage(),1); 
+            $this->Model->{'Employee'}->rollback();
+            Throw New \Exception ("[".__METHOD__."] Wystąpił błąd zapytania bazy danych: ".$e->getMessage(),1); 
         }  
-    }
-    protected function addEmployeeAllocation($sql){
-        // CHECK IS EXIST
-        if(self::employeeSpecExists($sql)===0){
-            // NOT EXIST -> ADD
-            $this->Log->log(1,"[".__METHOD__."] SPEC SENDED IN POST AND NOT EXIST IN DB=> ADD"); 
-            $this->dbLink->query('INSERT INTO `employee_allocation` (`id_employee`,`id_allocation`) VALUES (:idp,:ids)',$sql); 
-        }
-        else{
-            $this->Log->log(1,"[".__METHOD__."] SPEC SENDED IN POST BUT ALREADY EXIST => NOTHING TO DO"); 
-        }
-    }
-    protected function removeEmployeeAllocation($sql)
-    {
-        if(self::employeeSpecExists($sql)>0){
-            // EXIST -> REMOVE
-            $this->Log->log(1,"[".__METHOD__."] SPEC EXIST BUT NOT SENDED IN POST => REMOVE"); 
-            $this->dbLink->query('DELETE FROM `employee_allocation` WHERE `id_employee`=:idp AND `id_allocation`=:ids',$sql); 
-        }   
-        else{
-            $this->Log->log(1,"[".__METHOD__."] SPEC NOT SENDED IN POST AND NOT EXIST ID DB => NOTHING TO DO"); 
-        }
     }
     private function employeeSpecExists($sql){
         return count($this->dbLink->squery('SELECT * FROM `employee_allocation` WHERE `id_employee`=:idp AND `id_allocation`=:ids',$sql,'FETCH_ASSOC','fetchAll'));
@@ -299,7 +242,7 @@ class ManageEmployee
     }
     public function getEmployeesSpecSlo(){
         $this->Utilities->setGetString('function',$this->inpArray);
-        $this->Utilities->jsonResponse($this->dbLink->squery('SELECT * FROM `v_slo_u_spec` ORDER BY `ID` ASC'),$this->inpArray['function']);
+        $this->Utilities->jsonResponse($this->Model->{'Allocation'}->getAbbreviationList(),$this->inpArray['function']);
     }
     public function getEmployeesLike(){
         $this->Log->log(0,"[".__METHOD__."]");
@@ -331,51 +274,23 @@ class ManageEmployee
     {
         return ($this->dbLink->squery('SELECT `ID_Projekt`,`Numer_umowy`,`Temat_umowy`,`Procent_udziału`,`Data_od`,`Data_do` FROM `v_proj_prac_v4` WHERE `ID_Pracownik`=:i ORDER BY `ID_Projekt` ASC',[':i'=>[$id,'INT']]));
     }
-    # RETURN ALL EMPLOYEE SPEC DICTIONARY and other FROM DB
-    private function employeeSpec($idEmployee)
-    {
-        $this->Log->log(0,"[".__METHOD__."] ID Employess => ".$idEmployee);
-        // GET DICTIONARY
-        $emplSpec=$this->dbLink->squery('SELECT * FROM `v_slo_u_spec` ORDER BY `ID` ASC ');
-        // GET EMPLOYEE DICTIONARY 
-        $emplSlo=$this->dbLink->squery('SELECT * FROM `v_all_prac_spec` WHERE `idPracownik`=:i ORDER BY `idSlownik` ASC ',['i'=>[$idEmployee,'INT']]);
-        // COMBINE
-        return ($this->combineSloEmployeeSpec($emplSpec,$emplSlo));
-    }
     public function getEmployeeSpec(){
         $this->Log->log(0,"[".__METHOD__."]");
         (int) $id=self::getId();
          $this->Utilities->jsonResponse([
-            $this->Model->{'Employee'}->getEmployeeData($id)
-            ,self::employeeSpec($id)
+            $this->Model->{'Employee'}->getEmployeeUpperData($id)
+            ,$this->Model->{'Employee_allocation'}->getEmployeeAllocation($id)
         ],'eEmployeeSpec');
-    }
-    protected function combineSloEmployeeSpec($slo,$empSol)
-    {
-        foreach($slo as $id => $value)
-        {
-            foreach($empSol as $key => $valueEmpl)
-            {
-                if($value['ID']===$valueEmpl['idSlownik'])
-                {
-                    $slo[$id]['DEFAULT']='t';
-                    unset($empSol[$key]);
-                    break;
-                }
-            }
-        }
-        return $slo;
     }
     # RETURN CURRENT PROJECT DETAILS
     public function getEmployeeDetails(){
         $this->Log->log(0,"[".__METHOD__."]");
         (int) $id=self::getId();
         $this->Utilities->jsonResponse([
-            $this->Model->{'Employee'}->getEmployeeData($id)
-            ,self::employeeSpec($id)
+                                        $this->Model->{'Employee'}->getEmployeeUpperData($id)
+                                        ,$this->Model->{'Employee_allocation'}->getEmployeeAllocation($id)
         ],'eEmployee');
     }
-
     public function getModulEmployeesDefaults(){
         $this->Log->log(0,"[".__METHOD__."]");
         $this->Utilities->jsonResponse(['perm'=>$_SESSION['perm'],'data'=>$this->Model->{'Employee'}->getAll()],'runMain');

@@ -21,14 +21,14 @@ final class FileShow extends File{
         self::parseFile($file);
         self::setUpHeader();
     }
-    private function setUpDir($dir){
+    private static function setUpDir($dir){
         if(trim($dir)===''){
            die('NO DIR INPUT'); 
         }
         File::checkUploadDir($dir);
         self::$dir=$dir;
     }
-    private function parseFile($file=''){
+    private static function parseFile($file=''){
         if($file===''){
            die('NO FILE INPUT'); 
         }
@@ -44,7 +44,7 @@ final class FileShow extends File{
             die('WRONG FILE EXTENSION');
         }
     }
-    private function setUpHeader(){
+    private static function setUpHeader(){
         $size = getimagesize(self::$dir.self::$fileName);
         $fp = fopen(self::$dir. self::$fileName, 'rb');
         if ($size and $fp){

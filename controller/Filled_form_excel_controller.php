@@ -43,9 +43,8 @@ class Filled_form_excel_controller extends Base_controller {
 
         $this->spreadsheet = new Spreadsheet();
         $this->activeWorksheet = $this->spreadsheet->getActiveSheet();
-        (array) $form_column=$this->Model->{'Form_col'}->getAllLabelByFormId($this->id,'1');
-        self::setExcelHead($form_column);
-        self::setExcelBody($form_column);
+        self::setExcelHead($this->Model->{'Form_col'}->getAllLabelByFormId($this->id,'1'));
+        self::setExcelBody($this->Model->{'Form_col'}->getAllNameByFormId($this->id,'1'));
         
         $this->writer = new Xlsx($this->spreadsheet);
         (string) $fileName=uniqid('zestawienie_').'.xlsx';
@@ -76,37 +75,40 @@ class Filled_form_excel_controller extends Base_controller {
             $i++;
             $max++;
         }
+        $this->alphaMultiply=0;
     }
     private function setExcelBody(array $form_column=[]){
-        
-         $this->Log->log(0,__METHOD__." id form - ".$this->id);
+        $this->Log->log(0,__METHOD__." id form - ".$this->id);
         (int) $i=0;
         $max=0;
         (int) $row=2;
         $tmpAlpha=$this->alpha;
         //$this->Model->{'Filled_form_field'}->getByIdFormAndIdColumn($filled_form['i'],$column['i'])
         foreach($this->Model->{'Filled_form'}->getByIdForm($this->id) as $filled_form){
-            // $this->Log->logMulti(0,$filled_form['i']);
-            
-            foreach($form_column as $column){ // i and v
-                //$this->Log->logMulti(0,$column['i']);
-                //$this->Log->logMulti(0,$this->Model->{'Filled_form_field'}->getByIdFilledFormIdFormField($filled_form['i'],$column['i']));
-                self::multiplyColumn($i,$tmpAlpha);
-                foreach($this->Model->{'Filled_form_field'}->getByIdFilledFormIdFormField($filled_form['i'],$column['i']) as $filled_column){//
-                    //print_r($value['v']);
-                    //$this->Log->logMulti(0,$filled_column['v']);
-                    
-                    $this->activeWorksheet->setCellValue($tmpAlpha[$i].$row, $filled_column['v']);
-                }
-                $i++;
-                $max++;
-            }
+            $this->Log->log(0,__METHOD__."\r\nid_filled_form - ".$filled_form['i']."\r\nrow - ".$row);
+            self::setExcelBodyPosition($row,$i,$max,$tmpAlpha,$filled_form['i'],$form_column);
             $row++;
             $i=0;
             $max=0;
             $tmpAlpha=$this->alpha;
+            $this->alphaMultiply=0;
         }
        // die();
+    }
+    private function setExcelBodyPosition(int &$row=2,int &$i=0,int &$max=0,array &$tmpAlpha=[],string|int $id_form=0,array $form_column=[]){
+        $this->Log->log(0,__METHOD__."\r\nid_filled_form - ".$id_form);
+        foreach($form_column as $column){
+            $this->Log->log(0,"i - ".$i);
+            $this->Log->log(0,"max - ".$max);
+            $this->Log->log(0,"alphaMultiply - ".$this->alphaMultiply);
+            self::multiplyColumn($i,$tmpAlpha);
+            foreach($this->Model->{'Filled_form_field'}->getByIdFilledFormNameFormField($id_form,$column['v']) as $filled_column){//    
+                $this->Log->log(0,"column - ".$tmpAlpha[$i].$row);
+                $this->activeWorksheet->setCellValue($tmpAlpha[$i].$row, $filled_column['v']);
+            }
+            $i++;
+            $max++;
+        }
     }
     private function multiplyColumn(int &$i=0,array &$tmpAlpha=[], int $max=0):bool{
         if($max>self::max){

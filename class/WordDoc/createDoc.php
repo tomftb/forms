@@ -1,4 +1,7 @@
 <?php
+
+
+
 namespace WordDoc;
 
 final class createDoc extends createDocAbstract {
@@ -41,7 +44,7 @@ final class createDoc extends createDocAbstract {
         /*
          *  Creating the new document...
          */
-        require_once APP_ROOT.'/bootstrap.php';
+        require_once APP_ROOT.'bootstrap.php';
         $settings=new \PhpOffice\PhpWord\Settings();
         $settings::setOutputEscapingEnabled(true);
         $this->phpWord = new \PhpOffice\PhpWord\PhpWord();
@@ -60,18 +63,22 @@ final class createDoc extends createDocAbstract {
     }
     private function setDocInfo(){
         $this->Log->log(0,'['.__METHOD__.']');
+        date_default_timezone_set('Europe/Warsaw');
+        //$this->Log->log(0,'['.__METHOD__.']'.date_default_timezone_get());
+        //$this->Log->log(0,'['.__METHOD__.']'.date("Y-m-d H:i:s", time()));
+        //$this->Log->log(0,'['.__METHOD__.']'.date("Y-m-d H:i:s", time()));
         //$this->Log->log(0,$_SESSION);
         $properties = $this->phpWord ->getDocInfo();   
         $properties->setCreator($_SESSION['nazwiskoImie']);        
-        $properties->setCompany('Geofizyka Toruń S.A.');
-        $properties->setTitle('Testowy Etap projektu');
-        $properties->setDescription('TEST OPIS');
-        $properties->setCategory('TEST KATEGORIA');
-        $properties->setLastModifiedBy('OSTATNIA MODYFIKACJA przez ...');
-        $properties->setCreated(mktime(0, 0, 0, 3, 12, 2022));
-        $properties->setModified(mktime(0, 0, 0, 3, 14, 2022));
-        $properties->setSubject('TEMAT DOKUMENTU');
-        $properties->setKeywords('SŁOWA KLUCZOWE');
+        $properties->setCompany(COMPANY_NAME);
+        $properties->setTitle('');//Testowy Etap projektu
+        $properties->setDescription('');//TEST OPIS
+        $properties->setCategory('');//TEST KATEGORIA
+        $properties->setLastModifiedBy($_SESSION['nazwiskoImie']);
+        $properties->setCreated(time());//mktime(0, 0, 0, 3, 12, 2022)//time()mktime(0, 0, 0, 3, 12, 2022)
+        $properties->setModified(time());//mktime(0, 0, 0, 3, 14, 2022)
+        $properties->setSubject('');//TEMAT DOKUMENTU
+        $properties->setKeywords('');//SŁOWA KLUCZOWE
         /*
             $phpWord->getSettings()->setHideGrammaticalErrors(true);
             $phpWord->getSettings()->setHideSpellingErrors(true);
@@ -204,6 +211,7 @@ final class createDoc extends createDocAbstract {
             /* AT THE END ADD FAKE section if no more left */
             $propertyRun['firstSection']=false;
         }
+        $this->Log->log(0,"[".__METHOD__."] END"); 
     }
     private function setBreakType($valuenewline='1',$firstSection=false,&$breakType='continuous'){
          /* CHECK FOR NEW PAGE */
@@ -227,31 +235,41 @@ final class createDoc extends createDocAbstract {
             $this->Log->log(0,'['.__METHOD__.'] ROW');
             /* DYNAMIC RUN FUNCTION, newLine1 newLine0 (RUN VIA NEW LINE 1,0) */
             self::{'newLine'.$r->paragraph->property->valuenewline}($r,$propertyRun);
-            array_walk($r->image,['self','setRunImage'],$propertyRun['run']);
+            $this->Log->logMulti(0,$propertyRun);
+            $this->Log->logMulti(0,$propertyRun['run']);
+            self::setRunImage($r->image,$propertyRun['run']);
+            //foreach($r->image as $img){
+            //    self::setRunImage();
+            //}
+            //array_walk($r->image,['self','setRunImage'],$propertyRun['run']);
             $firstRow=$r->paragraph->property->valuenewline;
         }
+        $this->Log->log(0,"[".__METHOD__."] END"); 
     }
-    private function setRunImage($image,$key=0,&$item){
+    private function setRunImage($imageData,&$item){//second arg $key=0,
         $this->Log->log(0,"[".__METHOD__."]");
-        //$this->Log->log(0,$image);
-        parent::firstCheckImage($image);
-        if($image->data->tmp==='d'){
-            $this->Log->log(0,"[".__METHOD__."] Image tmp = d -> SKIP;");
-            return false;
-        }
-        $imageDir = ($image->data->tmp==='n') ? UPLOAD_DIR : TMP_UPLOAD_DIR;
-        parent::secondCheckImage($image);
-        /* TO DO
-         * infront - przed tekstem
-         * tight - przyległe
-         * behind - za tekstem
-         */
-        $item->addImage($imageDir.$image->property->uri,
+        foreach($imageData as $image){
+             //$this->Log->log(0,$image);
+            parent::firstCheckImage($image);
+            if($image->data->tmp==='d'){
+                $this->Log->log(0,"[".__METHOD__."] Image tmp = d -> SKIP;");
+                continue;
+                //return false;
+            }
+            $imageDir = ($image->data->tmp==='n') ? UPLOAD_DIR : TMP_UPLOAD_DIR;
+            parent::secondCheckImage($image);
+            /* TO DO
+            * infront - przed tekstem
+            * tight - przyległe
+            * behind - za tekstem
+            */
+            $item->addImage($imageDir.$image->property->uri,
                             array(  'width' => $image->style->width,
                                     'height' => $image->style->height,
                                     //'positioning' => 'relative',//relative absolute
                                     //'wrappingStyle'=>'infront'//'inline', 'behind', 'infront', 'square', 'tight'
                         ));//, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER
+        }
     }
     private function setListStyle($r,$listName=''){
       
@@ -318,28 +336,30 @@ final class createDoc extends createDocAbstract {
     }
     private function newLine0($r,&$propertyRun){
         $this->Log->log(0,"[".__METHOD__."] NEW LINE = FALSE");
-       // $propertyRun['run']->addText($r->paragraph->property->value,parent::setFont($r->paragraph->style));
+       // $propertyRun['run']->addText($r->paragraph->property->value,parent::getFont($r->paragraph->style));
         /* CHECK FOR SYSTEM CONSTS */
         self::checkSystemInLineConst($r,$propertyRun);  
     }
     private function inLine($r,&$propertyRun){
-        $propertyRun['run']->addText($r->paragraph->property->value,parent::setFont($r->paragraph->style));
+        $propertyRun['run']->addText($r->paragraph->property->value,parent::getFont($r->paragraph->style));
     }
     private function setpItem($r,&$propertyRun){
          $this->Log->log(0,"[".__METHOD__."] SET PARAGRAPH ITEM");
          /* TO SET THE sAME TAB STOP - USE FRONT END TO ADD TAB STOP FOR NEW PARAGRAPH */
          $newTextRun = $this->section->addTextRun(parent::setParagraphProperties($r));
          self::addTabStop($r,$newTextRun);
-         $newTextRun->addText($r->paragraph->property->value,parent::setFont($r->paragraph->style));
+         $newTextRun->addText($r->paragraph->property->value,parent::getFont($r->paragraph->style));
          $propertyRun['run'] = $newTextRun;
-         
     }
     private function setlItem($r,&$propertyRun){
         $this->Log->log(0,"[".__METHOD__."] SET LIST ITEM");
         self::{'setNewList_'.$r->list->property->newList}($propertyRun['actListName']);
         self::{'setNewTabStop_'.$r->list->property->newList}($propertyRun['actTabStopName']);
         $listItemRun = $this->section->addListItemRun($r->list->property->listLevel-1, self::setListStyle($r,$propertyRun['actListName']), self::setListParagraph($r,$propertyRun['actTabStopName']));
-        $listItemRun->addText($r->paragraph->property->value,parent::setFont($r->paragraph->style));  
+        $this->Log->log(0,"[".__METHOD__."] FONT PROPERTY:");
+        $font = parent::getFont($r->paragraph->style);
+        $this->Log->logMulti(0,$font);
+        $listItemRun->addText($r->paragraph->property->value,$font);  
         $propertyRun['run'] = $listItemRun;
     }
     private function setNewList_y(&$actListName){
@@ -399,7 +419,7 @@ final class createDoc extends createDocAbstract {
              $newTextRun->addText("\t",null);
          }
         /* WITH PARAGRAPH FORMATING TABSTOP ?*/ 
-        //$newTextRun->addText("\t\t",parent::setFont($r->paragraph->style));
+        //$newTextRun->addText("\t\t",parent::getFont($r->paragraph->style));
     }
         //function createImageDescriptionList(&$WordSection,$row){
         /* USE EXTERNAL SECTION */
@@ -408,12 +428,13 @@ final class createDoc extends createDocAbstract {
 
    //}
     private function checkSystemInLineConst($r,&$propertyRun){
+        $this->Log->log(0,"[".__METHOD__."]");
          /* CREATE IMAGE DESCRIPTION LIST */
          //$this->Chapter->createImageDescriptionList($this->section,$r);//newPage
          self::{'createImageDescriptionList'.strval(preg_match('/.*{IMG_DESCR_LIST}.*/i',$r->paragraph->property->value))}($r,$propertyRun,'inLine');
     }
     private function createImageDescriptionList0($r,&$propertyRun,$execute){
-        $this->Log->log(0,"[".__METHOD__."]");
+        $this->Log->log(0,"[".__METHOD__."] execute - ".$execute);
         self::{$execute}($r,$propertyRun);
     }
     private function createImageDescriptionList1($r,&$propertyRun,$execute){
@@ -424,6 +445,7 @@ final class createDoc extends createDocAbstract {
         $this->Chapter->createImageDescriptionList($this->section);
     }
     private function checkSystemNewLineConst($r,&$propertyRun,$execute){
+        $this->Log->log(0,"[".__METHOD__."]");
          /* CREATE IMAGE DESCRIPTION LIST */
          //$this->Chapter->createImageDescriptionList($this->section,$r);//newPage
          self::{'createImageDescriptionList'.strval(preg_match('/.*{IMG_DESCR_LIST}.*/i',$r->paragraph->property->value))}($r,$propertyRun,$execute);

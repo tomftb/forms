@@ -16,7 +16,7 @@ class Response {
          * m => modul
          */
         $this->Log=Logger::init(__METHOD__);
-        $this->Error=New ErrorHandler();
+        $this->Error=New \ErrorHandler();
         $this->Log->log(0,"[".__METHOD__."]");
         $this->response['modul']=$m;
     }

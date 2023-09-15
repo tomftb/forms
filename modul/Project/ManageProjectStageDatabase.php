@@ -8,6 +8,7 @@
  */
 class ManageProjectStageDatabase {
     private ?object $Model;
+    private ?object $Table;
     private $dbLink;
     protected $DatabaseUtilities;
     protected $Log;
@@ -20,7 +21,39 @@ class ManageProjectStageDatabase {
         $this->dbLink=LoadDb::load();
         $this->DatabaseUtilities=new DatabaseUtilities();
         $this->Model=new \stdClass();
-        $this->Model->{'Slo_project_stage'}=new \Slo_project_stage_model();
+        $this->Table=new \stdClass();
+        /*
+         * SET DEFALUT slo_project ENVIROMENT
+         */
+        self::setSloProjectEnviroment();
+    }
+    public function setSloProjectEnviroment(){
+        $this->Log->log(0,"[".__METHOD__."]");
+        $this->Model->{'Stage'}=new \Slo_project_stage_model();/* 'Slo_project_stage' */
+        $this->Model->{'Slo_project_stage_section'}=new \Slo_project_stage_section_model();
+        $this->Model->{'Slo_project_stage_subsection'}=new \Slo_project_stage_subsection_model();
+        $this->Model->{'Stage_row_variable'}=new \Slo_project_stage_subsection_row_p_variable_model();
+        $this->Model->{'Stage_row_i'}=new \Slo_project_stage_subsection_row_i_model();
+        /*
+         * Table
+         */
+        $this->Table->{'Stage'}='slo_project_stage';
+        $this->Table->{'Stage_row_variable'}='slo_project_stage_subsection_row_p_variable';
+        $this->Table->{'Stage_row_i'}='slo_project_stage_subsection_row_i';
+    }
+    public function setProjectReportEnviroment(){
+        $this->Log->log(0,"[".__METHOD__."]");
+        $this->Model->{'Stage'}=new \Project_report_model();/* 'Slo_project_stage' */
+       // $this->Model->{'Slo_project_stage_section'}=new \Slo_project_stage_section_model();
+       // $this->Model->{'Slo_project_stage_subsection'}=new \Slo_project_stage_subsection_model();
+        $this->Model->{'Stage_row_variable'}=new \Project_report_stage_subsection_row_p_variable_model();
+        $this->Model->{'Stage_row_i'}=new \Project_report_stage_subsection_row_i_model();
+        /*
+         * Table
+         */
+        $this->Table->{'Stage'}='project_report_stage';
+        $this->Table->{'Stage_row_variable'}='project_report_stage_subsection_row_p_variable';
+        $this->Table->{'Stage_row_i'}='project_report_stage_subsection_row_i';
     }
     public function __destruct(){}
     public function __call($m,$a){
@@ -61,20 +94,22 @@ class ManageProjectStageDatabase {
     protected function getStages(string $where='',array $parm=[]):array{
         $this->Log->log(0,"[".__METHOD__."]");
         (array) $data=[];
-        foreach($this->Model->{'Slo_project_stage'}->getStages($where,$parm) as $v){
+        foreach($this->Model->{'Stage'}->getStages($where,$parm) as $v){
             //array_push($data,array($v['i'],$v['n'],html_entity_decode($v['t']),html_entity_decode($v['v']),'bl'=>$v['bl']));
             array_push($data,['i'=>$v['i'],'t'=>html_entity_decode($v['t']),'bl'=>$v['bl']]);
         }
         return $data;
     }
-    public function getStageImageProperty(&$data,$table,$id=0){
-        $this->Log->log(0,"[".__METHOD__."] ID PARENT -> ".$id);
-        foreach($this->Model->{'Slo_project_stage'}->getChildId($table,[':id'=>[$id,'INT']]) as $k => $v){
+    public function assignStageImageProperty(&$data,$id=0){
+        $this->Log->log(0,"[".__METHOD__."] ID PARENT - ".$id);
+        $this->Log->log(0,"[".__METHOD__."] IMAGE TABLE - ".$this->Table->{'Stage_row_i'});
+        foreach($this->Model->{'Stage_row_i'}->getChild($id) as $k => $v){
+            $this->Log->log(0,"[".__METHOD__."] K - ".$k);
             $data->{$k}=new stdClass();
             $data->{$k}->data=new stdClass();
             $data->{$k}->data->id=intval($v->id,10);
             $data->{$k}->data->tmp='n'; // FOR run function getTmpStageImage or getStageImage
-            self::assignAllProperty($data->{$k},$table,$v->id);
+            self::assignAllProperty($data->{$k},$this->Table->{'Stage_row_i'},$v->id);
             /* FIX tmp_id */
             //$data->{$k}->property->tmpid=$k;
         }
@@ -85,7 +120,7 @@ class ManageProjectStageDatabase {
         self::assignProperty($Data,$tablePrefix,'style',$id);
     }
     private function assignProperty(&$data,$tablePrefix = '',$key='property',$id = 0){
-        $this->Log->log(2,"[".__METHOD__."] tablePrefix : ".$tablePrefix."\r\nPROPERTY: ".$key."\r\nID: ".$id);
+        $this->Log->log(2,"[".__METHOD__."]\r\n tablePrefix - `".$tablePrefix."`\r\n property - `".$key."`\r\n ID: ".$id);
         $data->{$key}=new stdClass();
         foreach($this->dbLink->squery("SELECT `property`,`value` FROM `${tablePrefix}_${key}` WHERE `id_parent`=:id;",[':id'=>[$id,'INT']],'FETCH_OBJ','fetchAll') as $v){
             $data->{$key}->{$v->property} = $v->value;
@@ -121,11 +156,11 @@ class ManageProjectStageDatabase {
         self::checkStageExists($id);
         /* GET STAGE */
         $this->stage = new stdClass();
-        $this->stage->data=$this->Model->{'Slo_project_stage'}->getStageFullData([':id'=>[$id,'INT']]);
+        $this->stage->data=$this->Model->{'Stage'}->getStageFullData([':id'=>[$id,'INT']]);
         /* FIX STRING TO INT */
         $this->stage->data->id=intval($this->stage->data->id,10);
         /* SET STAGE STYLE AND PROPERTY */
-        self::assignAllProperty($this->stage,'slo_project_stage',$this->stage->data->id);
+        self::assignAllProperty($this->stage,$this->Table->{'Stage'},$this->stage->data->id);
         /* SET STAGE SECTION */
         self::getStageSection($this->stage,$id);
         return $this->stage;
@@ -134,7 +169,7 @@ class ManageProjectStageDatabase {
         $this->Log->log(2,"[".__METHOD__."] ID => ".$id);
         $data->section=new stdClass();
         /* GET SECTION*/
-        foreach($this->Model->{'Slo_project_stage'}->getSection([':id'=>[$id,'INT']]) as $k => $v){
+        foreach($this->Model->{'Stage'}->getSection([':id'=>[$id,'INT']]) as $k => $v){
             $data->section->{$k} = (object) array(
                     'data'=>new stdClass(),
                     'subsection'=>new stdClass()
@@ -147,7 +182,7 @@ class ManageProjectStageDatabase {
     private function getStageSubsection(&$data,$id=0){
         $this->Log->log(2,"[".__METHOD__."] ID => ".$id);
         /* GET SUBSECTION */
-        foreach($this->Model->{'Slo_project_stage'}->getSubsection([':id'=>[$id,'INT']]) as $k => $v){
+        foreach($this->Model->{'Stage'}->getSubsection([':id'=>[$id,'INT']]) as $k => $v){
             $data->{$k} = (object) array(
                     'data'=>new stdClass(),
                     'subsectionrow'=>new stdClass()
@@ -159,7 +194,7 @@ class ManageProjectStageDatabase {
     }
     private function getStageSubsectionRow(&$data,$id=0){
         $this->Log->log(2,"[".__METHOD__."] ID => ".$id);
-        foreach($this->Model->{'Slo_project_stage'}->getSubsectionRow([':id'=>[$id,'INT']]) as $k => $v){
+        foreach($this->Model->{'Stage'}->getSubsectionRow([':id'=>[$id,'INT']]) as $k => $v){
              $data->{$k}= (object) array(
                     'data'=>new stdClass(),
                     'image'=>new stdClass(),
@@ -169,14 +204,14 @@ class ManageProjectStageDatabase {
                 );
             $data->{$k}->data->id=intval($v->id,10);
             self::assignAllProperty($data->{$k},'slo_project_stage_subsection_row',$data->{$k}->data->id);
-            self::getStageImageProperty($data->{$k}->image,'slo_project_stage_subsection_row_i',$data->{$k}->data->id);
+            self::assignStageImageProperty($data->{$k}->image,$data->{$k}->data->id);
             self::assignAllProperty($data->{$k}->list,'slo_project_stage_subsection_row_l',$data->{$k}->data->id);
             self::assignAllProperty($data->{$k}->paragraph,'slo_project_stage_subsection_row_p',$data->{$k}->data->id);
             self::assignAllProperty($data->{$k}->table,'slo_project_stage_subsection_row_t',$data->{$k}->data->id);
             /* SET TAB STOP */
             self::assignTabStopProperty($data->{$k}->paragraph,$data->{$k}->data->id,'slo_project_stage_subsection_row_p_tabstop');
             /* SET VARIABLE */
-            self::assignVariableProperty($data->{$k}->paragraph,$data->{$k}->data->id,'slo_project_stage_subsection_row_p_variable');
+            self::assignVariableProperty($data->{$k}->paragraph,$data->{$k}->data->id,$this->Table->{'Stage_row_variable'});
         }
     }
     
@@ -190,27 +225,20 @@ class ManageProjectStageDatabase {
     protected function getStage($id=0){
         $this->Log->log(0,"[".__METHOD__."] ID => ".$id);
         /* GET STAGE */ 
-        foreach($this->Model->{'Slo_project_stage'}->getStageEqual([':id'=>[$id,'INT']]) as $stage){
+        foreach($this->Model->{'Stage'}->getStageEqual([':id'=>[$id,'INT']]) as $stage){
             return $stage;
         }
         Throw New Exception ("[".__METHOD__.'] Stage not found - '.$id,1);
     }
     protected function hideStage(){
         $this->Log->log(0,"[".__METHOD__."]");
-        $this->Model->{'Slo_project_stage'}->hideStage(self::getChangeStageParm());
+        $this->Model->{'Stage'}->hideStage(self::getChangeStageParm());
     }
     protected function deleteStage(){
         $this->Log->log(0,"[".__METHOD__."]");
-        $this->Model->{'Slo_project_stage'}->deleteStage(self::getChangeStageParm());
+        $this->Model->{'Stage'}->deleteStage(self::getChangeStageParm());
     }
-    private function deleteSection($id = 0){  
-        $parm=[
-            ':id'=>[$id,'INT'],
-            ':delete_date'=>[$this->DatabaseUtilities->getDate(),'STR']
-        ];
-        $this->dbLink->query("UPDATE `slo_project_stage_section` SET `delete_status`='1',`delete_reason`='Removed by edit',`delete_date`=:delete_date,".$this->DatabaseUtilities->getAlterSql()." WHERE `id_parent`=:id AND `delete_status`='0'",
-                array_merge($parm,$this->DatabaseUtilities->getAlterParm()));
-    }
+
     private function getChangeStageParm(){
         return [
             ':id'=>[$this->data['id'],'INT'],
@@ -234,7 +262,7 @@ class ManageProjectStageDatabase {
         catch (\PDOException $e){
             //$this->Log->log(0,$e);
             $this->dbLink->rollback(); 
-            $this->Log->log(0,__METHOD__." DB ERROR:");
+            $this->Log->log(0,"[".__METHOD__."] DB ERROR:");
             $this->Log->logMulti(0,$e);
             Throw New Exception("[".__METHOD__."] DATABASE ERROR: ".$e->getMessage(),1);
         }
@@ -244,89 +272,68 @@ class ManageProjectStageDatabase {
         }
     }
     private function setStage(){
-        $this->Log->log(0,"[".__METHOD__."]\r\nID DB - ".$this->data->data->id);  
-        $id=$this->data->data->id;
-        /* ADD/UPDATE STAGE */
-        if($this->data->data->id===0){
-            $this->Log->log(0,"INSERT STAGE"); 
-            /* SET NEW ID */
-            $id = random_int(1000000000, 1099511627776);
-            /* SQL INSERT STAGE */
-            $parm=self::sqlStageParm();
-            $parm[':part']=[$this->data->data->part,'STR'];
-            $parm[':id']=[$id,'INT'];
-            $this->Model->{'Slo_project_stage'}->insertStage($parm);
-            
-            /* 
-            /* SQL INSERT STAGE SECTION */
-            foreach($this->data->section as $v){
-               self::insertSection($id,$v);
-            }
-        }
-        else{
-            /* ADD TO JS NEW PAGE!!!!*/
-            $this->Log->log(0,"UPDATE STAGE"); 
-            /* SQL UPDATE STAGE */
-            self::updateStage();
-            /* SQL UPDATE (DELETE) STAGE SECTION delete_status, update section wil set selete_status=0 */
-            self::deleteSection($this->data->data->id);
-            /* SQL UPDATE STAGE SECTION */
-            foreach($this->data->section as $v){
-                self::manageSection($v);
-            }
-        }
-        $this->Log->log(0,"[".__METHOD__."] UPDATE ATTRBUTES");  
-        self::deleteAttributes($id,'slo_project_stage');  
-        self::insertAttributes($id,$this->data,'slo_project_stage');  
+        $this->Log->log(0,"[".__METHOD__."] ID DB - ".$this->data->data->id);  
+        /* 
+         * INSERT/UPDATE STAGE 
+         */
+        $id = ($this->data->data->id===0) ? self::insertNewStage() : self::updateExistStage();
+
+        $this->Log->log(0,"[".__METHOD__."] UPDATE STAGE ATTRIBUTES");  
+        self::deleteAttributes($id,$this->Table->{'Stage'});  
+        self::insertAttributes($id,$this->data,$this->Table->{'Stage'});  
         return $id;
     }
-    private function updateStage(){
-        $this->Log->log(0,"[".__METHOD__."]");  
-         /* SQL INSERT STAGE */
-        $this->dbLink->query2(
-                "UPDATE `slo_project_stage` SET "
-                . "`departmentId`=:departmentId"
-                . ",`departmentName`=:departmentName"
-                . ",`title`=:title"
-                . ",`type`=:type"
-                . ",`new_page`=:new_page"
-                . ",".$this->DatabaseUtilities->getAlterSql().""
-                . " WHERE"
-                . "`id`=:id;"
-                ,array_merge(self::sqlStageParm(),[':id'=>[$this->data->data->id,'INT']],$this->DatabaseUtilities->getAlterParm())
-        );
+    private function insertNewStage(){
+        $this->Log->log(0,"[".__METHOD__."] INSERT NEW STAGE"); 
+        /* SET NEW ID */
+        $id = random_int(1000000000, 1099511627776);
+        $this->Model->{'Stage'}->insertStage(
+                $id
+                ,$this->data->data->departmentId
+                ,$this->data->data->departmentName
+                ,$this->data->data->title
+                ,'tx'
+                ,$this->data->data->valuenewline
+                ,$this->data->data->part);
+        /* SQL INSERT STAGE SECTION */
+        foreach($this->data->section as $v){
+            self::insertSection($id,$v);
+        }
+        return $id;
     }
-    private function sqlStageParm() : array{
-        return [
-                ':departmentId'=>[$this->data->data->departmentId,'INT'],
-                ':departmentName'=>[$this->data->data->departmentName,'STR'],
-                ':title'=>[$this->data->data->title,'STR'],
-                ':type'=>['tx','STR'],
-                ':new_page'=>[$this->data->data->valuenewline,'STR'],
-        ];
+    private function updateExistStage(){
+        $this->Log->log(0,"[".__METHOD__."] UPDATE EXIST STAGE"); 
+        /* ADD TO JS NEW PAGE!!!!*/
+        /* SQL UPDATE STAGE */
+        $this->Model->{'Stage'}->updateStage(
+                $this->data->data->id
+                ,$this->data->data->departmentId
+                ,$this->data->data->departmentName
+                ,$this->data->data->title
+                ,'tx'
+                ,$this->data->data->valuenewline);
+        /* SQL UPDATE (DELETE) STAGE SECTION delete_status, update section wil set selete_status=0 */
+        $this->Log->log(0,"[".__METHOD__."] UPDATE EXIST STAGE ".$this->data->data->id." SECTION DELETE STATUS `1`");
+        $this->Model->{'Slo_project_stage_section'}->updateDeleteViaParent($this->data->data->id,'1');
+        /* SQL UPDATE STAGE SECTION */
+        foreach($this->data->section as $v){
+            self::manageSection($v);
+        }
+        return $this->data->data->id;
     }
     private function insertSection($idStage=0,$section=[]){
-        $this->Log->log(0,"[".__METHOD__."]\r\nINSERT SECTION\r\nID DB STAGE - ".$idStage);
+        $this->Log->log(0,"[".__METHOD__."]\r\n INSERT NEW SECTION\r\n ID STAGE: ".$idStage);
         /* INSERT SECTION */
         $id = random_int(1000000000, 1099511627776);
-        $this->Model->{'Slo_project_stage'}->insertSection([':id'=>[$id,'INT'],':id_parent'=>[$idStage,'INT']]);
+        $this->Model->{'Slo_project_stage_section'}->insert($id,$idStage);
          /* INSERT SUBSECTION [COLUMNS] */
         self::insertAttributes($id,$section,'slo_project_stage_section');    
         foreach($section->subsection as $v){
             self::insertSubsection($id,$v); 
         }
     }
-    private function updateSection($v = []){
-        $this->Log->log(0,"[".__METHOD__."]");   
-        $this->Model->{'Slo_project_stage'}->updateDeleteWithReason('slo_project_stage_section',[':id'=>[$v->data->id,'INT'],':reason'=>['','STR'],':status'=>['0','STR']]);
-        self::deleteAttributes($v->data->id,'slo_project_stage_section');  
-        self::insertAttributes($v->data->id,$v,'slo_project_stage_section');      
-        /* SQL UPDATE (DELETE) STAGE SECTION ROW delete_status, update subsection row wil set delete_status=0 */
-        $this->Model->{'Slo_project_stage'}->updateDeleteWithReason('slo_project_stage_subsection',[':id'=>[$v->data->id,'INT'],':reason'=>['Removed by edit','STR'],':status'=>['1','STR']]);
-        /* MANAGE SUBSETION */
-        self::manageSubSection($v->data->id,$v->subsection);
-    }
-    private function manageSection($v=[]){
+
+    private function manageSection(object $v):bool{
         $this->Log->log(0,"[".__METHOD__."]");   
         /* 
          * v - SECTION
@@ -342,17 +349,30 @@ class ManageProjectStageDatabase {
          * v -> subsection
          */
         $v->data->id = intval($v->data->id,10);
+        $this->Log->log(0,"ID SECTION: ".$v->data->id);   
         if($v->data->id>0){
             /* SQL UPDATE SECTION */
             self::updateSection($v);
         }
         else{
             /* SQL INSERT STAGE SECTION */
+            
             self::insertSection($this->data->data->id,$v);
         }
+        return true;
     }
-    private function insertSubsection($idParent=0,$v=[]){
-        $this->Log->log(0,"[".__METHOD__."]\r\n ID DB SECTION - ".$idParent);
+    private function updateSection(object $v):void{
+        $this->Log->log(0,"[".__METHOD__."]");   
+        $this->Model->{'Slo_project_stage_section'}->updateDelete($v->data->id,'0','');
+        self::deleteAttributes($v->data->id,'slo_project_stage_section');  
+        self::insertAttributes($v->data->id,$v,'slo_project_stage_section');      
+        /* SQL UPDATE (DELETE) STAGE SECTION ROW delete_status, update subsection row wil set delete_status=0 */
+        $this->Model->{'Stage'}->updateDeleteWithReason('slo_project_stage_subsection',[':id'=>[$v->data->id,'INT'],':reason'=>['Removed by edit','STR'],':status'=>['1','STR']]);
+        /* MANAGE SUBSETION */
+        self::manageSubSection($v->data->id,$v->subsection);
+    }
+    private function insertSubsection($id_parent=0,$v=[]){
+        $this->Log->log(0,"[".__METHOD__."]\r\n INSERT NEW SUBSECTION\r\n ID SECTION: ".$id_parent);
         /*
          * v -> data
          * v -> style
@@ -360,9 +380,8 @@ class ManageProjectStageDatabase {
          * v -> subsectionrow
         */
         $id=random_int(1000000000, 1099511627776);
-        $this->Model->{'Slo_project_stage'}->insertSubsection([':id'=>[$id,'INT'],':id_parent'=>[$idParent,'INT']]);
+        $this->Model->{'Slo_project_stage_subsection'}->insert($id,$id_parent);
         /* INSERT SUBSECTION ROW [COLUMNS] */
-
         self::insertAttributes($id,$v,'slo_project_stage_subsection');        
         foreach($v->subsectionrow as $v){
             $IdRow=self::insertSubsectionRow($id,$v); 
@@ -371,10 +390,10 @@ class ManageProjectStageDatabase {
         }
     }
     private function insertSubsectionRow($idParent=0,$data=[]){
-        $this->Log->log(0,"[".__METHOD__."]\r\n ID DB SUBSECTION - ".$idParent);
+        $this->Log->log(0,"[".__METHOD__."]\r\n INSERT NEW SUBSECTION ROW\r\n ID SUBSECTION: ".$idParent);
         /* INSERT SUBSECTION ROWA DATA */
         $id=random_int(1000000000, 1099511627776);
-        $this->Model->{'Slo_project_stage'}->insertSubsectionRow([':id'=>[$id,'INT'],':id_parent'=>[$idParent,'INT']]);
+        $this->Model->{'Stage'}->insertSubsectionRow([':id'=>[$id,'INT'],':id_parent'=>[$idParent,'INT']]);
         /*
          * INSERT paragraph
          */
@@ -382,7 +401,7 @@ class ManageProjectStageDatabase {
         self::insertAttributes($id,$data->paragraph,'slo_project_stage_subsection_row_p');
         /* INSERT SUBSECTION ROW TABSTOP */
         self::insertExtendedTabStop($id,$data->paragraph->tabstop);
-        self::insertExtendedVariable($id,$data->paragraph->variable,'slo_project_stage_subsection_row_p_variable');
+        self::insertExtendedVariable($id,$data->paragraph->variable,$this->Table->{'Stage_row_variable'});
         /*
          * INSERT list
          */
@@ -402,45 +421,27 @@ class ManageProjectStageDatabase {
         //$this->dbLink->query2("DELETE FROM `".$table."_style` WHERE `id_parent`=:id;",$parm);
         /* ADD NEW */
         foreach($data->image as $v){
-            self::insertExtendedSubsectionRowImage($id,$v,'slo_project_stage_subsection_row_i');
+            self::insertExtendedSubsectionRowImage($id,$v);
         }
         return $id;
     }
-    public function insertExtendedSubsectionRowImage($idParent,$v,$table){
+    public function insertExtendedSubsectionRowImage($id_parent,$v){
+        $this->Log->log(0,"[".__METHOD__."]\r\n INSERT NEW EXTENDED ROW IMAGE\r\n ID ROW: ".$id_parent);
+        $id=random_int(1000000000, 1099511627776);
+        $this->Model->{'Stage_row_i'}->insert($id,$id_parent);
+        /* INSERT IMAGE STYLE AND PROPERTIES */
+        $this->insertAttributes($id,$v,$this->Table->{'Stage_row_i'});
+        /* MOVE FILE from tmp_uplad to upload */
+        File::moveFile(TMP_UPLOAD_DIR.$v->property->uri,UPLOAD_DIR,$v->property->uri);
+    }
+    public function insertSimpleSubsectionRowImage($IdRow,$v){
         $this->Log->log(0,"[".__METHOD__."]");
-        $run = function($idParent,$table,$t,$v){
-            /*
-             * t - $this
-             */
-            $id=random_int(1000000000, 1099511627776);
-            $t->Model->{'Slo_project_stage'}->insertSubsectionRowImage([':id'=>[$id,'INT'],':id_parent'=>[$idParent,'INT']]);
-            /* INSERT IMAGE STYLE AND PROPERTIES */
-            $t->insertAttributes($id,$v,$table);
-            /* MOVE FILE from tmp_uplad to upload */
-            File::moveFile(TMP_UPLOAD_DIR.$v->property->uri,UPLOAD_DIR,$v->property->uri);
-        };
-        self::insertSubsectionRowImage($idParent,$v,$table,$run);
+        $id=random_int(1000000000, 1099511627776);
+        $this->Model->{'Stage_row_i'}->insert($id,$IdRow);
+        $this->insertSimpleAttributes($id,$v,$this->Table->{'Stage_row_i'});       
     }
-    public function insertSimpleSubsectionRowImage($IdRow,$v,$table){
-        $this->Log->log(0,"[".__METHOD__."]");
-        $run = function($IdRow,$table,$t,$v){
-            $id=random_int(1000000000, 1099511627776);
-            //$t->dbLink->query2("INSERT INTO `".$table."` (`id_parent`) VALUES (:id);",[':id'=>[$IdRow,'INT']]); 
-            $t->Model->{'Slo_project_stage'}->insertSubsectionRowImage([':id'=>[$id,'INT'],':id_parent'=>[$idParent,'INT']]);
-              /* INSERT IMAGE STYLE AND PROPERTIES */
-            $t->insertSimpleAttributes($id,$v,$table);
-             /* MOVE FILE from tmp_uplad to upload IF CHANGED !!!! */
-            //File::moveFile(TMP_UPLOAD_DIR.$v->property->uri,UPLOAD_DIR,$v->property->uri);
-        };
-        self::insertSubsectionRowImage($IdRow,$v,$table,$run);
-    }
-    private function insertSubsectionRowImage($IdRow=0,$v,$table,$run){
-        /* INSERT IMAGE */
-        $run($IdRow,$table,$this,$v);
-      
-    }
-    public function insertAttributes($id=0,$data=[],$table='slo_project_stage_subsection_row_p'){
-        $this->Log->log(2,"[".__METHOD__."]\r\nID - ".$id."\r\nTABLE: ".$table);
+    public function insertAttributes(int $id=0,object $data,$table='slo_project_stage_subsection_row_p'):void{
+        $this->Log->log(2,"[".__METHOD__."]\r\n TABLE: `".$table."`\r\n ID: `".$id."`");
         (array) $parm[':id_parent']=[$id,'INT'];
         self::checkProperty($data,'style',$table);
         self::checkProperty($data,'property',$table);
@@ -448,20 +449,20 @@ class ManageProjectStageDatabase {
         self::insertAttributesProperty($parm,$data->property,$table.'_property'); 
     }
     public function deleteAttributes($id=0,$table='slo_project_stage_section'){
-        $this->Log->log(0,"[".__METHOD__."]\r\nID - ".$id."\rTABLES:\r\n`".$table."_style`\r\n`".$table."_property`");
-        $this->Model->{'Slo_project_stage'}->delete($table."_style",[':id'=>[$id,'INT']]);
-        $this->Model->{'Slo_project_stage'}->delete($table."_property",[':id'=>[$id,'INT']]);
+        $this->Log->log(0,"[".__METHOD__."]\r\n ID - ".$id."\r TABLES - `".$table."_style` `".$table."_property`");
+        $this->Model->{'Stage'}->delete($table."_style",[':id'=>[$id,'INT']]);
+        $this->Model->{'Stage'}->delete($table."_property",[':id'=>[$id,'INT']]);
     }
     private function insertAttributesProperty($parm=[],$data=[],$table='slo_project_stage_subsection_row_p_style'){
         $this->Log->log(2,"[".__METHOD__."]\r\nTABLE: ".$table);
         foreach($data as $k => $v){
             $parm[':property']=[$k,'STR']; 
             $parm[':value']=[$v,'STR']; 
-            $this->Model->{'Slo_project_stage'}->insertProperty($table,$parm);
+            $this->Model->{'Stage'}->insertProperty($table,$parm);
         }
     }
     public function insertSimpleAttributes($id=0,$data,$table=''){
-        $this->Log->log(2,"[".__METHOD__."]\r\nID - ".$id."\r\nTABLE: ".$table);
+        $this->Log->log(2,"[".__METHOD__."]\r\n ID - ".$id."\r\n TABLE: ".$table);
         $parm[':id']=[$id,'INT'];
         self::checkProperty($data,'style',$table);
         self::checkProperty($data,'property',$table);
@@ -478,7 +479,7 @@ class ManageProjectStageDatabase {
     public function insertSimpleTabStop($id=0,$data=[]){
         $this->Log->log(2,"[".__METHOD__."]");
         $run = function($parm,$t){
-            $t->Model->{'Slo_project_stage'}->insertTabStop($parm);
+            $t->Model->{'Stage'}->insertTabStop($parm);
         };
          self::insertTabStop($id,$data,$run);
     }
@@ -487,13 +488,13 @@ class ManageProjectStageDatabase {
          $this->Log->log(0,$data);
         //var_dump($data);
         $run = function($parm,$t){
-            $t->Model->{'Slo_project_stage'}->insertTabStop($parm);
+            $t->Model->{'Stage'}->insertTabStop($parm);
             
         };
         self::insertTabStop($id,$data,$run);
     }
     private function insertTabStop($id=0,$data=[],$run){
-        $this->Log->log(0,"[".__METHOD__."]\r\n ID DB SUBSECTION ROW - ".$id);
+        $this->Log->log(0,"[".__METHOD__."]\r\n ID SUBSECTION ROW - ".$id);
         $parm=[];
         
         foreach($data as $k => $v){
@@ -513,29 +514,24 @@ class ManageProjectStageDatabase {
                 $run($parm,$this);
         }
     }
-    public function insertSimpleVariable($id=0,$data=[]){
-         $run = function($parm,$t){
-            $t->Model->{'Slo_project_stage'}->insertVariable($parm);
+    public function insertSimpleVariable($id_parent=0,$data=[]){
+         $this->Log->log(2,"[".__METHOD__."]\r\n ID PARENT - ".$id_parent);
+         $run = function(int $id_parent=0,int $id_variable=0,string $name='',string $value='',string $type='v',$t){
+            $t->Model->{'Stage_row_variable'}->insert($id_parent,$id_variable,$name,$value,$type);
         };
-        self::insertVariable($id,$data,$run);
+        self::insertVariable($id_parent,$data,$run);
     }
-    public function insertExtendedVariable($id=0,$data=[]){
-         $run = function($parm,$t){
-            $t->Model->{'Slo_project_stage'}->insertVariable($parm);
+    public function insertExtendedVariable($id_parent=0,$data=[]){
+         $this->Log->log(2,"[".__METHOD__."]\r\n ID PARENT - ".$id_parent);
+         $run = function(int $id_parent=0,int $id_variable=0,string $name='',string $value='',string $type='v',$t){
+            $t->Model->{'Stage_row_variable'}->insert($id_parent,$id_variable,$name,$value,$type);
         };
-        self::insertVariable($id,$data,$run);
+        self::insertVariable($id_parent,$data,$run);
     }
-    private function insertVariable($id=0,$data=[],$run){
-        $this->Log->log(2,"[".__METHOD__."]\r\n ID DB SUBSECTION ROW - ".$id);
+    private function insertVariable(int $id_parent=0,$data=[],$run){
+        $this->Log->log(2,"[".__METHOD__."]\r\n ID SUBSECTION ROW - ".$id_parent);
         foreach($data as $v){
-                $parm=[
-                    ':id'=>[$id,'INT'],
-                    ':id_variable'=>[$v->id_variable,'INT'],/* PDO NOT ACCEPT FLOAT */
-                    ':name'=>[$v->name,'STR'],
-                    ':value'=>[$v->value,'STR'],
-                    ':type'=>[self::parseVariableType($v->type),'STR'] /* TO DO IN FUTURE v - variable, t - text */
-                ];
-                $run($parm,$this);
+            $run($id_parent,$v->id_variable,$v->name,$v->value,self::parseVariableType($v->type),$this);
         }
     }
     private function parseVariableType($v=''){
@@ -580,12 +576,12 @@ class ManageProjectStageDatabase {
     }
     private function updateSubSection($v = []){
         $this->Log->log(0,"[".__METHOD__."]");
-        $this->Model->{'Slo_project_stage'}->updateDeleteWithReason('slo_project_stage_subsection',[':id'=>[$v->data->id,'INT'],':reason'=>['','STR'],':status'=>['0','STR']]);
+        $this->Model->{'Stage'}->updateDeleteWithReason('slo_project_stage_subsection',[':id'=>[$v->data->id,'INT'],':reason'=>['','STR'],':status'=>['0','STR']]);
         self::deleteAttributes($v->data->id,'slo_project_stage_subsection');
         self::insertAttributes($v->data->id,$v,'slo_project_stage_subsection');
         /* SQL UPDATE (DELETE) STAGE SECTION ROW delete_status, update subsection row wil set delete_status=0 */
         $this->Log->log(0,"[".__METHOD__."] deleteSubsectionRow");
-        $this->Model->{'Slo_project_stage'}->updateDeleteWithReason('slo_project_stage_subsection_row',[':id'=>[$v->data->id,'INT'],':reason'=>['Removed by edit','STR'],':status'=>['1','STR']]);
+        $this->Model->{'Stage'}->updateDeleteWithReason('slo_project_stage_subsection_row',[':id'=>[$v->data->id,'INT'],':reason'=>['Removed by edit','STR'],':status'=>['1','STR']]);
         /* */
         self::manageSubSectionRow($v->data->id,$v->subsectionrow);
     }
@@ -641,8 +637,8 @@ class ManageProjectStageDatabase {
         $this->dbLink->query2("DELETE FROM `slo_project_stage_subsection_row_p_tabstop` WHERE `id_parent`=:id;",$parm);
         self::insertExtendedTabStop($v->data->id,$v->paragraph->tabstop);
         /* INSERT SUBSECTION ROW VARIABLE */
-        $this->dbLink->query2("DELETE FROM `slo_project_stage_subsection_row_p_variable` WHERE `id_parent`=:id;",$parm);
-        self::insertExtendedVariable($v->data->id,$v->paragraph->variable,'slo_project_stage_subsection_row_p_variable');
+        $this->dbLink->query2("DELETE FROM ".$this->Table->{'Stage_row_variable'}." WHERE `id_parent`=:id;",$parm);
+        self::insertExtendedVariable($v->data->id,$v->paragraph->variable,$this->Table->{'Stage_row_variable'});
         /*
          * INSERT list
          */
@@ -688,7 +684,7 @@ class ManageProjectStageDatabase {
         }
         else if($v->data->id===0 && $v->data->tmp==='y'){
             $this->Log->log(0,"INSERT IMAGE");
-            self::insertExtendedSubsectionRowImage($IdRow,$v,'slo_project_stage_subsection_row_i');
+            self::insertExtendedSubsectionRowImage($IdRow,$v);
         }
         else{
            throw New Exception ('Wrong CASE: ID - '.$v->data->id.' tmp - '.$v->data->tmp,1);
@@ -708,14 +704,7 @@ class ManageProjectStageDatabase {
                 ,array_merge([':id'=>[$imageId,'INT']],$this->DatabaseUtilities->getAlterParm()));
         return true;
     }
-    public function updateSimpleWskU($id=0,$table=''){
-        $this->Log->log(0,"[".__METHOD__."]");
-        $this->Log->log(0,$id);
-        $this->Log->log(0,$table);
-        $this->dbLink->query2(
-                "UPDATE `".$table."` SET `delete_status`='1' WHERE `id`=:id;"
-                ,[':id'=>[$id,'INT']]);
-    }
+
     private function checkProperty($data,$property='',$table=''){
          $this->Log->log(2,"[".__METHOD__."]\r\nPROPERTY - `".$property."`\r\nTABLE - `".$table."`");
          if(!property_exists($data, $property)){

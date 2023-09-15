@@ -218,8 +218,8 @@ class Database {//extends PDO
     public function commit(){
         self::$dbLink->PDO->commit();
     }
-    public function lastInsertId(){
-        self::$dbLink->PDO->lastInsertId();
+    public function lastInsertId():int{
+        return self::$dbLink->PDO->lastInsertId();
     }
     function __destruct(){}
     public function setAutoCommit(){

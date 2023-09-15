@@ -34,33 +34,41 @@
         (int) $id=filter_input(INPUT_GET,'id',FILTER_VALIDATE_INT);
         //(array) $filled_form=$this->Model->{'Filled_form'}->getByIdForm($id);
         //(array) $filled_form_col=$this->Model->{'Filled_form_field'}->getByIdForm($id);
-        (array) $form_column=$this->Model->{'Form_col'}->getLabelByFormId($id,'1');
+        //(array) $form_column=$this->Model->{'Form_col'}->getLabelByFormId($id,'1');
+        (array) $form_name_column=$this->Model->{'Form_col'}->getNameByFormId($id,'1');
+
+        //print_r($form_name_column);
+
         parent::returnJson([
             'form'=>$this->Model->{'Form'}->getById($id)
-            ,'col'=>$form_column
+            ,'col'=>$this->Model->{'Form_col'}->getLabelByFormId($id,'1')
             //,'list'=>$filled_form
             //,'filled_list'=>self::getFilledFormField($id,$form_column)
-            ,'list'=>self::getFilledFormField($id,$form_column)
+            ,'list'=>self::getList($id,$form_name_column)
             ]);
     }
-    private function getFilledFormField(string|int $id=0, array $form_column=[]):array{
+    private function getList(string|int $id=0, array $form_name_column=[]):array{
         (array) $filled_form_col=[];
         foreach($this->Model->{'Filled_form'}->getByIdForm($id) as $lp => $filled_form){
             //$filled_form_col[] = array_merge($filled_form,$this->Model->{'Filled_form_field'}->getNotNullByIdForm($filled_form['i']));
-            $filled_form_col[$lp]=[];
-            foreach($form_column as $column){
-                //echo $column['i'];
-                //$filled_form_col[$lp] = $this->Model->{'Filled_form_field'}->getByIdFormAndIdColumn($filled_form['i'],$form_column['i']);
-                foreach($this->Model->{'Filled_form_field'}->getByIdFilledFormIdFormField($filled_form['i'],$column['i']) as $filled_column){//
-                    //print_r($value['v']);
-                    $this->Log->logMulti(0,$filled_column['v']);
-                    array_push($filled_form_col[$lp],$filled_column['v']);
-                }
-               
-            }
-            
+            $filled_form_col[$lp]=self::getListPosition($filled_form['i'],$form_name_column);
         }
         return $filled_form_col;
     }
-
+    private function getListPosition(string|int $id_form=0,array $form_name_column=[]):array{
+        (array) $position = [];
+        foreach($form_name_column as $column){
+                //echo $column['i'];
+                //$filled_form_col[$lp] = $this->Model->{'Filled_form_field'}->getByIdFormAndIdColumn($filled_form['i'],$form_column['i']);
+                foreach($this->Model->{'Filled_form_field'}->getByIdFilledFormNameFormField($id_form,$column['v']) as $filled_column){//
+                   
+                    //echo ($filled_column['v'])."\r\n";
+                   
+                    $this->Log->logMulti(0,$filled_column['v']);
+                    array_push($position,$filled_column['v']);
+                }
+               
+            }
+        return $position;
+    }
 }

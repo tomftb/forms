@@ -21,7 +21,12 @@ class Form_col_model extends Database_model {
         Throw New Exception ('Formularz o id `'.$id.'` został usunięty.',0); 
     }
     public function getLabelByFormId(string|int $id=0, string $at_main_page='1'):array{
-        
+        return self::getPropertyByFormId('label',$id,$at_main_page);
+    }
+    public function getNameByFormId(string|int $id=0, string $at_main_page='1'):array{
+        return self::getPropertyByFormId('name',$id,$at_main_page);
+    }
+    public function getPropertyByFormId(string $property='label', string|int $id=0, string $at_main_page='1' ){
         return $this->Main->squery("SELECT "
                 . "`fcp`.`id` as `i`"
                 . ",`fcp`.`value` as `v`"
@@ -32,12 +37,27 @@ class Form_col_model extends Database_model {
                 . ",`form` as `f`"
                 . " WHERE "
                 . " `fcp`.`id_parent`=`fc`.`id` AND `fc`.`id_parent`=`fr`.`id` AND `fr`.`id_parent`=`f`.`id`"
-                . " AND `fcp`.`property`='label'"
+                . " AND `fcp`.`property`=:property"
                 . " AND `f`.`id`=:id"
-                . " AND `f`.`delete_status`='0' AND `fr`.`delete_status`='0' AND `fc`.`delete_status`='0' AND `fcp`.`delete_status`='0' AND `fc`.`at_main_page`=:at_main_page ORDER BY `fc`.`order`",[':id'=>[$id,"INT"],':at_main_page'=>[$at_main_page,'STR']]);
+                . " AND `f`.`delete_status`='0' "
+                . " AND `fr`.`delete_status`='0' "
+                . " AND `fc`.`delete_status`='0' "
+                . " AND `fcp`.`delete_status`='0' "
+                . " AND `fc`.`at_main_page`=:at_main_page "
+                . " AND `fc`.`type`='i' "
+                . " ORDER BY `fc`.`order`"
+                ,[
+                    ':id'=>[$id,"INT"]
+                    ,':at_main_page'=>[$at_main_page,'STR']
+                    ,':property'=>[$property,'STR']
+                ]);
     }
     public function getAllLabelByFormId(string|int $id=0):array{
-        
+        return self::getAllByFormId('label',$id);}
+    public function getAllNameByFormId(string|int $id=0):array{
+        return self::getAllByFormId('name',$id);
+    }
+    public function getAllByFormId(string $property='label',string|int $id=0):array{
         return $this->Main->squery("SELECT "
                 . "`fcp`.`id` as `i`"
                 . ",`fcp`.`value` as `v`"
@@ -48,9 +68,14 @@ class Form_col_model extends Database_model {
                 . ",`form` as `f`"
                 . " WHERE "
                 . " `fcp`.`id_parent`=`fc`.`id` AND `fc`.`id_parent`=`fr`.`id` AND `fr`.`id_parent`=`f`.`id`"
-                . " AND `fcp`.`property`='label'"
+                . " AND `fcp`.`property`=:property"
                 . " AND `f`.`id`=:id"
-                . " AND `f`.`delete_status`='0' AND `fr`.`delete_status`='0' AND `fc`.`delete_status`='0' AND `fcp`.`delete_status`='0' ORDER BY `fc`.`order`",[':id'=>[$id,"INT"]]);
+                . " AND `f`.`delete_status`='0' "
+                . " AND `fr`.`delete_status`='0' "
+                . " AND `fc`.`delete_status`='0' "
+                . " AND `fcp`.`delete_status`='0' "
+                . " AND `fc`.`type`='i' "
+                . "ORDER BY `fc`.`order`",[':id'=>[$id,"INT"],':property'=>[$property,"STR"]]);
     }
 }
 

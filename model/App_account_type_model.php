@@ -4,7 +4,7 @@ class App_account_type_model extends Database_model {
         parent::__construct();
     }
     public function __call($m,$a){
-        Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a));
+        Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
     }
     public function getList():array{
         return $this->Main->squery("SELECT `ID`,`SKROT`,`NAZWA`,`OPIS` FROM `slo_rola`;");

@@ -1,7 +1,6 @@
 <?php
 
 class ManageProjectDocument {
-    //put your code here
     private $inpArrayDok=array();
     private $idProject='';
     private $dbDok=array();
@@ -25,7 +24,7 @@ class ManageProjectDocument {
      * 2 -> error
      */
     private $response=array(
-        'status'=>0,
+        'status'=>'0',
         'info'=>''
     );
     
@@ -70,7 +69,7 @@ class ManageProjectDocument {
         $this->Log->log(0,"[".__METHOD__."]");
         if($idProject==='') { $this->setError(1," WRONG ID PROJECT => (".$idProject.")"); }
         $this->dbDok=$this->Model->{'Project_document'}->getById($idProject);
-        $this->response['status']=1;
+        $this->response['status']='1';
         foreach($this->dbDok as $value)
         {
             self::setupActDokListField($value['NAZWA']);
@@ -102,74 +101,30 @@ class ManageProjectDocument {
         array_map(array($this, 'insertNewDok'),$dokArray); 
         return (self::setResponse());
     }
-    public function insertNewDok($dok)
-    {
-        $this->Log->log(0,"[".__METHOD__."] INSERT INTO DB => ".$dok);
-        $this->response['status']=1;
-        $this->date=date("Y-m-d H:i:s");
-        $id = random_int(1000000000, 1099511627776);
-        $sql=[
-            ':id_project'=>[$this->idProject,'INT'],
-            ':name'=>[$dok,'STR'],
-            ':create_user_id'=>[$_SESSION["userid"],'INT'],
-            ':create_user_login'=>[$_SESSION["username"],'STR'],
-            ':create_user_full_name'=>[$_SESSION["nazwiskoImie"],'STR'],
-            ':create_user_email'=>[$_SESSION["mail"],'STR'],
-            ':create_date'=>[$this->date,'STR'],
-            ':create_host'=>[$this->RA,'STR'],
-            ':mod_user_id'=>[$_SESSION["userid"],'INT'],
-            ':mod_user_login'=>[$_SESSION["username"],'STR'],
-            ':mod_user_full_name'=>[$_SESSION["nazwiskoImie"],'STR'],
-            ':mod_user_email'=>[$_SESSION["mail"],'STR'],
-            ':mod_date'=>[$this->date,'STR'],
-            ':mod_host'=>[$this->RA,'STR']
-        ];
-        $this->dbLink->query('INSERT INTO `project_document` (`id`,`id_project`,`name`,`create_user_id`,`create_user_login`,`create_user_full_name`,`create_user_email`,`create_date`,`create_host`,`mod_user_id`,`mod_user_login`,`mod_user_full_name`,`mod_user_email`,`mod_date`,`mod_host`) VALUES ('.$id.',:id_project,:name,:create_user_id,:create_user_login,:create_user_full_name,:create_user_email,:create_date,:create_host,:mod_user_id,:mod_user_login,:mod_user_full_name,:mod_user_email,:mod_date,:mod_host)',$sql);     
-        self::setupActDokListField($this->addLabel.$dok);
+    public function insertNewDok(string $document=''){
+        $this->Log->log(0,"[".__METHOD__."] INSERT INTO DB => ".$document);
+        $this->response['status']='1';
+        $this->Model->{'Project_document'}->insert(random_int(1000000000, 1099511627776),$this->idProject,$document);
+       self::setupActDokListField($this->addLabel.$document);
     }
-    
-    private function removeNotSendedDoc($dok)
-    {
-        $this->Log->log(0,"[".__METHOD__."] SET delete_status = 1 FOR ".$dok['ID']." => ".$dok['Nazwa']);
+    private function removeNotSendedDoc($dok){
+        $this->Log->log(0,"[".__METHOD__."]\r\n SET delete_status = `1`\r\n ID - `".$dok['ID']."`\r\n VALUE - `".$dok['Nazwa']."`");
         /*
          * FOR TEST
          */
         //$dok['ID']=999;
-        if($this->documentExist($this->idProject,$dok['ID']))
-        {
-
-            $sql=[
-                ':wsk_u'=>['1','STR'],
-                ':mod_data'=>[CDT,'STR'],
-                ':mod_user'=>[$_SESSION["username"],'STR'],
-                ':mod_user_id'=>[$_SESSION["userid"],'INT'],
-                ':mod_host'=>[RA,'STR'],
-                ':id_projekt'=>[$this->idProject,'INT'],
-                ':id'=>[$dok['ID'],'INT']
-            ];
-            $this->dbLink->query('UPDATE `projekt_dok` SET '
-                    . 'wsk_u=:wsk_u,'
-                    . 'mod_data=:mod_data,'
-                    . 'mod_user=:mod_user,'
-                    . 'mod_user_id=:mod_user_id,'
-                    . 'mod_host=:mod_host '
-                    . 'WHERE '
-                    . 'id_projekt=:id_projekt '
-                    . 'AND id=:id',$sql); 
+        if($this->documentExist($this->idProject,$dok['ID'])){
+            $this->Model->{'Project_document'}->setDeleteStatusByIdProject($dok['ID'],$this->idProject);
+             $this->response['status']='1';
             self::setupActDokListField(self::sRed."USUNIĘTO".self::sEnd.": ".$dok['Nazwa']);
         }
         else{
             Throw New Exception("DOCUMENT NOT FOUND IN DATABASE => ID => ".$dok['ID'].", NAZWA => ".$dok['NAZWA'],1);
         }
     }
-    private function documentExist($id=0,$idDoc=0){
+    private function documentExist(int $id_project=0,int $id=0):bool{
         $this->Log->log(0,"[".__METHOD__."]");  
-        $sql=[
-            ':id'=>[$id,'INT'],
-            ':idDoc'=>[$idDoc,'INT'],
-            ];
-       
-        if (count($this->dbLink->squery('SELECT * FROM `project_document` WHERE `id_projekt`=:id AND id=:idDoc',$sql))>0){
+        if (count($this->Model->{'Project_document'}->getByIdProject($id_project,$id))>0){
             return true;
         }
         return false;

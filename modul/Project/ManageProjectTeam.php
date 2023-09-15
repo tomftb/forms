@@ -34,7 +34,7 @@ final class ManageProjectTeam implements ManageProjectTeamCommand{
         (int)$id=intval(filter_input(INPUT_GET,'id',FILTER_VALIDATE_INT),10);
         $this->Utilities->jsonResponse([
             'id'=>$id
-            ,'team'=>$this->Model->{'Employee'}->getTeam($id)
+            ,'team'=>$this->Model->{'Employee'}->getTeamInput($id)
             ,'project'=>$this->Model->{'Project'}->getProjectData($id)
         ],'pTeamOff');   
     }
@@ -49,7 +49,7 @@ final class ManageProjectTeam implements ManageProjectTeamCommand{
         $this->Utilities->keyExist($post,'id');
         $this->Utilities->isEmptyKeyValue($post,'id',true);
         $v['id']=$this->Utilities->getNumber($post['id']);
-        $v['team']=$this->Model->{'Employee'}->getTeam($v['id']);
+        $v['team']=$this->Model->{'Employee'}->getTeamInput($v['id']);
         $v['ava']=self::getAvailableTeam($v['id']);  
         $this->Log->logMulti(2,$v,__LINE__."::".__METHOD__."");
         $this->Utilities->jsonResponse($v,'pTeam');  

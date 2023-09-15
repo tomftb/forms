@@ -96,14 +96,14 @@ final class ManageProjectReport extends ManageProjectReportDatabase implements I
         self::uploadFiles(APP_URL."router.php?task=showProjectTmpReportFile&file=",TMP_UPLOAD_DIR); 
         $this->Utilities->jsonResponse($this->files,'showReportPreview'); 
     }
-    private function getProjectReportFullData($id=0){
+    private function getProjectReportFullData($id_project=0){
         $this->Log->log(0,"[".__METHOD__."]");
         $stage=new ManageProjectStage();
-        $v['id']=$id;
+        $v['id']=$id_project;
         $v['all']=$stage->getAllStage('b');
         $v['footer']=$stage->getAllStage('f');
         $v['heading']=$stage->getAllStage('h');
-        $v['act']=parent::getReport(['id_project'=>[$id,'INT']]);
+        $v['act']=parent::getReportByIdProject($id_project);
         $v['department']=$this->DatabaseUtilities->getUserDepartment($_SESSION['userid']);
         return $v;
     }
@@ -204,6 +204,6 @@ final class ManageProjectReport extends ManageProjectReportDatabase implements I
         $Report=json_decode(filter_input(INPUT_POST,'data'));
         //$this->Log->log(0,$Report);
         $idReport=parent::updateReport($Report);
-        $this->Utilities->jsonResponse(parent::getReportById(['id'=>[$idReport,'INT']]),'Zapis się powiódł'); 
+        $this->Utilities->jsonResponse(parent::getReportById($idReport),'Zapis się powiódł'); 
     }
 }

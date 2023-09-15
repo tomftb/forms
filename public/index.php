@@ -1,8 +1,11 @@
 <?php 
 session_start();
+
+date_default_timezone_set('Europe/Warsaw');
 /*
  * APPLICATION ROOT
- * CUT public string
+ * CUT public string or ../ ??
+ * NEED FOR VIEWS AS WELL !!
  */
 define('APP_ROOT',substr(filter_input(INPUT_SERVER,"DOCUMENT_ROOT"),0,-6));
 

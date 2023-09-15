@@ -107,11 +107,13 @@ class Email
         return '';
     }
     private function sendAttempt(string $errHeader=''):void{
+        
         $established=false;
 
         while($this->sendAttempts>0 && $established===false)
         {
-            $this->Log->log(0,"[".__METHOD__."] ".$this->Mailer->ErrorInfo);
+            $this->Log->log(0,"[".__METHOD__."] attempt - ".$this->sendAttempts);
+            //$this->Log->log(0,"[".__METHOD__."] error info - ".$this->Mailer->ErrorInfo);
             if($this->Mailer->Send()){
                 $established=true;
                 $this->connectAttemptTimeout=0;
@@ -120,8 +122,9 @@ class Email
             sleep($this->sendAttemptsTimeout);
         }
         if(!$established){
+            //$this->Log->log(0,"[".__METHOD__."] Couldn't send Email! ");
             $this->Mailer->SmtpClose(); 
-            Throw New Exception ($errHeader,0);
+            Throw New \Exception ($errHeader,0);
             //Throw New Exception ("Couldn't send Email!\n");
         }
         $this->Mailer->SmtpClose(); 

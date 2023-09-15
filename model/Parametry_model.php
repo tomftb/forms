@@ -36,6 +36,12 @@ class Parametry_model extends Database_model {
     public function getParmValue(array $input=[':k'=>[0,'STR']]){
         return $this->Main->squery('SELECT `WARTOSC` as `v` FROM parametry WHERE `SKROT`=:k',$input);
     }
+    public function getParmViaShortcut(string $SKROT=''):string{
+        foreach($this->Main->squery('SELECT `WARTOSC` as `v` FROM `parametry` WHERE `SKROT`=:SKROT',[':SKROT'=>[$SKROT,'STR']]) as $parm){
+            return $parm['v'];
+        }
+        Throw New \Exception('Parameter `'.$SKROT.'` not exists in database!',0);
+    }
     public function getColor(){
         return $this->Main->squery('SELECT `ENG` as `n`,`HEX` as `v` FROM `slo_color` WHERE 1;');
     }

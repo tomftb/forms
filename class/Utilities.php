@@ -16,11 +16,11 @@ class Utilities
     private $response=array(
         'status'=>0,
         'info'=>'',
-        'data'=>''
+        'data'=>[]
     );
     public function __construct(){
         $this->Log=Logger::init(__METHOD__);
-        $this->Error=New ErrorHandler();
+        $this->ErrorHandler=New \ErrorHandler();
     }
     public function checkInputGetValInt($key){
         $i=filter_input(INPUT_GET,$key,FILTER_VALIDATE_INT);
@@ -66,22 +66,17 @@ class Utilities
             $this->Log->log(0,' KEY '.$k.' NOT EXIST IN ARRAY');
         }
     }
-    public function checkKeyExistEmpty($k,$a)
-    {
+    public function keyExistEmpty(string|int $k='',array $a=[]):void{
         $this->Log->log(0,"[".__METHOD__."] KEY => ".$k);
         $this->Log->logMultidimensional(0,$a,"L::".__LINE__."::".__METHOD__);
-        if (!array_key_exists($k,$a))
-        {
-            //$this->setError(1,' KEY '.$k.' NOT FOUND IN ARRAY');
-            return (self::response());
+        if (!array_key_exists($k,$a)){
+            Throw New \Exception("[".__METHOD__.'] Key `'.$k.'` not exists in array!',1);
         }
-        if(trim($a[$k])==='')
-        {
-            //$this->setError(1,' KEY '.$k.' in ARRAY IS EMPTY');
+        if(trim($a[$k])===''){
+            Throw New \Exception("[".__METHOD__.'] Key `'.$k.'` trimed value `'.$a[$k].'` empty!',1);
         }
-        return (self::response());
     }
-    public function keyExist($a=[],$k=''){
+    public function keyExist(array $a=[],string|int $k=''):void{
         if(!is_array($a)){
             Throw New Exception("[".__METHOD__.'] ARG 1 IS NOT ARRAY!',1);
         }
@@ -143,7 +138,7 @@ class Utilities
     public function getPost($trim=true,$date=false){
         $this->Log->log(0,"[".__METHOD__."]");
         $this->validDate=$date;
-        $this->response['data']=array();
+        $this->response['data']=[];
         $POST = filter_input_array(INPUT_POST);
         $this->Log->logMultidimensional(0,$POST,"L::".__LINE__."::".__METHOD__);
         foreach($POST as $k => $v){
@@ -158,6 +153,8 @@ class Utilities
     }
     public function getDoc($empty=false)
     {
+         $this->Log->log(0,"[".__METHOD__."]");
+         $this->Log->logMulti(0,$this->response);
         /*
          * if empty is true assign empty dok as well
          */
@@ -182,32 +179,75 @@ class Utilities
         }
         return $dok;
     }
-    public function checkDateTypePost($k,&$v)
-    {
+    public function checkDateTypePost($k,&$v):bool{
+        $this->Log->log(1,"[".__METHOD__."]");
         if(!$this->validDate) {return '';}
-        
-        $tmpArray=array();
-        
-        if(preg_match('/^(d-).*/i',$k))
-        //if(substr($k, 0,2)==='d-')
-        {
-            if($v!=='')
-            {
-                /*
-                 * CHECK SEPARATOR
-                 */
-                $this->Log->log(1,"[".__METHOD__."] FOUND NOT EMPTY DATE => ".$v);
-                $tmpArray=explode('.',$v);
-                $v=trim($tmpArray[2])."-".trim($tmpArray[1])."-".trim($tmpArray[0]);
+        if(!preg_match('/^(d-).*/i',$k)){return false;}
+        $tmp_date=array();  
+        (int) $i=0;
+        foreach(explode('.',$v) as $tmp){
+            array_push($tmp_date,$tmp);
+            $i++;
+        }
+        $this->Log->log(1," DATE - `".$v."`");
+        if($i!==3){
+            $this->ErrorHandler->setError('Wrong date `'.$v.'`! Expected format `dd.mm.yyyy`! Field count '.$i.' expected 3.',0);
+            return false;
+        }
+        /*
+         * CHECK DAY,MONTH,YEAR
+         */
+        self::checkDateField('DAY',$tmp_date[0],2);
+        self::checkDateField('MONTH',$tmp_date[1],2);
+        self::checkDateField('YEAR',$tmp_date[2],4);
+        if($this->ErrorHandler->getStatus()==='1'){
+            return false;
+        }
+        /*
+         * SET MySQL DATE FORMAT
+         */
+        $v=$tmp_date[2]."-".$tmp_date[1]."-".$tmp_date[0];
+        $this->Log->log(1,"[".__METHOD__."] FOUND AND SET DATE - ".$v);
+        return true;
+    }
+    private function checkDateField(string $date_part='DAY',string $date='',int $length=2):bool{
+        $this->Log->log(2,"[".__METHOD__."]");
+        $date_length=strlen($date);
+        $numbers=range(0,9);
+        if($date_length!==$length){
+            $this->ErrorHandler->setError('Wrong date `'.$date_part.'` length '.$date_length.'! Expect '.$length,0);
+            return false;
+        }
+        /*
+         * FROM END TO BEGGINING
+         * WRONG - EXAMPLE 10
+            $numbers_end_date=range(1,9);
+            $check_numbers=&$numbers_end_date;
+            for($i=strlen($date);$i>0;$i--){
+                $part=substr($date, $i-1,1);
+                $this->Log->log(2," part - ".$part);
+                if(!in_array(intval($part,10),$check_numbers)){//
+                    $this->ErrorHandler->setError('Wrong date `'.$date_part.'` field value `'.$part.'` not in (0...9)!',0);
+                }
+                $check_numbers=&$numbers;
             }
-            else
-            {
-                $this->Log->log(1,"[".__METHOD__."] DATE => ".$v." => SET DEFAULT 0000-00-00");
-                $v='0000-00-00';
+         */
+        for($i=0;$i<strlen($date);$i++){
+            $part=substr($date, $i,1);
+            $this->Log->log(2," part - ".$part);
+            if(!in_array(intval($part,10),$numbers)){
+                $this->ErrorHandler->setError('Wrong date `'.$date_part.'` field value `'.$part.'` not in (0...9)!',0);
             }
         }
+        /*
+         * CHECK INTEGER DATE VALUE
+         */
+        $date_int=intval($date);
+        if($date_int<1){
+             $this->ErrorHandler->setError('Wrong date `'.$date_part.'` value `'.strval($date_int).'`!',0);
+        }
+        return true;
     }
-
     public function checkDokTypePost($k,$v)
     {
         if(!$this->validDok) {return '';}
@@ -307,7 +347,7 @@ class Utilities
         {
             if(!array_key_exists($idx, $v))
             {
-                $this->setError(1,' IDX '.$idx.' NOT FOUND IN ARRAY!');
+                $this->ErrorHandler->setError(' IDX '.$idx.' NOT FOUND IN ARRAY!',1);
             }
             else
             {
@@ -371,13 +411,9 @@ class Utilities
         $this->Log->log(1,"[".__METHOD__."] DATE => ".$Year.'-'.$tmp[1].'-'.$Day);
         return ($Year.'-'.$tmp[1].'-'.$Day);
     }
-    private function response()
-    {
-        if($this->Error->getError()!==''){
-            $this->response['status']=1;
-            $this->response['info']=$this->Error->getError();
-            $this->response['data']='';
-        }
+    private function response(){
+        $this->response['status']=$this->ErrorHandler->getStatus();
+        $this->response['info']=$this->ErrorHandler->getError();
         return ($this->response);
     }
     public function getYearFromData($date,$delimiter='-'){
@@ -395,5 +431,28 @@ class Utilities
     public function getStatus(){
         $this->Log->log(0,"[".__METHOD__."]");
         return ($this->response['status']);
+    }
+    public function getDatePickerDate(string $date_mysql=''):string{
+        /*
+         * explode by space
+         */
+        $tmp_datetime=self::getDatePart(' ',2,$date_mysql,'MySQL datetime');
+        /*
+         * 0 - date
+         * 1 - time
+         * explode by -
+         */
+        $tmp_date=self::getDatePart('-',3,$tmp_datetime[0],'MySQL date');
+        self::checkDateField('DAY',$tmp_date[2],2);
+        self::checkDateField('MONTH',$tmp_date[1],2);
+        self::checkDateField('YEAR',$tmp_date[0],4);
+        return $tmp_date[2].'.'.$tmp_date[1].'.'.$tmp_date[0];
+    }
+    private function getDatePart(string $delimiter='', int $length=0, string $date_part='', string $part='MySQL datetime'):array{
+        $date = explode($delimiter,$date_part);
+        if(count($date)!=$length){
+            Throw New Exception('Wrong '.$part.' format `'.$date.'`!',1);
+        }
+        return $date;
     }
 }
