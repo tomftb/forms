@@ -1,6 +1,6 @@
 <?php
 /**
- * Description of Forms_controller
+ * Description of Form_controller
  *
  * @author tomborc
  */

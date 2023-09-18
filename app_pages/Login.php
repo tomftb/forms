@@ -1,6 +1,5 @@
 <?php
 final class Login extends Page{
-    private $Log;
     private $mainPerm='LOG_INTO_APP';
     private $view=['vLogin.php'];
     private $js=[
@@ -20,7 +19,6 @@ final class Login extends Page{
     private $loginBgColor='';
 	
     public function __construct(){
-        $this->Log=Logger::init();
         parent::__construct();	
         if(!self::checkLogin()){
             self::setPage();

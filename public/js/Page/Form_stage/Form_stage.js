@@ -4,7 +4,7 @@
  * CLASS Xhr -> js/Main/Xhr.js
  */
 var error = false;
-class Form_part{
+class Form_stage{
     Modal = new Object();
     Html = new Object();
     router='';
@@ -678,7 +678,7 @@ class Form_part{
     }
 }
 try{
-   var FormPart = new Form_part(window.appUrl,window.appUrl+'/router.php?task=');
+   var FormPart = new Form_stage(window.appUrl,window.appUrl+'/router.php?task=');
    window.addEventListener('load', function(){
         console.log('page is fully loaded');
         try{

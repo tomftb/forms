@@ -1,18 +1,6 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of NoAccess
- *
- * @author tborczynski
- */
 class NoAccess extends Page{
-    private $Log;
     private $perm='';
     private $view=[
         'Main/PageLink.php',
@@ -28,6 +16,7 @@ class NoAccess extends Page{
     public function __construct($idPage=0,array $pagePerm){
         $this->Log=Logger::init();
         parent::__construct();
+        $this->Log->log(0,"[".__METHOD__."]");
         $this->perm=self::setPerm($idPage,$pagePerm);
         self::checkPerm();
         if($this->err){
@@ -47,6 +36,7 @@ class NoAccess extends Page{
     private function checkPerm(){
         $this->Log->log(0,"[".__METHOD__."]");
         if(!in_array($this->perm,$_SESSION['perm'])){
+           $this->Log->log(0,"Permission - ".$this->perm." not in user SESSION permissions.");
            $this->err=true;
         }
     }

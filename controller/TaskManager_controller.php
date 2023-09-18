@@ -63,7 +63,7 @@ class Invoker
         $this->task->run();
     }
 }
-final class ModulManager{
+final class TaskManager_controller{
     
     private $modulData;
     private $modul=[];
@@ -89,7 +89,7 @@ final class ModulManager{
         array_push($this->modul,new ManageProjectConstant());
         array_push($this->modul,new ManageProjectVariable());
         array_push($this->modul,new \Form_controller());
-        array_push($this->modul,new \Form_part_controller());
+        array_push($this->modul,new \Form_stage_controller());
         array_push($this->modul,new \Filled_form_controller());
         array_push($this->modul,new \Filled_form_excel_controller());
        

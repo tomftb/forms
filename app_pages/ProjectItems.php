@@ -12,7 +12,6 @@
  * @author tborczynski
  */
 final class ProjectItems extends Page{
-    private $Log;
     private $mainPerm='LOG_INTO_STAGE';
     private $view=[
         'Main/PageLink.php',
@@ -74,12 +73,12 @@ final class ProjectItems extends Page{
         ];
     public function __construct(){
         parent::__construct();	
+        $this->Log->log(0,"[".__METHOD__."]");
         self::setPage();
         parent::load();
     }
     public function setPage(){
-	$this->Log=Logger::init();
-	$this->Log->log(0,__METHOD__);
+	$this->Log->log(0,"[".__METHOD__."]");
 	parent::setJs($this->js);
         parent::setView($this->view);
         parent::setMainPerm($this->mainPerm);

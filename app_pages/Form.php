@@ -1,18 +1,5 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of ProjectItems
- *
- * @author tborczynski
- */
 final class Form extends Page{
-    private $Log;
     private $mainPerm='LOG_INTO_FORM';
     private $view=[
         'Main/PageLink.php',
@@ -54,10 +41,8 @@ final class Form extends Page{
         'Page/ProjectStage/Section.js',
         'Page/ProjectStage/ProjectStageCreateHead.js',
         'Page/ProjectStage/ProjectStageCreate.js',
-
         'Page/ProjectStage/ProjectStageCreateTable.js',
         'Page/ProjectStage/ProjectStageCreateImage.js',
-
         'Page/ProjectStage/ProjectStageTable.js',
         'Page/ProjectStage/ProjectStage.js',
         'Page/ProjectConstantTable.js',
@@ -66,9 +51,7 @@ final class Form extends Page{
         'Page/ProjectVariable/ProjectVariableTable.js',
         'Page/ProjectVariable/ProjectVariableCreate.js',
         'Page/ProjectVariable/ProjectVariable.js',
-
         //'Page/Forms/Forms.js',
-        
         ];
     public function __construct(){
         parent::__construct();	
@@ -76,7 +59,6 @@ final class Form extends Page{
         parent::load();
     }
     public function setPage(){
-	$this->Log=Logger::init();
 	$this->Log->log(0,__METHOD__);
 	parent::setJs($this->js);
         parent::setView($this->view);

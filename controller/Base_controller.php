@@ -15,7 +15,6 @@ abstract class Base_controller {
         $this->Error=New \ErrorHandler();
         $this->Model=new \stdClass();
         $this->Controller=new \stdClass();
-
     }
     public function __destruct(){
         

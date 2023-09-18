@@ -1,18 +1,6 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of ProjectItems
- *
- * @author tborczynski
- */
 final class Filled_form extends Page{
-    private $Log;
+
     private $mainPerm='LOG_INTO_FILLED_FORM';
     private $view=[
         'Main/PageLink.php',
@@ -77,7 +65,6 @@ final class Filled_form extends Page{
         parent::load();
     }
     public function setPage(){
-	$this->Log=Logger::init();
 	$this->Log->log(0,__METHOD__);
 	parent::setJs($this->js);
         parent::setView($this->view);

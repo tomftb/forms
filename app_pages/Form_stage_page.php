@@ -11,12 +11,11 @@
  *
  * @author tborczynski
  */
-final class Form_part extends Page{
-    private $Log;
-    private $mainPerm='LOG_INTO_FORM_PART';
+final class Form_stage_page extends Page{
+    private $mainPerm='LOG_INTO_FORM_STAGE';
     private $view=[
         'Main/PageLink.php',
-        'Form_part_view.php',
+        'Form_stage_view.php',
         'Main/Table.html',
         'Main/AdaptedModal.html',
         'Main/Footer.php'
@@ -64,18 +63,18 @@ final class Form_part extends Page{
         //'Page/ProjectVariable/ProjectVariableTable.js',
         //'Page/ProjectVariable/ProjectVariableCreate.js',
         //'Page/ProjectVariable/ProjectVariable.js',
-        'Page/Form_part/Form_part_table.js',
-        'Page/Form_part/Form_part.js',
+        'Page/Form_stage/Form_stage_table.js',
+        'Page/Form_stage/Form_stage.js',
         
         ];
     public function __construct(){
         parent::__construct();	
+        $this->Log->log(0,"[".__METHOD__."]");
         self::setPage();
         parent::load();
     }
     public function setPage(){
-	$this->Log=Logger::init();
-	$this->Log->log(0,__METHOD__);
+	$this->Log->log(0,"[".__METHOD__."]");
 	parent::setJs($this->js);
         parent::setView($this->view);
         parent::setMainPerm($this->mainPerm);

@@ -1,7 +1,6 @@
 <?php
 
 final class Projekty extends Page{
-    private $Log;
     private $mainPerm='LOG_INTO_PROJ';
     private $view=[
         'Main/PageLink.php',
@@ -52,7 +51,6 @@ final class Projekty extends Page{
         parent::load();	
     }
     public function setPage(){
-	$this->Log=Logger::init();
 	$this->Log->log(0,__METHOD__);
 	parent::setJs($this->js);
         parent::setView($this->view);

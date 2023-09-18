@@ -1,5 +1,5 @@
 <?php
-final class UrlManager{
+final class UrlManager_controller{
    
     private $Log;
     private $urlData=[];
@@ -151,7 +151,7 @@ final class UrlManager{
         ,['downloadFilledFormExcelList','EXCEL_FILLED_FORM']
         ,['getHideFormGlossary','HIDE_FORM']
         ,['getRemoveFormGlossary','REMOVE_FORM']
-        ,['getFormPartDefaults','LOG_INTO_FORM_PART']
+        ,['getFormPartDefaults','LOG_INTO_FORM_STAGE']
     ];
         
     public function __construct(){

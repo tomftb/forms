@@ -4,7 +4,7 @@
  * Author: Tomasz Borczynski
  */
 abstract class Page{
-    private $Log;
+    protected $Log;
     private $mainPerm='LOG_INTO_APP';
     private $view=[];
     private $mainView=[

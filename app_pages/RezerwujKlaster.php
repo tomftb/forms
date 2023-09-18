@@ -1,7 +1,6 @@
 <?php
 
 final class RezerwujKlaster extends Page{
-    private $Log;
     private $mainPerm='LOG_INTO_CLUSTR';
     private $view=[
         'Main/PageLink.php',
@@ -18,7 +17,6 @@ final class RezerwujKlaster extends Page{
         parent::load();	
     }
     public function setPage(){
-	$this->Log=Logger::init();
 	$this->Log->log(0,__METHOD__);
 	parent::setJs($this->js);
         parent::setView($this->view);

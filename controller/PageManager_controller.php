@@ -3,7 +3,7 @@
     Static ABSTRACT Factory
 */
 
-class PageManager
+class PageManager_controller
 {
     private static $Log;
     /*
@@ -20,7 +20,7 @@ class PageManager
         ,9=>'LOG_INTO_OPCJ'
         ,10=>'LOG_INTO_PARM'
         ,11=>'LOG_INTO_STAGE'
-        ,12=>'LOG_INTO_FORM_PART'
+        ,12=>'LOG_INTO_FORM_STAGE'
         ,13=>'LOG_INTO_FORM'
     ];
     public static function load($idPage=0){
@@ -30,55 +30,53 @@ class PageManager
         self::loadPage($idPage);
     }
     private static function loadPage($idPage){
+        self::$Log->log(0,"[".__METHOD__."] ID PAGE - ".strval($idPage));
         switch ($idPage):
                         default:  
                         case 1:
-                                New RezerwujKlaster();
+                                New \RezerwujKlaster();
                             break;    
                         case 3:
-                                New Projekty();
+                                New \Projekty();
                             break;
                         case 4:
-                                New Pracownicy();
+                                New \Pracownicy();
                             break;
                         case 5:
-                                New Administrator();
+                                New \Administrator();
                             break;
                         case 6:
-                                New Uzytkownik();
+                                New \Uzytkownik();
                             break;
                         case 7: 
-                                New Uprawnienia();
+                                New \Uprawnienia();
                             break;
                         case 8:
-                                New Role();
+                                New \Role();
                             break;
                         case 9:
-                                New Opcje();
+                                New \Opcje();
                             break;
                         case 10:
-                                New Parametry();
+                                New \Parametry();
                             break;
                         case 11:
-                                //New Etapy();
-                                New ProjectItems();
+                                New \ProjectItems();
                             break;
                         case 12:
-                                //New Etapy();
-                                New Form_part();
+                                New \Form_stage_page();
                             break;
                         case 13:
-                                //New Etapy();
                                 New \Filled_form();
                             break;
 	endswitch;
     }
     private static function loadLoginPage(){
-        self::$Log->log(0,__METHOD__);
+        self::$Log->log(0,"[".__METHOD__."]");
         New \Login();  
     }
     private static function loadNoAccessPage($idPage){
-        self::$Log->log(0,__METHOD__);
+        self::$Log->log(0,"[".__METHOD__."]");
         New \NoAccess($idPage,self::$pagePerm);
     }
 }
