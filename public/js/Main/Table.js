@@ -303,6 +303,14 @@ class Table
             th.style[attr]=headRow.style[attr];
         } 
     }
+    /*
+     * initialise
+     * @returns void
+     */
+    init(){
+        console.log('Table.init()');
+        this.setLink();
+    }
     setLink(){
         console.log('Table.setLink()');
         var tableEle = document.getElementById('mainTableDiv');
@@ -317,10 +325,16 @@ class Table
         //console.log(this.link);
     }
     clearTable(){
-        //console.log('Table::clearTable()');
+        console.log('Table::clearTable()');
         this.clearEle(this.link['error']);
         this.clearEle(this.link['head']);
         this.clearEle(this.link['body']);
+    }
+    clearBody(){
+        this.clearEle(this.link['body']);
+    }
+    clearError(){
+        this.clearEle(this.link['error']);
     }
     clearEle(ele){
         //console.log('ProjectStageTable::clearEle()');
@@ -329,9 +343,9 @@ class Table
         };
     }
     setError(info){
-        //console.log('Table::setError()');
-        //console.log(info);
-        //console.log(this.link['error']);
+        console.log('Table::setError()');
+        console.log(info);
+        console.log(this.link['error']);
         this.link['error'].classList.remove("d-none");
         this.link['error'].innerHTML=info;
         this.error=true;

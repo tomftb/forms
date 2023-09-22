@@ -10,21 +10,19 @@
             <div class="btn pull-left mt-0" > 
                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                     <div class="btn-group" role="group">
-                        <button class="btn btn-info text-white" type="button" onclick="FormPart.Stage.clearShow()">
-                        Etapy
-                        </button>
+                        <button class="btn btn-info text-white" type="button" id="showStages">Etapy</button>
                         <button type="button" class="btn  btn-info dropdown-toggle dropdown-toggle-split text-white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <div class="dropdown-menu bg-info">
-                            <a id="createText" class="dropdown-item bg-info text-white" onclick="FormPart.Stage.createText()" href="#">Dodaj</a>
+                            <a class="dropdown-item bg-info text-white" id="addStage" href="#">Dodaj</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-6 mb-0 mt-0" >
-                <div class="input-group"><input type="text" class="form-control" placeholder="Szukaj..." onkeyup="FormPart.setFilterValue(this)" ><div class="input-group-append"><button class="btn btn-secondary" type="button" onclick="FormPart.filterOut(this)"><i class="fa fa-search"></i></button></div>
+                <div class="input-group"><input type="text" class="form-control" placeholder="Szukaj..."  ><div class="input-group-append"><button class="btn btn-secondary" type="button" ><i class="fa fa-search" id="filterStages"></i></button></div>
                   </div>
                     <div class="form-group form-check-inline mt-0">
                     <label class="form-check-label">

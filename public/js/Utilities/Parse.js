@@ -46,7 +46,7 @@ class Parse{
         return data;
     }
     parse(response){
-        //console.log('ProjectItems::parseResponse()');
+        //console.log('Parse.parseResponse()');
         try {
             var json=this.getJson(response); 
         }
@@ -64,7 +64,7 @@ class Parse{
         return json.value;
     }
     getSimpleJson(response){
-        console.log('ProjectItems::getSimpleJson()');
+        console.log('Parse.getSimpleJson()');
         //console.log(response);
         try {
             var json=JSON.parse(response);

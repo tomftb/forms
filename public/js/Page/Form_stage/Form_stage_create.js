@@ -1,271 +1,231 @@
-
-class ProjectStage{
-    fieldDisabled='y';
-    projectData=new Object();
-    actDay = getActDate();
-    actStageData=new Object();
-    loggedUserPerm=new Array();
-    errorStatus=false;
+class Form_stage_create extends Modal{
+    permissions=new Array();
+    appUrl='';
     router='';
-    data={};
-    Items = new Object();
-    inputFieldCounter=0;
-    fieldDisabled='n';
-    StageTable = new Object();
-    //CreateText = new Object;
-    CreateImage = new Object();
-    CreateTable = new Object();
-    Create = new Object();
-    Tool = new Object();
-    //CreateList = new Object;
+    Department = new Object();
+    Title = new Object();
     Property = new Object();
     Xhr=new Object();
+    Form_stage_list = new Object();
+    Form_stage_create_department = new Object();
+    Form_stage_create_action = new Object();
+    Parse = new Object();
+    ErrorStack = new Object();
+    FormData = {
+        'id':'N/A'
+        ,'user':{
+            'create_user_id':0
+            ,'create_user_login':'N/A'
+            ,'create_user_email':'N/A'
+            ,'create_date':'N/A'
+        }
+        ,'stage':{
+            0:{
+                'id':0// STAGE ID
+                ,'section':{
+                            0:{
+                                'id':0// SECTION ID [ROW]
+                                ,'subsection':{
+                                                0:{
+                                                    'id':0// SUBSECTION ID [COLUMN]
+                                                    ,'row':{
+                                                            0:{
+                                                               'id':0// ROW ID [COLUMN ROW]
+                                                               ,'data':{
+                                                                   0:{}
+                                                               }
+                                                        }
+                                                    }//END ROW PROPERTY
+                                                }
+                                }// END SUBSECTION PROPERTY
+                            }
+                }// END SECTION PROPERTY
+            }
+        }//END STAGE PROPERTY
+    };
+    
+    constructor(router,appUrl,Form_stage_list){
+        super();
+        console.log('Form_stage_create.construct()');
+        this.Xhr=new Xhr2();
+        this.ErrorStack=new ErrorStack();
+        this.router=router;  
+        this.appUrl=appUrl;  
+        this.Parse=new Parse();
+        
+        this.setLoad(this.Xhr,this.appUrl);
+        
+        this.Form_stage_list=Form_stage_list;        
+        this.Form_stage_create_action=new Form_stage_create_action(this);
+        this.Form_stage_create_section=new Form_stage_create_section(this);
+    }
     /*
-        Default Stage part:
-        b - body
-        h - head
-        f - footer
-    */
-    url={
-        primary:'getProjectStages',
-        active:'getProjectStages',
-        hidden:'getProjectHiddenStages',
-        deleted:'getProjectDeletedStages',
-        hiddenAndDeleted:'getProjectHiddenAndDeletedStages',
-        all:'getProjectAllStages'
-    };
-    title={
-        stage:{
-            label:'Etapy',
-            'text-color':'text-info'
-        },
-        footer:{
-            label:'Stopka',
-            'text-color':'text-brown'
-        },
-        heading:{
-            label:'Nagłówek',
-            'text-color':'text-brown'
-        }
-    };
-    constructor(Items){
-        //console.log('ProjectStage::construct()');
-        this.Xhr=Items.Xhr2;
-        this.router=Items.router;
-        this.Items = Items;
-        //console.log(Items);
-        //console.log(this.Items.router);
-        this.Tool = new Tool();
-        this.Property = new ProjectStageProperty();
-        this.StageTable = new ProjectStageTable(this);  
-        this.StageTable.setProperties(this.Items.appurl,this.Items.router);
-        this.CreateImage = new ProjectStageCreateImage();
-        this.CreateTable = new ProjectStageCreateTable();
-        this.Create = new ProjectStageCreate(this);
+     * SET PROPERTY
+     */
+    setProperty(property){
+        //this.FormStage.create_user_id=property.user.userid;
+        //this.FormStage.create_user_email=property.user.mail;
+        //this.FormStage.create_user_login=property.user.username;
+        this.permissions=property.user.perm;
+        //const date = new Date();
+        //this.FormStage.create_date=date.getFullYear().toString()+"-"+date.getMonth().toString()+"-"+date.getDate().toString()+" "+date.getHours().toString()+":"+date.getMinutes().toString()+":"+date.getSeconds().toString();
+        //2023-08-09 15:15:24
     }
-    clearShow(){
-        console.log('ProjectStage::clearShow()');
-        this.Items.default['part']='b';
-        this.Items.setClearDefault(this,'show',this.title.stage);
-        this.StageTable.detailsTask='detailsText';
-        this.Items.setTitle();
-        this.show();
-    }
-    show(){
-        console.log('ProjectStage::show()');
-        console.log(this.Items.default);
-        var action={
-            'u':this.Items.default.url.active,
-            'd':this.getFilterData(0)
-        };
-        this.StageTable.runPOST(action);
-    }
-    showFooter(){
-        console.log('ProjectStage::showFooter()');
-        this.Items.default['part']='f';
-        this.Items.setClearDefault(this,'showFooter',this.title.footer);
-        this.StageTable.detailsTask='detailsFooter';
-        var action={
-            'u':this.Items.default.url.active,
-            'd':this.getFilterData(0)
-        };
-        this.Items.setTitle();
-        this.StageTable.runPOST(action);
-    }
-    showHeading(){
-        console.log('ProjectStage::showHeading()');
-        this.Items.default['part']='h';
-        this.Items.setClearDefault(this,'showHeading',this.title.heading);
-        this.StageTable.detailsTask='detailsHeading';
-        var action={
-            'u':this.Items.default.url.active,
-            'd':this.getFilterData(0)
-        };
-        this.Items.setTitle();
-        this.StageTable.runPOST(action);
-    }
-    prepare(response,btnLabel,btnClass){
-        //console.log('ProjectStage::prepare()');
-        //console.log(response);
-            /* SET UP STAGE DATA */
-            var data=this.Items.parseResponse(response);
-            /* SET UP GLOSSARY */
-            //this.Items.Glossary
-            /* RUN MODAL */
-            this.Items.Modal.clearData();
-            var self=this;
-            var fd = this.getFilterData(data['data']['value']['stage'].i) 
-            var run = function(){
-                self.Items.closeModal();  
-                self.Items.filterOutReloadData(fd,'setResponse');
-            };
-            this.Items.setCloseModal(run);
-            this.Items.setChangeDataState(data['data']['value']['stage'].i,data['data']['value']['stage'].t,data['data']['function'],data['data']['value']['slo'],btnLabel,btnClass,fd,'setResponse');
-            this.Items.Modal.setInfo("Project Stage ID: "+data['data']['value']['stage'].i+", Create user: "+data['data']['value']['stage'].cu+" ("+data['data']['value']['stage'].cul+"), Create date: "+data['data']['value']['stage'].cd);
-    }
-    hide(response){
-        //console.log('ProjectStage::hide()');
+    /*
+     * CREATE
+     */
+    create(response){
         try{
-            this.prepare(response,'Ukryj','secondary');
+            console.log('Form_stage_create.create()');
+            console.log(response);
+             /*
+             * PARSE RESPONSE
+             */
+            this.response = this.Parse.getSimpleJson(response);
+            console.log(this.response);
         }
-        catch(error){
-            console.log(error);
-            this.StageTable.Table.setError(error);
-            //this.StageTable.Table.setError('An Application Error Has Occurred!');
+        catch(e){
+            console.log("Form_stage_create.create() parse catch()",e);
+            this.Form_stage_list.setError(e);
             return false;
-        };
-        /* RUN MODAL IN second try to prevent hide error */
-        try{
-           this.Items.prepareModal('Ukrywanie Etapu Projektu','bg-secondary');
         }
-        catch(error){
-            console.log(error);
-            this.StageTable.Table.setError(error);
+        try{           
+            /*
+             * CLEAR ErrorStack
+             */
+            this.ErrorStack.clearStack();
+            /*
+             * SETUP MODAL
+             */
+            super.clearData();
+            super.setExitKeys();
+            super.setHead('Dodaj etap formularza','bg-info');
+            super.setCloseModal();
+            super.setInfo("Form Stage ID: "+(this.FormData.id).toString()+", Create user: "+this.FormData.create_user_login+" (e-mail: "+this.FormData.create_user_email+"), Create date: "+this.FormData.create_date);
+            //console.log(this.link['adapted']);  
+            console.log(this.link);
+            /*
+             * SET MAIN DYNAMIC FIELD
+             */
+            this.setModalMain();
+            /*
+             * SET PREVIEW FIELD
+             */
+            this.setModalPreview();
+            /*
+             * SET ACTION
+             */
+            this.Form_stage_create_action.set(this.link);
+            /*
+             * SHOW MODAL
+             */
+            super.showModal();
+        }
+        catch(e){
+            console.log("Form_stage_create.create() modal catch()",e);
+            this.Form_stage_list.setError('Application error occurred! Contact with Administrator!');
         }
     }
-    remove(response){
-        //console.log('ProjectStage::remove()');
-        try{
-            this.prepare(response,'Usuń','danger');
-        }
-        catch(error){
-            console.log(error);
-            this.StageTable.Table.setError(error);
-            //this.StageTable.Table.setError('An Application Error Has Occurred!');
-            return false;
-        };
-        /* RUN MODAL IN second try to prevent hide error */
-        try{
-            this.Items.prepareModal('Usuwanie Etapu Projektu','bg-danger');
-        }
-        catch(error){
-            console.log(error);
-            this.StageTable.Table.setError(error);
-        }
+    setModalPreview(){
+        console.log('Form_stage_create.setModalPreview()');
+        var row=this.Html.getRow();
+            row.setAttribute('id','preview');
+        var col=this.Html.getCol(12);
+            row.append(col);
+            /*
+             * SET LINK TO PREVIEW
+             */
+            this.link['preview']=col;
+            /*
+             * APPEND TO ADAPTED
+             */
+            this.link['adapted'].append(row);
     }
-    createText(){
-        console.log('ProjectStage::createText()');
-        this.Items.default['part']='b';
-        this.Items.setDefaultActionUrl(this,'show',this.title.stage);
-        this.runCreate('prepareText','t','b');
+    setModalMain(){
+        console.log('Form_stage_create.setModalPreview()');
+        var row=this.Html.getRow();
+            row.setAttribute('id','main');
+        var col=this.Html.getCol(12);
+            row.append(col);
+            /*
+             * SET TITLE
+             */
+            this.Title = new Form_stage_create_title(this,col);
+            /*
+             * SET DEPARTMENT
+             */
+            this.Department = new Form_stage_create_department(this,col,this.response.department);
+            /*
+             * SET SECTION ROW
+             */
+            this.Form_stage_create_section.set(col);
+            /*
+             * SET LINK TO DYNAMIC
+             */
+            this.link['dynamic']=col;
+            /*
+             * APPEND TO ADAPTED
+             */
+            this.link['adapted'].append(row);  
     }
-    createImage(){
-        //console.log('ProjectStage::createImage()');
+    setData(response){
+        console.log('Form_stage_create.save()',response);
     }
-    createTable(){
-        //console.log('ProjectStage::createTable()');
+    getData(self){
+        console.log('Form_stage_create.getData()',self);
+         /*
+         * self.Parent references to this object Form_stage_create
+         */
+        return self.Form_stage_create_section.getData();
+        //return {};
     }
-    createList(){
-        //console.log('ProjectStage::createList()');
-        this.Items.default['part']='b';
-        this.Items.setDefaultActionUrl(this,'show',this.title.stage);
-        this.runCreate('prepareList','l');
-    }
-    createFooter(){
-        //console.log('ProjectStage::createFooter()');
-        this.Items.default['part']='f';
-        this.Items.setDefaultActionUrl(this,'showFooter',this.title.footer);
-        this.runCreate('prepareFooter','t');
-    }
-    createHeading(){
-        //console.log('ProjectStage::createHeading()');
-        this.Items.default['part']='h';
-        this.Items.setDefaultActionUrl(this,'showHeading',this.title.heading);
-        this.runCreate('prepareHeading','t');
-    }
-    runCreate(r,t){
-        console.log('ProjectStage::runCreate()');
-        console.log(r);
+    preview(self){
+        console.log('Form_stage_create.preview()');
         /*
-         * r - method name to run
-         * t - type (t - text, l - list)
+         * self references to this object Form_stage_create
          */
         try{
-            this.Create.type=t;
-            this.Create.part=this.Items.default['part'];
-            this.Xhr.run({
-                t:'GET',
-                u:this.router+'getProjectVariablesSimpleList&u=0&v=0&b=0',
-                c:true,
-                d:null,
-                o:this.Create,
-                m:r
-            });
+            var stage={
+                0:{
+                    'id':0
+                    ,'section':self.getData(self)
+                }
+            };
+            new Form_stage_preview(self.link['preview'],stage);
         }
-        catch(error){
-            console.log(error);
-            this.StageTable.Table.setError(error);
-            return false;
-        };
+        catch(e){
+            console.log("Form_stage_create.preview() catch()",e);
+            /*
+             * SET MODAL ERROR
+             */
+            self.setError('Application error occurred! Contact with Administrator!');
+        }
     }
-    detailsText(response){
-        console.log('ProjectStage::detailsText/list()');
-        this.Items.default['part']='b';
-        this.Items.setDefaultAction(this,'show');
-        console.log(this.Items.default);
-        this.runDetails(response,'detailsText');
-    }
-    detailsHeading(response){
-        console.log('ProjectStage::detailsHeading()');
-        this.Items.default['part']='h';
-        this.Items.setDefaultAction(this,'showHeading');
-        this.runDetails(response,'detailsHeading');
-    }
-    detailsFooter(response){
-        console.log(response,'ProjectStage::detailsFooter()');
-        this.Items.default['part']='f';
-        this.Items.setDefaultAction(this,'showFooter');
-        this.runDetails(response,'detailsFooter');
-    }
-    runDetails(response,run){
-        /*
-         * response - response
-         * run - method name to run
-        */
+    save(self){
+        console.log('Form_stage_create.save()');
         try{
-            /* PARSE RESPONSE */
-            var r=this.Items.parseResponse(response);
-            /* RUN */
-            this.Create[run](r.data);
+            if(self.ErrorStack.check()){ 
+                console.log('');
+                return false;
+            }
+            self.FormData.stage={
+                0:{
+                    'id':0
+                    ,'section':self.getData(self)
+                }
+            };
+            /*
+            * self.Parent references to this object Form_stage_create
+            */
+            new Form_stage_save(self);
         }
-        catch(error){
-            console.log(error);
-            this.StageTable.Table.setError(error);
-            return false;
-        }; 
-    }
-    setResponse(response){
-        console.log('ProjectStage.setResponse()');
-        var data = this.Items.setModalResponse(response)
-        if(data.status===1 || data.status==='1'){
-            return false;
+        catch(e){
+            console.log("Form_stage_create.save() catch()",e);
+            /*
+             * SET MODAL ERROR
+             */
+            self.setError('Application error occurred! Contact with Administrator!');
         }
-        this.Items.setTitle();
-        this.StageTable.updateBody(data); 
-    }
-    getFilterData(id){
-        var fd = this.Items.getFilterData(id);
-            fd.append('p',this.Items.default['part']);
-        return fd;
+        
     }
 }

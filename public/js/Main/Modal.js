@@ -40,6 +40,14 @@ class Modal{
         $(this.link['main']).modal('hide');
         this.clearData();
     }
+    /*
+     * initialise
+     * @returns void
+     */
+    init(){
+        console.log('Modal.init()');
+        this.setLink();
+    }
     setLink(){
         console.log('Modal::setLink()');
         this.getModal();
@@ -100,28 +108,28 @@ class Modal{
             this.Html.hideField(this.link['extra']);
         }
     }
-    setInfo(value){
+    setInfo(msg){
         //console.log('Modal::setInfo()');
         var textInfo=document.createElement('small');
             textInfo.setAttribute('class','text-left text-secondary ml-1');
-            textInfo.innerHTML=value;
+            textInfo.append(document.createTextNode(msg.toString()));
             this.link['info'].appendChild(textInfo);
     }
-    setError(e){
-        //console.log(e);
-        //console.log(this.link);
+    setError(msg){
         this.Html.removeClass(this.link['error'],['d-none','alert-success']);
         this.Html.addClass(this.link['error'],['alert-danger']);
-        this.link.error.innerHTML=e;
+        this.Html.removeChilds(this.link.error);
+        this.link.error.append(document.createTextNode(msg.toString()));
     }
     unsetError(){
         this.Html.addClass(this.link['error'],'d-none');
-        this.link.error.innerHTML='';
+        this.Html.removeChilds(this.link.error);
     }
-    setSuccess(i){
+    setSuccess(msg){
         this.Html.removeClass(this.link['error'],['d-none','alert-danger']);
         this.Html.addClass(this.link['error'],['alert-success']);
-        this.link.error.innerHTML=i;
+        this.Html.removeChilds(this.link.error);
+        this.link.error.append(document.createTextNode(msg.toString()));
     }
     setLoad(Xhr,appUrl){
            //setLoadModalInfo(Xhr){
@@ -229,5 +237,15 @@ class Modal{
             }
             else {}
         };
+    }
+    showModal(){
+        console.log('Modal.showModal()');
+        //$('#AdaptedModal').modal('show');
+        $(this.link['main']).modal({
+            show:true,
+            backdrop: 'static',
+            keyboard: false  // to prevent closing with Esc button
+        });
+        this.link['close'].parentNode.removeAttribute('data-dismiss');
     }
 }

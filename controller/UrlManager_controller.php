@@ -151,7 +151,10 @@ final class UrlManager_controller{
         ,['downloadFilledFormExcelList','EXCEL_FILLED_FORM']
         ,['getHideFormGlossary','HIDE_FORM']
         ,['getRemoveFormGlossary','REMOVE_FORM']
-        ,['getFormPartDefaults','LOG_INTO_FORM_STAGE']
+        ,['getFormStageDefaults','LOG_INTO_FORM_STAGE']
+        ,['getFormStageList','LOG_INTO_FORM_STAGE']
+        ,['getFormStageCreate','CREATE_FORM_STAGE']
+        ,['saveFormStage','CREATE_FORM_STAGE']
     ];
         
     public function __construct(){
@@ -193,7 +196,7 @@ final class UrlManager_controller{
             }   
         }
         if(!$found){
-            Throw New Exception(__METHOD__.' Task not exists => '.$this->urlData['task'],1);
+            Throw New Exception("[".__METHOD__.'] Task not exists => '.$this->urlData['task'],1);
         }
     }
     private function setTaskPerm($perm){

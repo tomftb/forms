@@ -20,7 +20,7 @@ class ProjectStageCreateHead{
         
     }
     set(ele){//ele
-        //console.log('ProjectStageCreateHead.set()');
+        console.log('ProjectStageCreateHead.set()');
         var self = this;
         var titleError=this.Tool.getDivError();
         var titleDiv=this.Html.getRow();
@@ -66,7 +66,7 @@ class ProjectStageCreateHead{
         
     }
     setDepartment(){
-        //console.log('ProjectStageCreateHead.setDepartment()');
+        console.log('ProjectStageCreateHead.setDepartment()');
         //console.log(this);
         var self=this;
         //throw 'sssssssssssss';

@@ -185,21 +185,25 @@ class ProjectStageCreate{
         
     }
     setUpTextModal(){
+        console.log('ProjectStageCreate.setUpTextModal()');
         this.setUpModal();
         //console.log(this.Modal.link);
         /* ASSING PREVIEW FIELD, ASSING WORKING FIELD */
         this.Modal.link.form.append(this.createPreview(),this.createDynamicView(this.helplink,'createExtendedSection'));
     }
     setUpListModal(){
+        console.log('ProjectStageCreate.setUpListModal()');
         this.setUpModal();
          /* ASSING PREVIEW FIELD, ASSING WORKING FIELD */
         this.Modal.link.form.append(this.createPreview(),this.createDynamicView(this.helplink,'createExtendedSection'));
     }
     setUpHeadingModal(){
+        console.log('ProjectStageCreate.setUpHeadingModal()');
         this.setUpModal();
         this.Modal.link.form.append(this.createPreview(),this.createDynamicView(this.helplink,'createSection'));
     }
     setUpFooterModal(){
+        console.log('ProjectStageCreate.setUpFooterModal()');
         this.setUpModal();
         this.Modal.link.form.append(this.createPreview(),this.createDynamicView(this.helplink,'createSection'));
     }
@@ -660,7 +664,6 @@ class ProjectStageCreate{
         var cancel=this.Html.cancelButton('Wyjdź');
         var self = this;
         var run = this.setUndoTask(this);
-            cancel.onclick = 
             cancel.onclick=function(){
                if(self.ErrorStack.check()){
                     if (confirm('Opuścić okno bez zapisu?') === true) {

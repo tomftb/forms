@@ -278,5 +278,19 @@ class Html{
             }
             return dropDownMenu;
     }
+    getButton(title,classList){
+        var button = document.createElement('button');
+            button.appendChild(document.createTextNode(title));
+        for(const prop in classList){
+            button.classList.add(classList[prop]);
+        }  
+        return button;
+    }
+    getOption(value){
+        var v = value.toString();
+        var option = document.createElement('option');
+            option.value = v;
+            option.append(document.createTextNode(v));
+        return option;
+    }
 }
-

@@ -7,17 +7,18 @@ class ErrorStack{
     constructor() {
         //console.log('ErrorStack::constructor()');
         this.Html = new Html();
+
         this.clearStack();
     }
     add(id,info){
-        console.log('ErrorStack::add(id,info)');
+        console.log('ErrorStack.add(id,info)');
         console.log(id);
         console.log(info);
         this.info[id.toString()]=info;
         this.setBlock();  
     }
     remove(id){
-        console.log('ErrorStack::remove(id)');
+        console.log('ErrorStack.remove(id)');
         console.log(id);
         id=id.toString();
         if(id===undefined || id === null){
@@ -48,14 +49,49 @@ class ErrorStack{
         return false;
     }
     get(){
+        return this.getList('');
+    }
+    getHtml(){
+       return this.getList("<br/>");
+    }
+    getHtmlWithMask(mask){
+        console.log('ErrorStack.getHtmlWithMask() mask:',mask);
+        var msg='';
+        var tmp_prefix='';
+        var mask_length=mask.length;
+        for(const prop in this.info){
+            console.log(prop);
+            if(prop.substring(0, mask_length)===mask){
+                msg+=tmp_prefix+this.info[prop];
+                tmp_prefix="<br/>";
+            }
+            //console.log(ErrorStack.[ErrorStack.name][prop]);
+        }
+        return msg;
+    }
+    getList(prefix){
         //console.log('ErrorStack::get()');
-        var info='';
+        var msg='';
+        var tmp_prefix='';
         for(const prop in this.info){
             //console.log(prop);
             //console.log(ErrorStack.[ErrorStack.name][prop]);
-            info+=this.info[prop];
+            msg+= tmp_prefix+this.info[prop];
+            tmp_prefix=prefix;
         }
-        return info;
+        return msg;
+    }
+    getWithPrefix(prefix){
+        //console.log('ErrorStack::get()');
+        var msg='';
+        var tmp_prefix='';
+        for(const prop in this.info){
+            //console.log(prop);
+            //console.log(ErrorStack.[ErrorStack.name][prop]);
+            msg+= tmp_prefix+this.info[prop];
+            tmp_prefix=prefix;
+        }
+        return msg;
     }
     clearStack(){
         this.info={};
@@ -73,7 +109,7 @@ class ErrorStack{
         this.block.push(ele);
     }
     setBlock(){
-        console.log('ErrorStack::setBlock()');
+        console.log('ErrorStack.setBlock()');
         var action = function(t,b){
                 //console.log(t);
                 //console.log(b);
@@ -83,7 +119,7 @@ class ErrorStack{
         this.manageBlock(action);
     }
     unsetBlock(){
-        console.log('ErrorStack::unsetBlock()');
+        console.log('ErrorStack.unsetBlock()');
         var action = function(t,b){
                 t.Html.removeClass(b,"disabled");
                 b.removeAttribute("disabled",'');

@@ -203,6 +203,7 @@ class Xhr2 {
     }  
     setOnError(property){
         console.log('Xhr2.setOnError()');
+        console.log(typeof property);
         /*
          * property:
          * o = object
@@ -214,9 +215,9 @@ class Xhr2 {
                     console.log(property.o);
                     console.log(property.m);
                     console.log(typeof property.o[property.m]);
-                    Error.o[Error.m]('Hxr2::onload() An Application Error Has Occurred!');
+                    Error.o[Error.m]('Xhr2.onload() An Application Error Has Occurred!');
                     //throw 'An Application Error Has Occurred!';
-                    alert('Xhr2::setOnError() An Application Error Has Occurred!');
+                    alert('Xhr2.setOnError() An Application Error Has Occurred!');
         }
         else{
             console.log('Xhr2.setOnError() property');
