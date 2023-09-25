@@ -455,4 +455,14 @@ class Utilities
         }
         return $date;
     }
+    public function propertyExists(object $object, string $property='',string $message = 'Property not exists in object!',int $lvl=1):void{
+        /*
+         * lvl
+         * 0 - user
+         * 1 - application
+         */
+        if(!property_exists($object, $property)){
+            Throw New \Exception ($message,$lvl);
+        }
+    }
 }

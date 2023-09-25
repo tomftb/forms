@@ -61,6 +61,7 @@ class Form_stage_create_input_checkbox{
             input_text.classList.add('form-control');
             input_text.setAttribute('id',this.uniqid+'_label');
             input_text.setAttribute('name',this.uniqid+'_label');
+            input_text.setAttribute('type','text');
             input_text.setAttribute('placeholder','Write checkbox label...');
             input_text.setAttribute('aria-label',this.uniqid+"text input with checkbox");
             
@@ -77,14 +78,19 @@ class Form_stage_create_input_checkbox{
         this.Prototype.setDataRow(data_row,data_row_id);
     }
     getData(){
-        //this.data.value=this.input.checkbox.value;
-        //this.data.label=this.input.text.value;
-        //return this.data;
         return {
-            'value':this.input.checkbox.value
+            'id':this.input.checkbox.id
+            ,'value':this.input.checkbox.value
+            ,'name':this.input.checkbox.name
             ,'type':'checkbox'
             ,'property':{
-                'label':this.input.text.value
+                'label':{
+                     'id':this.input.text.id
+                    ,'value':this.input.text.value
+                    ,'name':this.input.text.name
+                    ,'type':this.input.text.type
+                }
+                ,'type':this.input.checkbox.type
             }
             ,'style':new Object()
         };

@@ -65,6 +65,7 @@ class Form_stage_create_input_radio{
             input_text.classList.add('form-control');
             input_text.setAttribute('id',this.uniqid+'_label');
             input_text.setAttribute('name',this.uniqid+'_label');
+            input_text.setAttribute('type','text');
             input_text.setAttribute('placeholder','Write radio label...');
             input_text.setAttribute('aria-label',this.uniqid+"text input with radio button");
             
@@ -85,11 +86,18 @@ class Form_stage_create_input_radio{
     }
     getData(){
         return {
-            'value':this.input.radio.value
-            ,'id':this.uniqid
+            'id':this.input.radio.id
+            ,'value':this.input.radio.value
+            ,'name':this.input.radio.name
             ,'type':'radio'
             ,'property':{
-                'label':this.input.text.value
+                'label':{
+                    'id':this.input.text.id
+                    ,'value':this.input.text.value
+                    ,'name':this.input.text.name
+                    ,'type':this.input.text.type
+                }
+                ,'type':this.input.radio.type
             }
             ,'style':new Object()
         };

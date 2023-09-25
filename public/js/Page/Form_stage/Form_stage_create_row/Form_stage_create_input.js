@@ -48,6 +48,7 @@ class Form_stage_create_input{
             text_input.setAttribute('disabled','');
             text_input.setAttribute('id',this.uniqid);
             text_input.setAttribute('name',this.uniqid);
+            text_input.setAttribute('type','text');/* TO DO */
             text_input.setAttribute('placeholder','Write...');
             text_div.append(text_input);
             this.input = text_input;
@@ -61,11 +62,12 @@ class Form_stage_create_input{
         //this.data.value=this.input.value;
         //return this.data;
         return {
-            'value':this.input.value
-            ,'id':this.uniqid
+            'id':this.input.id
+            ,'value':this.input.value
+            ,'name':this.input.name
             ,'type':'input'
             ,'property':{
-                'type':'text'//number to do in future
+                'type':this.input.type//number to do in future
             }
             ,'style':new Object()
         };

@@ -1,5 +1,6 @@
 class Form_stage_preview{
     Html = new Object();
+    Utilities = new Object();
     //ele = new Object();
     //data = new Object();
     subsection_min = 1;
@@ -11,12 +12,11 @@ class Form_stage_preview{
         //console.log('Form_stage_preview.construct()',ele,data);
         this.setUniqid();
         this.Html = new Html();
+        this.Utilities = new Utilities();
         /*
          * CLEAR PREVIEW ELEMENT FIELD
          */
         this.Html.removeChilds(ele);
-        //this.ele = ele;
-        //this.data = data;
         this.setStage(ele,data);
         console.log('Form_stage_preview.construct() END');
         console.log(ele);
@@ -81,17 +81,16 @@ class Form_stage_preview{
         }
     }
     setRowProperty(ele,data){
-        //console.log('Form_stage_preview.setRowProperty()',data);
-        if(!data.hasOwnProperty('type')){
-            throw "Row data doesn't have `type` property!";
-        }
-        if(!data.hasOwnProperty('value')){
-            throw "Row data doesn't have `value` property!";
-        }
-        if(!data.hasOwnProperty('property')){
-            throw "Row data doesn't have `property` property!";
-        }
+        console.log('Form_stage_preview.setRowProperty()',data);
+        this.Utilities.propertyExists(data,'type',"Row data doesn't have `type` property!");
+        this.Utilities.propertyExists(data,'property',"Row data doesn't have `property` property!");
+        this.Utilities.propertyExists(data,'value',"Row data doesn't have `value` property!");
+        this.Utilities.propertyExists(data,'name',"Row data doesn't have `name` property!");
+
         try{
+            /*
+             * TO DO - number,password, email
+             */
             this['setRow_'+data.type](ele,data);
         }
         catch(e){
@@ -128,9 +127,7 @@ class Form_stage_preview{
     }
     setRow_select(ele,data){
         console.log('Form_stage_preview.setRow_select()',data);
-        if(!data.property.hasOwnProperty('options')){
-            throw "Row data select doesn't have `options` property!";
-        }
+        this.Utilities.propertyExists(data.property,'options',"Row data `select` `property` doesn't have `options` property!");
         
         var row = this.Html.getRow();
         var col = this.Html.getCol(12);
@@ -154,9 +151,11 @@ class Form_stage_preview{
     }
     setRow_checkbox(ele,data){
         console.log('Form_stage_preview.setRow_checkbox()',data);
-        if(!data.property.hasOwnProperty('label')){
-            throw "Row data checkbox doesn't have `label` property!";
-        }
+        this.Utilities.propertyExists(data.property,'label',"Row data `checkbox` `property` doesn't have `label` property!");
+        /*
+         * LABEL CHECK
+         */
+        this.Utilities.propertyExists(data.property.label,'value',"Row data `checkbox` `property` `label` doesn't have `value` property!");
         var id = this.uniqid+"_checkbox_"+this.counter.toString();
         var row = this.Html.getRow();
         var col = this.Html.getCol(12);
@@ -169,7 +168,7 @@ class Form_stage_preview{
         var label=document.createElement('label');
             label.classList.add('form-check-label'); 
             label.setAttribute('for',id);   
-            label.append(document.createTextNode(data.property.label));
+            label.append(document.createTextNode(data.property.label.value));
             form_check.append(input,label);
             col.append(form_check);
             row.append(col);
@@ -177,9 +176,11 @@ class Form_stage_preview{
     }
     setRow_radio(ele,data){
         console.log('Form_stage_preview.setRow_radio()',data);
-        if(!data.property.hasOwnProperty('label')){
-            throw "Row data radio doesn't have `label` property!";
-        }
+         this.Utilities.propertyExists(data.property,'label',"Row data `radio` `property` doesn't have `label` property!");
+        /*
+         * LABEL CHECK
+         */
+        this.Utilities.propertyExists(data.property.label,'value',"Row data `radio` `property` `label` doesn't have `value` property!");
         var row = this.Html.getRow();
         var col = this.Html.getCol(12);
                 var id = this.uniqid+"_checkbox_"+this.counter.toString();
@@ -194,7 +195,7 @@ class Form_stage_preview{
         var label=document.createElement('label');
             label.classList.add('form-check-label');
             label.setAttribute('for',id);   
-            label.append(document.createTextNode(data.property.label));
+            label.append(document.createTextNode(data.property.label.value));
             form_check.append(input,label);
             col.append(form_check);
             row.append(col);

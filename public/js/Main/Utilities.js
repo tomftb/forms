@@ -176,4 +176,14 @@ class Utilities {
             ele.checked=true;
         }
     }
+    propertyExists(o,p,m){
+        /*
+         * o - object
+         * p - proeprty
+         * m - message
+         */
+        if(!o.hasOwnProperty(p)){
+            throw m;
+        }
+    }
 }

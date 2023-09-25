@@ -11,6 +11,7 @@
         $this->Log->log(0,"[".__METHOD__."]");
         $this->Model->{'Uprawnienia'}=new \Uprawnienia_model();
         $this->Model->{'Department_user'}=new \Department_user_model();
+        $this->Controller->{'Form_stage_create'}=new \Form_stage_create_controller();
     }
     public function __call($m,$a){
         Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
@@ -59,8 +60,11 @@
     }
     public function saveFormStage(){
         $this->Log->log(0,"[".__METHOD__."]");
-        (array) $post = filter_input(INPUT_POST,'data');
-        $this->Log->logMulti(0,$post);
+        (array) $post = json_decode(filter_input(INPUT_POST,'data'));
+        if(json_last_error()){
+            throw new \exception(json_last_error_msg(),0);
+        }
+        $this->Controller->{'Form_stage_create'}->create($post);
         Throw New \Exception('ssss',0);
         parent::returnJson([]);
     }

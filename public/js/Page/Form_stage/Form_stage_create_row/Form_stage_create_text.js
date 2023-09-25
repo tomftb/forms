@@ -47,6 +47,7 @@ class Form_stage_create_text{
             input.classList.add('form-control');
             input.setAttribute('id',this.uniqid);
             input.setAttribute('name',this.uniqid);
+            input.setAttribute('type','text');/* TO DO */
             text_div.append(input);
             this.input=input;
             this.Prototype.ele.input.append(text_div);
@@ -58,10 +59,13 @@ class Form_stage_create_text{
     getData(){
         console.log('Form_stage_create_text.getData()',this.input);
         return {
-            'value':this.input.value
-            ,'id':this.uniqid
+            'id':this.input.id
+            ,'value':this.input.value
+            ,'name':this.input.name
             ,'type':'text'
-            ,'property':{}
+            ,'property':{
+                'type':this.input.type
+            }
             ,'style':new Object()
         };
     }

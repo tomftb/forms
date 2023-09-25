@@ -68,12 +68,14 @@ class Form_stage_create_input_select{
         this.Prototype.setDataRow(data_row,data_row_id);
     }
     getData(){
-        return {
-            'value':this.input.value
-            ,'id':this.uniqid
+        return {     
+            'id':this.input.id
+            ,'value':this.input.value
+            ,'name':this.input.name
             ,'type':'select'
             ,'property':{
                 'options':this.options
+                ,'type':'select'
             }
             ,'style':new Object()
         };
