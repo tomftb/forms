@@ -79,7 +79,7 @@ class Form_stage_create_input_checkbox{
     }
     getData(){
         return {
-            'id':this.input.checkbox.id
+            'id':0//this.input.checkbox.id
             ,'value':this.input.checkbox.value
             ,'name':this.input.checkbox.name
             ,'type':'checkbox'

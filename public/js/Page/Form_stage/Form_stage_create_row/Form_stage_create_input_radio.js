@@ -86,7 +86,7 @@ class Form_stage_create_input_radio{
     }
     getData(){
         return {
-            'id':this.input.radio.id
+            'id':0//this.input.radio.id
             ,'value':this.input.radio.value
             ,'name':this.input.radio.name
             ,'type':'radio'

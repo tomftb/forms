@@ -14,14 +14,16 @@ class Form_stage_create extends Modal{
     FormData = {
         'id':'N/A'
         ,'user':{
-            'create_user_id':0
-            ,'create_user_login':'N/A'
+            'create_user_login':'N/A'
             ,'create_user_email':'N/A'
             ,'create_date':'N/A'
         }
         ,'stage':{
             0:{
                 'id':0// STAGE ID
+                ,'department_name':''// STAGE ID
+                ,'department_id':0// STAGE ID
+                ,'title':0// STAGE ID
                 ,'section':{
                             0:{
                                 'id':0// SECTION ID [ROW]
@@ -101,7 +103,7 @@ class Form_stage_create extends Modal{
             super.setExitKeys();
             super.setHead('Dodaj etap formularza','bg-info');
             super.setCloseModal();
-            super.setInfo("Form Stage ID: "+(this.FormData.id).toString()+", Create user: "+this.FormData.create_user_login+" (e-mail: "+this.FormData.create_user_email+"), Create date: "+this.FormData.create_date);
+            super.setInfo("Form Stage ID: "+(this.FormData.id).toString()+", Create user: "+this.FormData.user.create_user_login+" (e-mail: "+this.FormData.user.create_user_email+"), Create date: "+this.FormData.user.create_date);
             //console.log(this.link['adapted']);  
             console.log(this.link);
             /*
@@ -168,11 +170,36 @@ class Form_stage_create extends Modal{
              */
             this.link['adapted'].append(row);  
     }
-    setData(response){
-        console.log('Form_stage_create.save()',response);
+    updateData(response){
+        console.log('Form_stage_create.updateData()');
+        console.log(response);
+        /*
+         * UPDATE FormData
+         */
+        this.FormData=response;
+        /*
+         * UPDATE Modal info
+         */
+        super.setInfo("Form Stage ID: "+(this.FormData.stage[0].id).toString()+", Create user: "+this.FormData.user.create_user_login+" (e-mail: "+this.FormData.user.create_user_email+"), Create date: "+this.FormData.user.create_date);
+            
+        console.log(this.FormData);
+        //this.FormData.user = response.user;
+        //this.FormData.stage = response.stage;
     }
-    getData(self){
-        console.log('Form_stage_create.getData()',self);
+    getTitle(self){
+        console.log('Form_stage_create.getTitle()');
+        return self.Title.getValue();
+    }
+    getDepartmentName(self){
+        console.log('Form_stage_create.getDepartmentName()');
+        return self.Department.getName();
+    }
+    getDepartmentId(self){
+        console.log('Form_stage_create.getDepartmetnId()');
+        return self.Department.getValue();
+    }
+    getSectionData(self){
+        console.log('Form_stage_create.getSectionData()');
          /*
          * self.Parent references to this object Form_stage_create
          */
@@ -188,7 +215,7 @@ class Form_stage_create extends Modal{
             var stage={
                 0:{
                     'id':0
-                    ,'section':self.getData(self)
+                    ,'section':self.getSectionData(self)
                 }
             };
             new Form_stage_preview(self.link['preview'],stage);
@@ -208,15 +235,15 @@ class Form_stage_create extends Modal{
                 console.log('');
                 return false;
             }
-            self.FormData.stage={
-                0:{
-                    'id':0
-                    ,'section':self.getData(self)
-                }
-            };
+            self.FormData.stage[0].department_name = self.getDepartmentName(self);
+            self.FormData.stage[0].department_id = self.getDepartmentId(self);
+            self.FormData.stage[0].title = self.getTitle(self);
+            self.FormData.stage[0].section = self.getSectionData(self);
+
             /*
             * self.Parent references to this object Form_stage_create
             */
+            console.log(self.FormData.stage);
             new Form_stage_save(self);
         }
         catch(e){

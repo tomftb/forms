@@ -59,7 +59,7 @@ class Form_stage_create_text{
     getData(){
         console.log('Form_stage_create_text.getData()',this.input);
         return {
-            'id':this.input.id
+            'id':0//this.input.id
             ,'value':this.input.value
             ,'name':this.input.name
             ,'type':'text'

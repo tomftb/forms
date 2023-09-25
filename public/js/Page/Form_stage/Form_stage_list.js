@@ -27,19 +27,25 @@ class Form_stage_list extends Table{
             }
         },
         2:{
-            title:'Data utworzenia',
+            title:'Department',
             attribute:{
                 scope:'col'
             }
         },
         3:{
-            title:'Data modyfikacji',
+            title:'Data utworzenia',
             attribute:{
                 scope:'col'
             }
         },
         4:{
-            title:'',
+            title:'Data modyfikacji',
+            attribute:{
+                scope:'col'
+            }
+        },
+        5:{
+            title:'',/* BUTTONS */
             style:{
                 width:'200px'
             },
@@ -48,10 +54,11 @@ class Form_stage_list extends Table{
             }
         }};
     body={
-        0:'i'
-        ,1:'n'
-        ,2:'cd'
-        ,3:'md'
+        0:'id'
+        ,1:'title'
+        ,2:'department_name'
+        ,3:'create_date'
+        ,4:'mod_date'
     };
     button={
         'show':{
@@ -61,14 +68,6 @@ class Form_stage_list extends Table{
             ,'action':'showFormModal'
             ,'url':'getFormDescription&id='
             ,'permission':'SHOW_FORM_STAGE'
-        }
-        ,'filled':{
-            'set':'getButton'// //getDisabledButton
-            ,'title':'Zestawienie'
-            ,'class':'btn-purple'
-            ,'action':'showFilledModal'
-            ,'url':'getFilledForms&id='
-            ,'permission':'SHOW_LIST_FILLED_FORM'
         }
         ,'hide':{
             'set':'getButton'//getHideButton
@@ -143,12 +142,13 @@ class Form_stage_list extends Table{
             return {};
         }
     }
-
     updateBodyRow(bodyRow){      
         //console.log('Form_stage_table.updateBodyRow()');
+        //console.log(bodyRow);
         var tr=document.createElement('TR');
         for(const prop in this.body){         
             //console.log(prop);
+            //console.log(this.body[prop]);
             tr.appendChild(this.setBodyRowColData(bodyRow[this.body[prop]]));
         };
         tr.appendChild(this.setBodyRowColButton(bodyRow));
@@ -159,7 +159,6 @@ class Form_stage_list extends Table{
             col.innerHTML=value;
             return col;
     }
-
     setBodyRowColButton(value){
         //console.log('ProjectStageTable::setBodyRowColButton()');
         var col = document.createElement('TD');

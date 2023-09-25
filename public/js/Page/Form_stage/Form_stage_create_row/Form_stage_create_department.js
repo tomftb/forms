@@ -41,6 +41,17 @@ class Form_stage_create_department{
     getValue(){
         return this.select.value;
     }
+    getName(){
+        console.log(this.department_list,this.select.value);
+        for (const prop in this.department_list){
+            if(this.department_list[prop].i===this.select.value){
+                return this.department_list[prop].n;
+                break;
+            }
+        }
+        console.log("Department `"+this.select.value+"` not found!");
+        throw 'Application error occurred! Contact with Administrator!';
+    }
     setInput(){
         console.log('Form_stage_create_department.setInput()');
         var row=this.Html.getRow();

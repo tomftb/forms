@@ -211,12 +211,12 @@ class Form_stage_create_section{
         for(const section in this.Section){
             console.log(this.Section[section]);
             data[section] = {
-                'id':section
+                'id':0//section
                 ,'subsection':new Object
             };
             for(const subsection in this.Section[section].subsection){
                 data[section].subsection[subsection]={
-                    'id':subsection
+                    'id':0//subsection
                     ,'row':this.Section[section].subsection[subsection].getData()
                 };
             }

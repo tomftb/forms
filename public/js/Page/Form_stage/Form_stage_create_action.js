@@ -56,6 +56,7 @@ class Form_stage_create_action{
                     if (confirm('Opuścić okno bez zapisu?') === true) {
                         window.onbeforeunload = null;
                         $(self.Parent.link['main']).modal('hide');
+                        
                         return false;
                     }
                     else{ 

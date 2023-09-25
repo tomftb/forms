@@ -48,7 +48,7 @@ class Form_stage_create_title{
         }
     }
     getValue(){
-        return this.value;
+        return this.input.value;
     }
     getInputField(){
         var self=this;

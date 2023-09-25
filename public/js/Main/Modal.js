@@ -110,6 +110,7 @@ class Modal{
     }
     setInfo(msg){
         //console.log('Modal::setInfo()');
+        this.Html.removeChilds(this.link['info']);
         var textInfo=document.createElement('small');
             textInfo.setAttribute('class','text-left text-secondary ml-1');
             textInfo.append(document.createTextNode(msg.toString()));

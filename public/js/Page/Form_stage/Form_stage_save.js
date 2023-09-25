@@ -38,6 +38,7 @@ class Form_stage_save{
              */
             this.response = this.Parent.Parse.getSimpleJson(response);
                 console.log(this.response);
+                this.Parent.updateData(this.response);
                 this.Parent.setSuccess('Zapis się powiódł');
         }
         catch (e) {

@@ -69,7 +69,7 @@ class Form_stage_create_input_select{
     }
     getData(){
         return {     
-            'id':this.input.id
+            'id':0//this.input.id
             ,'value':this.input.value
             ,'name':this.input.name
             ,'type':'select'
