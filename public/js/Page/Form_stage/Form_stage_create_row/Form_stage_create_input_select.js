@@ -3,7 +3,7 @@ class Form_stage_create_input_select{
     Html = new Object();
     Parent = new Object();
     Prototype = new Object();
-    
+    id_db = 0;
     uniqid='';
     type = 'select';
     input = new Object();
@@ -64,12 +64,12 @@ class Form_stage_create_input_select{
             this.Prototype.ele.input.append(text_div);
     }
     setData(data_row,data_row_id){
-        console.log('Form_stage_create_text.setData()');
+        console.log('Form_stage_create_select.setData()');
         this.Prototype.setDataRow(data_row,data_row_id);
     }
     getData(){
         return {     
-            'id':0//this.input.id
+            'id_db':this.id_db
             ,'value':this.input.value
             ,'name':this.input.name
             ,'type':'select'
@@ -86,5 +86,9 @@ class Form_stage_create_input_select{
     }
     getType(){
         return this.type;
+    }
+    updateIdDb(row){
+        console.log('Form_stage_create_select.updateIdDb()');
+        this.id_db = row.id_db;
     }
 }

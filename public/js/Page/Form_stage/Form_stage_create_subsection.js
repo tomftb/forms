@@ -15,6 +15,7 @@ class Form_stage_create_subsection{
     fields_counter=0;
     column_size=2;
     Row = new Object();
+    id_db = 0;
     
     constructor(Parent,ele,column_size){
         try{
@@ -124,8 +125,8 @@ class Form_stage_create_subsection{
         console.log('Form_stage_create_subsection.getData()');
         var data = new Object();
         for (const prop in this.Row){
-            data[prop]=this.Row[prop].getData();
-        }
+            data[prop] = this.Row[prop].getData();
+        };
         return data;
     }
     set(ele,column_size){        
@@ -170,5 +171,17 @@ class Form_stage_create_subsection{
             console.log('Form_stage_create_subsection.checkErrors()',e);
             alert('Application error occurred! Contact with Administrator!');
         }  
+    }
+    getIdDb(){
+        return this.id_db;
+    }
+    updateIdDb(data){
+        console.log('Form_stage_create_subsection.updateIdDb()');
+        console.log(data);
+        this.id_db = data.id_db;
+        for (const prop in data.row){
+            console.log(this.Row[prop]);
+            this.Row[prop].updateIdDb(data.row[prop]);
+        };
     }
 }

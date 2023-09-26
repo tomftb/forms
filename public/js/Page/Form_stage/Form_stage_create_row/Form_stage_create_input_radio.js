@@ -3,7 +3,8 @@ class Form_stage_create_input_radio{
     Html = new Object();
     Parent = new Object();
     Prototype = new Object();
-    
+    id_db = 0;
+    child_id_db = 0;
     uniqid='';
     type = 'radio';
     input = {
@@ -81,18 +82,18 @@ class Form_stage_create_input_radio{
             this.Prototype.ele.input.append(div_input_group);
     }
     setData(data_row,data_row_id){
-        console.log('Form_stage_create_text.setData()');
+        console.log('Form_stage_create_radio.setData()');
         this.Prototype.setDataRow(data_row,data_row_id);
     }
     getData(){
         return {
-            'id':0//this.input.radio.id
+            'id_db':this.id_db
             ,'value':this.input.radio.value
             ,'name':this.input.radio.name
             ,'type':'radio'
             ,'property':{
                 'label':{
-                    'id':this.input.text.id
+                    'id_db':this.child_id_db
                     ,'value':this.input.text.value
                     ,'name':this.input.text.name
                     ,'type':this.input.text.type
@@ -108,5 +109,10 @@ class Form_stage_create_input_radio{
     }
     getType(){
         return this.type;
+    }
+    updateIdDb(row){
+        console.log('Form_stage_create_radio.updateIdDb()');
+        this.id_db = row.id_db;
+        this.child_id_db = row.property.label.id_db;
     }
 }

@@ -9,10 +9,11 @@ class Form_stage_create extends Modal{
     Form_stage_list = new Object();
     Form_stage_create_department = new Object();
     Form_stage_create_action = new Object();
+    Form_stage_create_section = new Object();
     Parse = new Object();
     ErrorStack = new Object();
     FormData = {
-        'id':'N/A'
+        'id_db':'N/A'
         ,'user':{
             'create_user_login':'N/A'
             ,'create_user_email':'N/A'
@@ -20,19 +21,19 @@ class Form_stage_create extends Modal{
         }
         ,'stage':{
             0:{
-                'id':0// STAGE ID
+                'id_db':0// STAGE ID
                 ,'department_name':''// STAGE ID
                 ,'department_id':0// STAGE ID
                 ,'title':0// STAGE ID
                 ,'section':{
                             0:{
-                                'id':0// SECTION ID [ROW]
+                                'id_db':0// SECTION ID [ROW]
                                 ,'subsection':{
                                                 0:{
-                                                    'id':0// SUBSECTION ID [COLUMN]
+                                                    'id_db':0// SUBSECTION ID [COLUMN]
                                                     ,'row':{
                                                             0:{
-                                                               'id':0// ROW ID [COLUMN ROW]
+                                                               'id_db':0// ROW ID [COLUMN ROW]
                                                                ,'data':{
                                                                    0:{}
                                                                }
@@ -103,7 +104,7 @@ class Form_stage_create extends Modal{
             super.setExitKeys();
             super.setHead('Dodaj etap formularza','bg-info');
             super.setCloseModal();
-            super.setInfo("Form Stage ID: "+(this.FormData.id).toString()+", Create user: "+this.FormData.user.create_user_login+" (e-mail: "+this.FormData.user.create_user_email+"), Create date: "+this.FormData.user.create_date);
+            super.setInfo("Form Stage ID: "+(this.FormData.id_db).toString()+", Create user: "+this.FormData.user.create_user_login+" (e-mail: "+this.FormData.user.create_user_email+"), Create date: "+this.FormData.user.create_date);
             //console.log(this.link['adapted']);  
             console.log(this.link);
             /*
@@ -172,7 +173,7 @@ class Form_stage_create extends Modal{
     }
     updateData(response){
         console.log('Form_stage_create.updateData()');
-        console.log(response);
+        //console.log(response);
         /*
          * UPDATE FormData
          */
@@ -180,9 +181,13 @@ class Form_stage_create extends Modal{
         /*
          * UPDATE Modal info
          */
-        super.setInfo("Form Stage ID: "+(this.FormData.stage[0].id).toString()+", Create user: "+this.FormData.user.create_user_login+" (e-mail: "+this.FormData.user.create_user_email+"), Create date: "+this.FormData.user.create_date);
-            
+        super.setInfo("Form Stage ID: "+(this.FormData.stage[0].id_db).toString()+", Create user: "+this.FormData.user.create_user_login+" (e-mail: "+this.FormData.user.create_user_email+"), Create date: "+this.FormData.user.create_date);
+        /*
+         * UPDATE SECTION, SUBSECTION AND ROW IDS
+         */  
         console.log(this.FormData);
+        console.log(this.Form_stage_create_section);
+        this.Form_stage_create_section.updateId(this.FormData.stage[0].section);
         //this.FormData.user = response.user;
         //this.FormData.stage = response.stage;
     }
@@ -214,7 +219,7 @@ class Form_stage_create extends Modal{
         try{
             var stage={
                 0:{
-                    'id':0
+                    'id_db':0
                     ,'section':self.getSectionData(self)
                 }
             };

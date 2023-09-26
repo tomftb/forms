@@ -30,7 +30,7 @@ class Form_stage_model extends Database_model {
                 . "`id`=:id"
                 , array_merge(
                            [
-                            ':id'=>[$data->id,'INT']
+                            ':id'=>[$data->id_db,'INT']
                             ,':department_id'=>[$data->department_id,'INT']
                             ,':department_name'=>[$data->department_name,'STR']
                             ,':title'=>[$data->title,'STR']

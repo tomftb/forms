@@ -11,6 +11,7 @@ class Form_stage_create_input{
         ,'style':new Object()
         ,'property':new Object()
     }
+    id_db = 0;
     
     constructor(Parent){
         try{
@@ -55,14 +56,14 @@ class Form_stage_create_input{
             this.Prototype.ele.input.append(text_div);
     }
     setData(data_row,data_row_id){
-        console.log('Form_stage_create_text.setData()');
+        console.log('Form_stage_create_input.setData()');
         this.Prototype.setDataRow(data_row,data_row_id);
     }
     getData(){
         //this.data.value=this.input.value;
         //return this.data;
         return {
-            'id':0//this.input.id
+            'id_db':this.id_db
             ,'value':this.input.value
             ,'name':this.input.name
             ,'type':'input'
@@ -78,5 +79,9 @@ class Form_stage_create_input{
     }
     getType(){
         return this.type;
+    }
+    updateIdDb(row){
+        console.log('Form_stage_create_input.updateIdDb()');
+        this.id_db = row.id_db;
     }
 }

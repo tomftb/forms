@@ -25,6 +25,7 @@ class Form_stage_create_input_prototype{
         0:new Object()
     };
     data_row_id = 0;
+        
     constructor(Parent,main_ele){
         try{
             //console.log('Form_stage_create_input_prototype.construct()');
@@ -206,6 +207,9 @@ class Form_stage_create_input_prototype{
             ele.append(button);
     }
     setDataRow(data_row,data_row_id){
+        /*
+         * FOR REMOVE ELE
+         */
         this.data_row = data_row;
         this.data_row_id=data_row_id;
     }

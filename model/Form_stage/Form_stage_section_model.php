@@ -27,8 +27,24 @@ class Form_stage_section_model extends Database_model {
                 . "`id`=:id"
                 , array_merge(
                            [
-                            ':id'=>[$data->id,'INT']
+                            ':id'=>[$data->id_db,'INT']
                 ]
+                ,parent::getAlterUserParm()
+                )
+        );
+    }
+    public function setNewVersion(int $id_parent=0){
+                $this->Main->query2("UPDATE `form_stage_section` SET "
+                . "`delete_status`='1'"
+                . ",`delete_reason`='NEW VERSION'"
+                . ",`delete_date`='".parent::getDate()."'"
+                . ",".parent::getUpdateSql().""
+                . " WHERE "
+                . "`id_parent`=:id_parent"
+                , array_merge(
+                           [
+                            ':id_parent'=>[$id_parent,'INT']
+                            ]
                 ,parent::getAlterUserParm()
                 )
         );

@@ -14,6 +14,8 @@ class Form_stage_create_input_checkbox{
         ,'style':new Object()
         ,'property':new Object()
     }
+    id_db = 0;
+    child_id_db = 0;
     
     constructor(Parent){
         try{
@@ -74,18 +76,19 @@ class Form_stage_create_input_checkbox{
             this.Prototype.ele.input.append(div_input_group);
     }
     setData(data_row,data_row_id){
-        console.log('Form_stage_create_text.setData()');
+        console.log('Form_stage_create_checkbox.setData()');
         this.Prototype.setDataRow(data_row,data_row_id);
     }
     getData(){
         return {
-            'id':0//this.input.checkbox.id
+            'id_db':this.id_db
             ,'value':this.input.checkbox.value
             ,'name':this.input.checkbox.name
             ,'type':'checkbox'
             ,'property':{
                 'label':{
-                     'id':this.input.text.id
+                    
+                     'id_db':this.child_id_db
                     ,'value':this.input.text.value
                     ,'name':this.input.text.name
                     ,'type':this.input.text.type
@@ -101,5 +104,10 @@ class Form_stage_create_input_checkbox{
     }
     getType(){
         return this.type;
+    }
+    updateIdDb(row){
+        console.log('Form_stage_create_checkbox.updateIdDb()');
+        this.id_db = row.id_db;
+        this.child_id_db = row.property.label.id_db;
     }
 }

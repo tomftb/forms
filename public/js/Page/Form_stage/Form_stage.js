@@ -147,9 +147,9 @@ try{
                 alert('Form_stage.load() Error occured!');
             }
         },false);
-        window.addEventListener('resize', function(event) {
-            console.log('Window resize',event);
-            console.log(window.innerWidth,window.innerHeight);
+        window.addEventListener('resize', function(event) {/* TO DO */
+            //console.log('Window resize',event);
+           // console.log(window.innerWidth,window.innerHeight);
         }, true);
 }
 catch (e){

@@ -6,7 +6,7 @@ class Form_stage_create_text{
     
     uniqid='';
     type = 'text';
-
+    id_db = 0;
     input = new Object();
     
     data = {
@@ -59,7 +59,7 @@ class Form_stage_create_text{
     getData(){
         console.log('Form_stage_create_text.getData()',this.input);
         return {
-            'id':0//this.input.id
+            'id_db':this.id_db
             ,'value':this.input.value
             ,'name':this.input.name
             ,'type':'text'
@@ -75,5 +75,9 @@ class Form_stage_create_text{
     }
     getType(){
         return this.type;
+    }
+    updateIdDb(row){
+        console.log('Form_stage_create_text.setData()');
+        this.id_db = row.id_db;
     }
 }

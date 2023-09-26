@@ -57,7 +57,7 @@
         }
         $this->Controller->{'Form_stage_create'}->create($post);
         $response = $this->Controller->{'Form_stage_create'}->get();
-        $response->id = 0;
+        $response->id_db = 0;
         parent::returnJson($response);
     }
 }

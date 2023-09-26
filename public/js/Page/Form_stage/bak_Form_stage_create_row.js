@@ -15,6 +15,7 @@ class Form_stage_create_row{
     }    
     uniqid = '';
 
+
     constructor(Parent){
         try{
             console.log('Form_stage_create_row.construct()');
