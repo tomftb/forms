@@ -19,7 +19,7 @@ class Form_stage{
         /*
          * FORM STAGE TABLE
          */
-        this.Form_stage_list = new Form_stage_list(this.router);
+        this.Form_stage_list = new Form_stage_list();
         /*
          * FORM STAGE MODAL
          */
@@ -35,6 +35,7 @@ class Form_stage{
          * INITIALISE PARENT TABLE LINKS
          */
         this.Form_stage_list.init(); 
+        this.Form_stage_list.setParent(this); 
         /*
          * SET TABLE LIST HEAD */
         this.Form_stage_list.setHead();
@@ -68,7 +69,7 @@ class Form_stage{
             this.Form_stage_list.setPermissions(this.response.user.perm);
             /*
              * SET TABLE BODY
-             */
+             */            
             this.Form_stage_list.setBody(this.response.list);
             /*
              * SET DEPARTMENT - TURN OFF
@@ -127,6 +128,15 @@ class Form_stage{
         ele.onclick = function(){
             console.log(self);
         };
+    }
+    editStage(){
+       console.log('Form_stage.editStage()');  
+    }
+    removeStage(){
+      console.log('Form_stage.removeStage()');  
+    }
+    hideStage(){
+        console.log('Form_stage.hideStage()');  
     }
 }
 /*
