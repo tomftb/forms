@@ -57,7 +57,11 @@ final class Form_stage_page extends Page{
         'Page/ProjectStage/ProjectStageCreateImage.js',
         'Page/ProjectStage/ProjectStageTable.js',
         'Page/ProjectStage/ProjectStage.js',
-
+        
+        'Page/Form_stage/Form_stage_show.js',
+        'Page/Form_stage/Form_stage_edit.js',
+        'Page/Form_stage/Form_stage_remove.js',
+        'Page/Form_stage/Form_stage_hide.js',
         'Page/Form_stage/Form_stage_list.js',
         'Page/Form_stage/Form_stage_section.js',
         'Page/Form_stage/Form_stage_preview.js',
