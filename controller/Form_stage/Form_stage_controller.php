@@ -47,9 +47,19 @@
         parent::returnJson(
                 [
                     'department'=>$this->Model->{'Department_user'}->getUserDepartments($_SESSION['userid'])
-                    ,'parameters'=>$this->Model->{'Parametry'}->getFormStageCreate()       
+                    ,'parameters'=>self::getParameters()      
                 ]
         );
+    }
+    private function getParameters(){
+        (object) $parameters = new stdClass();
+        $throw='throwError';
+        foreach($this->Model->{'Parametry'}->getFormStageCreate() as $parm){
+            $parameters->{$parm['s']}=$parm['v'];
+            $throw='throwNoError';
+        }
+        parent::{$throw}(__METHOD__.' No \'FORM_STAGE\' parameters in database!',1);
+        return $parameters;
     }
     public function saveFormStage(){
         $this->Log->log(0,"[".__METHOD__."]");
