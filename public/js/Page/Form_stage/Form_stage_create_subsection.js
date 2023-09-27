@@ -1,5 +1,6 @@
 class Form_stage_create_subsection{  
     Html = new Object();
+    Utilities = new Object();
     ErrorStack = new Object();
     /*
      * REFERENCES TO ELEMENTS
@@ -12,26 +13,72 @@ class Form_stage_create_subsection{
         ,'error':new Object()
     }    
     uniqid = '';
-    fields_counter=0;
+    row_counter=0;
     column_size=2;
     Row = new Object();
     id_db = 0;
+    default_row_field = 'text';
+    create = new Object();
     
     constructor(Parent,ele,column_size){
         try{
             //console.log('Form_stage_create_subsection.construct()');
             this.Html=new Html();
+            this.Utilities=new Utilities();
             /*
              * PARENT EXTENDS MODAL
              */
             this.Parent = Parent;
             this.ErrorStack = Parent.ErrorStack;
+            this.parameters = Parent.parameters;
+           
             this.setUniqid();  
+            this.setCreate();
+            this.setRowCounter(Parent.parameters);
+            this.setRowDefaultField(Parent.parameters);
             this.set(ele,column_size);
+            this.setRows();
         }
         catch(e){
             console.log('Form_stage_create_subsection.construct() catch()',e);
-            alert('Application error occurred! Contact with Administrator!');
+            //alert('Application error occurred! Contact with Administrator!');
+            this.setError(this,'overall_subsection','Application error occurred! Contact with Administrator!');
+            this.checkErrors(this);
+        }
+    }
+    setRowCounter(parameters){
+        this.Utilities.propertyExists(parameters,'FORM_STAGE_ROW_COUNT','No `FORM_STAGE_ROW_COUNT` parameter!');
+        this.row_counter = parseInt(parameters.FORM_STAGE_ROW_COUNT,10);
+    }
+    setRowDefaultField(parameters){
+        this.Utilities.propertyExists(parameters,'FORM_STAGE_ROW_FIELD','No `FORM_STAGE_ROW_FIELD` parameter!');
+        this.default_row_field = parameters.FORM_STAGE_ROW_FIELD;
+    }
+    setCreate(){
+        this.create.text = function(self){return new Form_stage_create_text(self);};
+        this.create.input = function(self){ return new Form_stage_create_input(self);};
+        this.create.select = function(self){ return new Form_stage_create_input_select(self);};
+        this.create.checkbox = function(self){ return new Form_stage_create_input_checkbox(self);};
+        this.create.radio = function(self){ return new Form_stage_create_input_radio(self);};
+    }
+    setRows(){
+        var max = this.row_counter;
+        for(var i=0;i<max;i++){
+            //self.Row[i] = create(this);
+            var id = this.uniqid+this.row_counter.toString();
+                //console.log('Form_stage_create_subsection.setAddText() onclick() '+label);
+                console.log(this.ele.dynamic);
+                console.log(this.row_counter);
+                /*
+                 * DYNAMIC RUN ANONYMOUSE FUNCTION AND SETUP ROW OBJECT
+                 */
+                this.Row[this.row_counter] = this.create[this.default_row_field](this);//self.row_counter//id
+                /*
+                 * SET REFERENCE TO ROW OBJECT
+                 */
+                this.Row[this.row_counter].setData(this.Row,id);//self.row_counter//id
+                this.row_counter++;
+                console.log(this.ele.dynamic_fields);
         }
     }
     setValue(value){
@@ -76,13 +123,12 @@ class Form_stage_create_subsection{
             /*
              * SET ADD ACTION - BUTTON 
              */
-            this.setAddButton('T','success','Dodaj tekst',function(self){ return new Form_stage_create_text(self);});//Create label
-            this.setAddButton('I','purple','Dodaj pole typu wprowadź dane',function(self){ return new Form_stage_create_input(self);});//Create input
-            this.setAddButton('S','danger','Dodaj pole typu wskaż z listy',function(self){ return new Form_stage_create_input_select(self);});//Create input select
-            this.setAddButton('C','warning','Dodaj pole typu zaznacz',function(self){ return new Form_stage_create_input_checkbox(self);});//Create input checkbox
-            this.setAddButton('R','primary','Dodaj pole typu wyboru',function(self){ return new Form_stage_create_input_radio(self);});//Create input radio
+            this.setAddButton('T','success','Dodaj tekst',this.create.text);
+            this.setAddButton('I','purple','Dodaj pole typu wprowadź dane',this.create.input);
+            this.setAddButton('S','danger','Dodaj pole typu wskaż z listy',this.create.select);
+            this.setAddButton('C','warning','Dodaj pole typu zaznacz',this.create.checkbox);
+            this.setAddButton('R','primary','Dodaj pole typu wyboru',this.create.radio);
     }
-
     setAddButton(label,button_color,title,create){
         //console.log('Form_stage_create_section.setAddButton() label - '+label);
         var self = this;
@@ -90,19 +136,19 @@ class Form_stage_create_subsection{
             button.setAttribute('title',title);
             button.onclick=function(){
             try{
-                var id = self.uniqid+self.fields_counter.toString();
+                var id = self.uniqid+self.row_counter.toString();
                 //console.log('Form_stage_create_subsection.setAddText() onclick() '+label);
                 console.log(self.ele.dynamic);
-                console.log(self.fields_counter);
+                console.log(self.row_counter);
                 /*
                  * DYNAMIC RUN ANONYMOUSE FUNCTION AND SETUP ROW OBJECT
                  */
-                self.Row[id] = create(self);
+                self.Row[self.row_counter] = create(self);//self.row_counter//id
                 /*
                  * SET REFERENCE TO ROW OBJECT
                  */
-                self.Row[id].setData(self.Row,id);
-                self.fields_counter++;
+                self.Row[self.row_counter].setData(self.Row,id);//self.row_counter//id
+                self.row_counter++;
                 console.log(self.ele.dynamic_fields);
             }
             catch(e){
@@ -117,9 +163,6 @@ class Form_stage_create_subsection{
         //console.log('Form_stage_create_subsection.setMainEle()');
         //console.log(ele);
         this.ele.main = ele;
-    }
-    get(){
-        return this.ele;
     }
     getData(){
         console.log('Form_stage_create_subsection.getData()');
@@ -136,7 +179,6 @@ class Form_stage_create_subsection{
         this.setDynamicField();
         this.setActionField();
         this.setErrorField();       
-        this.get();
     }
     setError(self,code,msg){
         /*
