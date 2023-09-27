@@ -91,6 +91,7 @@ class parametry{
                     this.glossary['font-family']=jsonResponse['data']['value']['font-family'];
                     this.glossary['line-spacing']=jsonResponse['data']['value']['line-spacing'];
                     this.glossary['list-type']=jsonResponse['data']['value']['list-type'];
+                    this.glossary['n-subsection']=jsonResponse['data']['value']['n-subsection'];
                     this.glossary.parameters=jsonResponse['data']['value']['parm'];
                     this.run='sAll';
                 case 'sAll': 
@@ -101,10 +102,10 @@ class parametry{
                     break;
             }
         }
-        catch(e){
-            
+        catch(e){         
             console.log(e);
-            this.Error.show('Application error occurred!');
+            this.Error.setError('Application error occurred!');
+            this.Error.show();
         }
     }
     displayAll(d)
@@ -244,6 +245,12 @@ class parametry{
                 field.data=this.getList(d,this.glossary['list-type']);
                 field.input='Select';
                 break;
+                /* TO DO - ADD DEFAULT FROM PARAMETER */
+            //case 'n-subsection':
+              //  console.log('n-subsection');
+              //  field.data=this.getList(d,this.glossary['n-subsection']);
+              //  field.input='Select';
+              //  break;
             default:
                 field.input='Input';
                 break;
