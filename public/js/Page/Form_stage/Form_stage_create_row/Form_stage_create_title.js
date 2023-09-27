@@ -13,12 +13,8 @@ class Form_stage_create_title{
 
     uniqid = '';
     type='title';
-
     runError = 'setError';
     
-
-
-
     input = new Object();
     value = "";
     value_length = 0;
