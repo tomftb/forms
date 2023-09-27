@@ -65,49 +65,48 @@ class Form_stage_list extends Table{
             'set':'getButton'// //getDisabledButton
             ,'title':'Wyświetl'
             ,'class':'btn-info'
-            ,'action':'showFormModal'
-            ,'url':'getFormDescription&id='
+            ,'action':'editStage'
+            ,'url':'getFormStageShowData&id='
             ,'permission':'SHOW_FORM_STAGE'
         }
         ,'hide':{
             'set':'getButton'//getHideButton
             ,'title':'Ukryj'
             ,'class':'btn-secondary'
-            ,'action':'showHideModal'
-            ,'url':'getHideFormGlossary&id='
+            ,'action':'hideStage'
+            ,'url':'getFormStageHideData&id='
             ,'permission':'HIDE_FORM_STAGE'
         }
         ,'remove':{
             'set':'getButton'//getRemoveButton
             ,'title':'Usuń'
             ,'class':'btn-danger'
-            ,'action':'showRemoveModal'
-            ,'url':'getRemoveFormGlossary&id='
+            ,'action':'removeStage'
+            ,'url':'getFormStageRemoveData&id='
             ,'permission':'REMOVE_FORM_STAGE'
         }
     }
-    constructor(Parent){
+    constructor(){
         super();
-        console.log('Form_stage_table.construct()');  
-        this.Parent=Parent;
+        console.log('Form_stage_list.construct()');  
         this.Parse=new Parse();
         this.Xhr=new Xhr2();
-        //this.Parse = new Parse();
         this.Html = new Html();
-        
+
     }
     setHead(){
+        console.log('Form_stage_list.setHead()');  
         super.setHead(this.head);
     }
     setProperties(appUrl,url){
-        //console.log('ProjectConst::setProperties()');
+        console.log('Form_stage_list.setProperties()');  
         this.appUrl=appUrl;
         this.router=url;
         //console.log(appUrl);
         //console.log(url);
     }
     runPOST(action){
-        console.log('Form_stage_table.runPost()',action);
+        console.log('Form_stage_list.runPost()',action);
         super.unsetError();
         /* SET HEAD */
         //super.setHead(this.head);
@@ -115,7 +114,7 @@ class Form_stage_list extends Table{
         super.receivePost(this,'setBody',router+action.u,action.d);
     }
     run(task){
-        //console.log('Form_stage_table.run()\ntask');
+        //console.log('Form_stage_list.run()\ntask');
         //console.log(task);
         super.unsetError();
         this.defaultTask=task;
@@ -126,7 +125,7 @@ class Form_stage_list extends Table{
         super.getData(this,'setBody',this.router+task);
     }
     setBody(response){
-        console.log('Form_stage_table.setBody()');
+        console.log('Form_stage_list.setBody()');
         try {
             /*
              * UPDATE BODY DATA
@@ -136,14 +135,14 @@ class Form_stage_list extends Table{
             }
         }
         catch (error) {
-            console.log('Form_stage_table.setBody().catch()');
+            console.log('Form_stage_list.setBody().catch()');
             console.log(error);
             this.setError('Application error occurred! Contact with Administrator!');
             return {};
         }
     }
     updateBodyRow(bodyRow){      
-        //console.log('Form_stage_table.updateBodyRow()');
+        //console.log('Form_stage_list.updateBodyRow()');
         //console.log(bodyRow);
         var tr=document.createElement('TR');
         for(const prop in this.body){         
@@ -160,16 +159,16 @@ class Form_stage_list extends Table{
             return col;
     }
     setBodyRowColButton(value){
-        //console.log('ProjectStageTable::setBodyRowColButton()');
+        console.log('Form_stage_list.setBodyRowColButton()',value);
         var col = document.createElement('TD');
-        var buttonGroup=this.setButtonGroup(value.i);
+        var buttonGroup=this.setButtonGroup(value[this.body[0]]);
             col.appendChild(buttonGroup);
             //this.setBlockUserInfo(col,value.bl);
             //console.log(col);
         return col;
     }
     setButtonGroup(id){
-        //console.log('Form_stage_table.setGroupBtn('+id+')');
+        console.log('Form_stage_list.setGroupBtn() id - ',id);
         //console.log(Ajax);
         /* ADD LOAD INFO */
         var btnGroup=document.createElement('DIV');
@@ -195,46 +194,48 @@ class Form_stage_list extends Table{
         return btnEle;
     }
     getButton(prop,id){
-        //console.log('Form_stage_table.getShowButton()');
+        //console.log('Form_stage_list.getButton()');
+        console.log(this.Parent);
         var btnEle  = this.getButtonEle(prop.title,prop.class);
         var self = this;
-        var AjaxRun = this.getXhrRunProperty(prop.url+id);
-            AjaxRun.m=prop.action;
+        var AjaxRun = {
+                    t:"GET"
+                    ,u:self.router+prop.url+id
+                    ,c:true
+                    ,d:null
+                    ,o:this.Parent
+                    ,m:prop.action
+                };
+           
             btnEle.onclick = function (){
+                console.log('Form_stage_list.getButton() onclick()');
+                console.log(prop);
+                console.log(id);
+                console.log(AjaxRun);
+                
                 //$(self.Parent.Modal.link['main']).modal('show');
-                self.unsetError();
-                self.Xhr.setOnError({o:self, m:'setError'});
-                self.Xhr.run(AjaxRun);
+                //self.unsetError();
+                //self.Xhr.setOnError({o:self, m:'setError'});
+                //self.Xhr.run(AjaxRun);
             };
         return btnEle;
     }
-    getXhrRunProperty(task){
-        var run={
-            t:"GET",
-            u:this.Parent.router+task,
-            c:true,
-            d:null,
-            o:this.Parent,
-            m:''
-        };
-        return run;
-    }
     setPermissions(permissions){
-        //console.log('Form_stage_table.setPermissions()');
+        //console.log('Form_stage_list.setPermissions()');
         this.setButtonPermission(permissions);
     }
     setButtonPermission(permissions){
-        //console.log('Form_stage_table.setButtonPermission()');
+        //console.log('Form_stage_list.setButtonPermission()');
         for (const prop in this.button){
             //console.log(this.button[prop]);
             if(!permissions.includes(this.button[prop].permission)){
-                //console.log('Form_stage_table.setButtonPermission() not include `'+this.button[prop].permission+'`');
+                //console.log('Form_stage_list.setButtonPermission() not include `'+this.button[prop].permission+'`');
                 this.button[prop].set='getDisabledButton';
             }
         }
     }
     setResponse(response){
-        //console.log('Form_stage_table.setResponse()');
+        //console.log('Form_stage_list.setResponse()');
         try {
             /*
              * PARSE RESPONSE
@@ -243,7 +244,7 @@ class Form_stage_list extends Table{
             //console.log(this.response);
         }
         catch (error) {
-            console.log('Form_stage_table.setResponse().catch()');
+            console.log('Form_stage_list.setResponse().catch()');
             console.log(error);
             this.setError('Application error occurred! Contact with Administrator!');
             return {};
@@ -251,7 +252,7 @@ class Form_stage_list extends Table{
         return {};
     }
     get(Parent){
-        console.log('Form_stage_table.get()');
+        console.log('Form_stage_list.get()');
         /*
          * 
          * @param {type} response
@@ -279,7 +280,7 @@ class Form_stage_list extends Table{
         
     }
     set(response){
-        console.log('Form_stage_table.set()');
+        console.log('Form_stage_list.set()');
         console.log(response);
         /*
          * CLEAR TABLE HEAD ERROR
@@ -293,5 +294,8 @@ class Form_stage_list extends Table{
           * SET BODY
           */
         this.setBody(this.response);
+    }
+    setParent(Parent){
+        this.Parent=Parent;
     }
 }
