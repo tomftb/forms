@@ -92,7 +92,10 @@ final class TaskManager_controller{
         array_push($this->modul,new \Form_stage_controller());
         array_push($this->modul,new \Filled_form_controller());
         array_push($this->modul,new \Filled_form_excel_controller());
-       
+        array_push($this->modul,new \Form_stage_hide_controller());
+        array_push($this->modul,new \Form_stage_remove_controller());
+        array_push($this->modul,new \Form_stage_show_controller());
+        array_push($this->modul,new \Form_stage_edit_controller());
     }
     
     public function loadMethod($method=''){
