@@ -32,4 +32,10 @@ abstract class Base_controller {
                 'info'=>$info
             ]);
     }
+    protected function throwError(string $msg='',int $lvl=1):void{
+        Throw New \Exception($msg,$lvl);
+    }
+    protected function throwNoError(){
+        //
+    }
 }
