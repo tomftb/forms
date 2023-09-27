@@ -12,6 +12,7 @@
         $this->Model->{'Uprawnienia'}=new \Uprawnienia_model();
         $this->Model->{'Department_user'}=new \Department_user_model();
         $this->Model->{'Form_stage'}=new \Form_stage_model();
+        $this->Model->{'Parametry'}=new \Parametry_model();
         $this->Controller->{'Form_stage_create'}=new \Form_stage_create_controller();
     }
     public function __call($m,$a){
@@ -46,6 +47,7 @@
         parent::returnJson(
                 [
                     'department'=>$this->Model->{'Department_user'}->getUserDepartments($_SESSION['userid'])
+                    ,'parameters'=>$this->Model->{'Parametry'}->getFormStageCreate()       
                 ]
         );
     }
