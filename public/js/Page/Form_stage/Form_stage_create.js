@@ -161,7 +161,7 @@ class Form_stage_create extends Modal{
             /*
              * SET SECTION ROW
              */
-            this.Form_stage_create_section.set(col);
+            this.Form_stage_create_section.set(col,this.response.parameters);
             /*
              * SET LINK TO DYNAMIC
              */
