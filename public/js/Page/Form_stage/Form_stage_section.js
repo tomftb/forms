@@ -1,9 +1,12 @@
 class Form_stage_section{
 
+    Html = new Object();
+    Utilites = new Object();
+    
     id_db = 0;
     subsection_min = 1;
     subsection_max = 12;
-    subsection_counter = 5;
+    subsection_counter = 1;
     section_counter = 0;
     uniqid = '';
     subsection_fields;
@@ -15,13 +18,17 @@ class Form_stage_section{
         ,'footer':new Object()
     };
     Subsection = new Object();
+    parameters = new Object();
     
-    constructor(parent_ele,section_counter){
+    constructor(parent_ele,section_counter,parameters){
         console.log('Form_stage_section.constructor()');
+        this.parameters = parameters;
         this.senUniqid(); 
         this.Html = new Html();
+        this.Utilities = new Utilities();
         this.ele.parent = parent_ele;
         this.section_counter = section_counter;
+        this.setSubsectionCounter(parameters);
         /*
          * SET Dynamic Main Field
          */
@@ -36,6 +43,16 @@ class Form_stage_section{
         this.setFooter();
         console.log(this.ele.parent);
         console.log(this.Subsection);
+    }
+    setSubsectionCounter(parameters){
+        this.Utilities.propertyExists(parameters,'FORM_STAGE_SUBSECTION_COUNT','No `FORM_STAGE_SUBSECTION_COUNT` parameter!');
+        this.subsection_counter = parseInt(parameters.FORM_STAGE_SUBSECTION_COUNT,10);
+        if(this.subsection_counter<1){
+            throw 'Subsection counter `'+this.subsection_counter+'` is less than 1!';
+        }
+        if(this.subsection_counter>12){
+            throw 'Subsection counter `'+this.subsection_counter+'` is greater than 12!';
+        }
     }
     senUniqid(){
         console.log('Form_stage_section.setUniqid()');
@@ -207,20 +224,10 @@ class Form_stage_section{
                         /*
                          * REMOVE FIELDS
                          */
-                        self.ele.main.remove();
-                        //for(const prop in self.ele.dynamic_fields[id]){
-                          //  self.ele.dynamic_fields[id][prop].remove();
-                        //}
+                        self.ele.main.remove();                        
                         /*
-                         * REMOVE OBJECT KEY
+                         * REMOVE Subsection object
                          */
-                        //delete self.ele.dynamic_fields[id];
-                        
-                        /*
-                         * REMOVE Section with id
-                         */
-                         //delete self.Section[id];
-                        //console.log(self.Section[id]);
                         self.Subsection = new Object();
                     }
                     //console.log(self.Section[id]);
