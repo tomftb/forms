@@ -75,4 +75,7 @@ class Parametry_model extends Database_model {
     public function getListType(){
         return $this->Main->squery('SELECT `NAME` as n,`VALUE` as v FROM `slo_list_type` ORDER BY `VALUE` ASC');
     }
+    public function getFormStageCreate(){
+        return $this->Main->squery('SELECT `SKROT` as s,`WARTOSC` as v FROM `parametry` WHERE `SKROT` LIKE \'%FORM_STAGE_%\'');
+    }
 }
