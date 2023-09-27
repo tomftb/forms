@@ -106,5 +106,8 @@ class Error
         //console.log(field);
         this.div=field;
     }
+    setError(msg){
+        this.msg = msg;
+    }
 }
 
