@@ -126,7 +126,15 @@ class ManageParameters {
             ,'font-family'=>$this->Model->{'Parametry'}->getFontFamily()
             ,'line-spacing'=>$this->Model->{'Parametry'}->getLineSpacing()
             ,'list-type'=>$this->Model->{'Parametry'}->getListType()
+            ,'n-subsection'=>self::getNSubsection()//range(1,12)
             ],'');
+    }
+    public function getNSubsection(){
+        (array) $data=[];
+        foreach(range(1,12) as $v){
+            $data[$v]=['n'=>$v,'v'=>$v];
+        }
+        return $data;
     }
     public function getLineSpacingName(string $shortcut=''):string{
          return self::getParameter($shortcut,'getLineSpacingName');
