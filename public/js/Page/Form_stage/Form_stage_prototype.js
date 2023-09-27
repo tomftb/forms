@@ -1,4 +1,4 @@
-class Form_stage_create_input_prototype{  
+class Form_stage_prototype{  
     Html = new Object();
     ErrorStack = new Object();
     /*

@@ -32,7 +32,7 @@ class Form_stage_create_title{
             /*
              * Prototype
              */
-            this.Prototype = new Form_stage_create_input_prototype(Parent,ele);
+            this.Prototype = new Form_stage_prototype(Parent,ele);
             this.Html=new Html();
             this.Prototype.unsetBorder();
             this.Prototype.setUniqid(this.type);

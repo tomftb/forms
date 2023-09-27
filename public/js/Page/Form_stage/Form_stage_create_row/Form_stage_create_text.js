@@ -24,7 +24,7 @@ class Form_stage_create_text{
              * PARENT EXTENDS MODAL
              */
             this.Parent = Parent;
-            this.Prototype = new Form_stage_create_input_prototype(Parent,Parent.ele.dynamic);
+            this.Prototype = new Form_stage_prototype(Parent,Parent.ele.dynamic);
             this.Prototype.setUniqid(this.type);
             this.Prototype.setTitle(this.type);
             this.Prototype.setRemoveTitle('Potwierdź usunięcie pola typu tekst');

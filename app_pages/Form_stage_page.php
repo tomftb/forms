@@ -67,7 +67,7 @@ final class Form_stage_page extends Page{
         'Page/Form_stage/Form_stage_preview.js',
         'Page/Form_stage/Form_stage_save.js',
         'Page/Form_stage/Form_stage_create_action.js',
-        'Page/Form_stage/Form_stage_create_row/Form_stage_create_input_prototype.js',
+        'Page/Form_stage/Form_stage_prototype.js',
         'Page/Form_stage/Form_stage_create_row/Form_stage_create_department.js',
         'Page/Form_stage/Form_stage_create_row/Form_stage_create_title.js',
 

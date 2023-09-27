@@ -9,21 +9,21 @@ class Form_stage{
     Parse = new Object();
     response;
 
-    constructor(appUrl,url){
+    constructor(app_url,router){
         console.log('Form_stage.constructor()'); 
-        this.appUrl=appUrl; 
-        this.router=url;
+        this.appUrl=app_url; 
+        this.router=router;
         this.Xhr=new Xhr2();
         this.Department=new Department();
         this.Parse=new Parse();
         /*
          * FORM STAGE TABLE
          */
-        this.Form_stage_list = new Form_stage_list();
+        this.Form_stage_list = new Form_stage_list(app_url,router);
         /*
          * FORM STAGE MODAL
          */
-        this.Form_stage_create=new Form_stage_create(this.router,this.appUrl,this.Form_stage_list); 
+        this.Form_stage_create=new Form_stage_create(router,app_url,this.Form_stage_list); 
     }
     loadDefaultList(){
         console.log('Form_stage.loadDefaultList()');
@@ -129,14 +129,17 @@ class Form_stage{
             console.log(self);
         };
     }
-    editStage(){
-       console.log('Form_stage.editStage()');  
+    editStage(response){
+        console.log('Form_stage.editStage()');  
+        console.log(response);
     }
-    removeStage(){
-      console.log('Form_stage.removeStage()');  
+    removeStage(response){
+        console.log('Form_stage.removeStage()');  
+        console.log(response);
     }
-    hideStage(){
+    hideStage(response){
         console.log('Form_stage.hideStage()');  
+        console.log(response);
     }
 }
 /*

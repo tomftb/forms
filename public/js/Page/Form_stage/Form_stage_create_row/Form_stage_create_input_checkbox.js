@@ -26,7 +26,7 @@ class Form_stage_create_input_checkbox{
              */
             this.Parent = Parent;
             
-            this.Prototype = new Form_stage_create_input_prototype(Parent,Parent.ele.dynamic);
+            this.Prototype = new Form_stage_prototype(Parent,Parent.ele.dynamic);
             this.Prototype.setTitle(this.type);
             this.Prototype.setRemoveTitle('Potwierdź usunięcie pola typu checkbox');
             this.Prototype.setUniqid(this.type);
