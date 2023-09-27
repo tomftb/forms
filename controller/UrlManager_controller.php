@@ -155,6 +155,9 @@ final class UrlManager_controller{
         ,['getFormStageList','LOG_INTO_FORM_STAGE']
         ,['getFormStageCreate','CREATE_FORM_STAGE']
         ,['saveFormStage','CREATE_FORM_STAGE']
+        ,['getFormStageShowData','SHOW_FORM_STAGE']
+        ,['getFormStageHideData','HIDE_FORM_STAGE']
+        ,['getFormStageRemoveData','REMOVE_FORM_STAGE']
     ];
         
     public function __construct(){
