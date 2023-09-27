@@ -1,7 +1,7 @@
 class Form_stage_create_section{  
     
     Html = new Object();
-    
+    Utilities = new Object();
     ErrorStack = new Object();
     /*
      * REFERENCES TO ELEMENTS
@@ -20,6 +20,7 @@ class Form_stage_create_section{
         try{
             console.log('Form_stage_create_section.construct()');
             this.Html=new Html();
+            this.Utilities = new Utilities();
             /*
              * PARENT EXTENDS MODAL
              */
@@ -59,7 +60,7 @@ class Form_stage_create_section{
                     console.log('Form_stage_create_section.setAddButton() onclick()');
                     console.log(self.ele.dynamic);
                     console.log(self.section_counter);
-                    self.Section[self.section_counter] = new Form_stage_section(self.ele.dynamic,self.section_counter);
+                    self.Section[self.section_counter] = new Form_stage_section(self.ele.dynamic,self.section_counter,self.parameters);
                     //self.addField(self);
                     self.section_counter++;
                     //console.log(self.ele.dynamic_fields);
@@ -114,23 +115,34 @@ class Form_stage_create_section{
         console.log(ele);
         this.ele.main = ele;
     }
-    set(ele){
+    set(ele,parameters){
         console.log('Form_stage_create_section.set()');
         /*
          * RESET FIELD COUNTER
          */
-        this.section_counter = 0;
+        this.setSectionCounter(parameters);
         
         /*
          * RESET FIELD SUBSETION DEFAULT COUNTER
          */
         //this.subsection_counter = 2;
+        this.parameters = parameters;
         this.setUniqid();
         this.setMainEle(ele);
         this.setDynamicField();
+        this.setSections(parameters);
         this.setActionField();
         this.setErrorField();       
         console.log(this.ele);
+    }
+    setSectionCounter(parameters){
+        this.Utilities.propertyExists(parameters,'FORM_STAGE_SECTION_COUNT','No `FORM_STAGE_SECTION_COUNT` parameter!');
+        this.section_counter = parseInt(parameters.FORM_STAGE_SECTION_COUNT,10);
+    }
+    setSections(parameters){
+        for(var i = 0; i < this.section_counter ; i++){
+            this.Section[i] = new Form_stage_section(this.ele.dynamic,i,parameters);
+        }
     }
     setError(self,code,msg){
         /*

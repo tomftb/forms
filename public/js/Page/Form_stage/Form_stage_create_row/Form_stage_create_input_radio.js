@@ -42,7 +42,9 @@ class Form_stage_create_input_radio{
         }
         catch(e){
             console.log('Form_stage_create_input_radio.construct() catch()',e);
-            alert('Application error occurred! Contact with Administrator!');
+            //alert('Application error occurred! Contact with Administrator!');
+            Parent.setError(this,'overall_input','Section row input error has occured! Contact with Administrator!');
+            Parent.checkErrors(this);
         }
     }
     setInput(){
