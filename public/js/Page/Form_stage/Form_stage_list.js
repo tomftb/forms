@@ -1,14 +1,12 @@
 class Form_stage_list extends Table{
     Html= new Object();
-    //Parse = new Object();
     Xhr = new Object();
     Parent = new Object();
     defaultTask='';
-    appUrl='';
+    app_url='';
     router='';
     detailsTask='detailsText';
     response=new Object();
-
     
     head={
         0:{
@@ -86,43 +84,18 @@ class Form_stage_list extends Table{
             ,'permission':'REMOVE_FORM_STAGE'
         }
     }
-    constructor(){
+    constructor(app_url,router){
         super();
         console.log('Form_stage_list.construct()');  
         this.Parse=new Parse();
         this.Xhr=new Xhr2();
         this.Html = new Html();
-
+        this.app_url=app_url;
+        this.router=router;
     }
     setHead(){
         console.log('Form_stage_list.setHead()');  
         super.setHead(this.head);
-    }
-    setProperties(appUrl,url){
-        console.log('Form_stage_list.setProperties()');  
-        this.appUrl=appUrl;
-        this.router=url;
-        //console.log(appUrl);
-        //console.log(url);
-    }
-    runPOST(action){
-        console.log('Form_stage_list.runPost()',action);
-        super.unsetError();
-        /* SET HEAD */
-        //super.setHead(this.head);
-        /* GET DATA => SET BODY */
-        super.receivePost(this,'setBody',router+action.u,action.d);
-    }
-    run(task){
-        //console.log('Form_stage_list.run()\ntask');
-        //console.log(task);
-        super.unsetError();
-        this.defaultTask=task;
-        /* CLEAR TABLE */
-        super.clearTable();   
-         
-        /* GET DATA => SET BODY */
-        super.getData(this,'setBody',this.router+task);
     }
     setBody(response){
         console.log('Form_stage_list.setBody()');
@@ -181,44 +154,30 @@ class Form_stage_list extends Table{
         /* ADD ROW WITH BLOCK USER INGO */
         return btnGroup;
     }
-    getButtonEle(title,c){
-        var btn = document.createElement('BUTTON'); 
-            btn.innerHTML=title;
-            btn.setAttribute('class','btn '+c);
-        return btn;
-    }
     getDisabledButton(prop,id){
-        var btnEle  = this.getButtonEle(prop.title,prop.class);
-            btnEle.classList.add('disabled');
-            btnEle.setAttribute('disabled','');
-        return btnEle;
+        var button  = this.Html.getButton(prop.title,[prop.class,'disabled','btn']);
+            button.setAttribute('disabled','');
+        return button;
     }
     getButton(prop,id){
         //console.log('Form_stage_list.getButton()');
         console.log(this.Parent);
-        var btnEle  = this.getButtonEle(prop.title,prop.class);
+        var button  = this.Html.getButton(prop.title,[prop.class,'btn']);
         var self = this;
-        var AjaxRun = {
+            button.onclick = function (){
+                console.log('Form_stage_list.getButton() onclick()');
+                self.unsetError();
+                self.Xhr.setOnError({o:self, m:'setError'});
+                self.Xhr.run({
                     t:"GET"
                     ,u:self.router+prop.url+id
                     ,c:true
                     ,d:null
-                    ,o:this.Parent
+                    ,o:self.Parent
                     ,m:prop.action
-                };
-           
-            btnEle.onclick = function (){
-                console.log('Form_stage_list.getButton() onclick()');
-                console.log(prop);
-                console.log(id);
-                console.log(AjaxRun);
-                
-                //$(self.Parent.Modal.link['main']).modal('show');
-                //self.unsetError();
-                //self.Xhr.setOnError({o:self, m:'setError'});
-                //self.Xhr.run(AjaxRun);
+                });
             };
-        return btnEle;
+        return button;
     }
     setPermissions(permissions){
         //console.log('Form_stage_list.setPermissions()');
