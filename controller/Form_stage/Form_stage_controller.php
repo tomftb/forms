@@ -14,6 +14,7 @@
         $this->Model->{'Form_stage'}=new \Form_stage_model();
         $this->Model->{'Parametry'}=new \Parametry_model();
         $this->Controller->{'Form_stage_create'}=new \Form_stage_create_controller();
+        $this->Controller->{'Glossary'}=new \Glossary_controller();
     }
     public function __call($m,$a){
         Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
@@ -35,6 +36,7 @@
                     'user'=>$_SESSION
                     ,'department'=>$this->Model->{'Department_user'}->getUserDepartments($_SESSION['userid'])
                     ,'list'=>$this->Model->{'Form_stage'}->getList('0','0')
+                    ,'glossary'=>$this->Controller->{'Glossary'}->getAllWithPositions()
                 ]
         );
     }
@@ -47,7 +49,7 @@
         parent::returnJson(
                 [
                     'department'=>$this->Model->{'Department_user'}->getUserDepartments($_SESSION['userid'])
-                    ,'parameters'=>self::getParameters()      
+                    ,'parameters'=>self::getParameters()       
                 ]
         );
     }
@@ -61,6 +63,7 @@
         parent::{$throw}(__METHOD__.' No \'FORM_STAGE\' parameters in database!',1);
         return $parameters;
     }
+
     public function saveFormStage(){
         $this->Log->log(0,"[".__METHOD__."]");
         (array) $post = json_decode(filter_input(INPUT_POST,'data'));
@@ -71,5 +74,8 @@
         $response = $this->Controller->{'Form_stage_create'}->get();
         $response->id_db = 0;
         parent::returnJson($response);
+    }
+    public function exists(int $id_db=0):void{
+        $this->Model->{'Form_stage'}->exists($id_db);
     }
 }
