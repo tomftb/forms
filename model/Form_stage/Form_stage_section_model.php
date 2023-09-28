@@ -33,7 +33,7 @@ class Form_stage_section_model extends Database_model {
                 )
         );
     }
-    public function setNewVersion(int $id_parent=0){
+    public function setNewVersion(int $id_parent=0):void{
                 $this->Main->query2("UPDATE `form_stage_section` SET "
                 . "`delete_status`='1'"
                 . ",`delete_reason`='NEW VERSION'"
@@ -48,5 +48,16 @@ class Form_stage_section_model extends Database_model {
                 ,parent::getAlterUserParm()
                 )
         );
+    }
+    public function getByIdParent(string|int $id_parent=0):array{
+        return $this->Main->squery('SELECT '
+                . '`id` as `id_db`'
+                . ' FROM `form_stage_section` '
+                . ' WHERE '
+                . '`id_parent`=:id_parent'
+                ,[
+                    ':id_parent'=>[$id_parent,'INT']
+                ]
+                ,'FETCH_OBJ','fetchAll');
     }
 }

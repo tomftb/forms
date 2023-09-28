@@ -96,4 +96,18 @@ class Form_stage_row_model extends Database_model {
                 )
         );
     }
+    public function getByIdParent(string|int $id_parent=0):array{
+        return $this->Main->squery('SELECT '
+                . '`id` as `id_db`'
+                . ',`name`'
+                . ',`type`'
+                . ',`value`'
+                . ' FROM `form_stage_row` '
+                . ' WHERE '
+                . '`id_parent`=:id_parent'
+                ,[
+                    ':id_parent'=>[$id_parent,'INT']
+                ]
+                ,'FETCH_OBJ','fetchAll');
+    }
 }

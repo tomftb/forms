@@ -49,4 +49,15 @@ class Form_stage_subsection_model extends Database_model {
                 )
         );
     }
+    public function getByIdParent(string|int $id_parent=0):array{
+        return $this->Main->squery('SELECT '
+                . '`id` as `id_db`'
+                . ' FROM `form_stage_subsection` '
+                . ' WHERE '
+                . '`id_parent`=:id_parent'
+                ,[
+                    ':id_parent'=>[$id_parent,'INT']
+                ]
+                ,'FETCH_OBJ','fetchAll');
+    }
 }
