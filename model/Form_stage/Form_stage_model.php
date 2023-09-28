@@ -63,4 +63,38 @@ class Form_stage_model extends Database_model {
                 ,'fetchAll'
         );
     }
+    public function exists(string|int $id=0):string{
+        foreach($this->Main->squery('SELECT `id` as `id` FROM `form_stage` WHERE `id`=:id',[':id'=>[$id,'INT']]) as $form_stage){
+            return $form_stage['id'];
+        }
+        Throw New \Exception('form_stage with id - `'.$id.'` not exists in database!',0);
+    }
+    public function get(string|int $id=0):array{
+        return $this->Main->squery('SELECT '
+                . '`id` as `id_db`'
+                . ',`department_id`'
+                . ',`department_name`'
+                . ',`title`'
+                . ',`create_user_login`'
+                . ',`create_user_email`'
+                . ',`create_date`'
+                . ',`mod_user_login`'
+                . ',`mod_user_email`'
+                . ',`buffer_user_id`'
+                . ',`hide_status`'
+                . ',`hide_reason`'
+                . ',`delete_status`'
+                . ',`delete_reason` '
+                . ' FROM `form_stage` '
+                . ' WHERE '
+                . '`id`=:id'
+                ,[
+                    ':id'=>[$id,'INT']
+                ]
+                ,'FETCH_OBJ','fetchAll');
+        //foreach($this->Main->squery('SELECT `id` as `id_db`,`department_id`,`department_name`,`title`,`create_user_login`,`create_user_email`,`create_date`,`mod_user_login`,`mod_user_email`,`buffer_user_id`,`hide_status`,`hide_reason`,`delete_status`,`delete_reason` FROM `form_stage` WHERE `id`=:id',[':id'=>[$id,'INT']],'FETCH_OBJ','fetchAll') as $form_stage){
+          //  return $form_stage;
+        //}
+        //Throw New \Exception('form_stage with id - `'.$id.'` not exists in database!',0);
+    }
 }
