@@ -34,8 +34,29 @@ class Form_stage_create extends Modal{
                                                     ,'row':{
                                                             0:{
                                                                'id_db':0// ROW ID [COLUMN ROW]
-                                                               ,'data':{
-                                                                   0:{}
+                                                               ,'name':""
+                                                               /* type: text,input,checkbox,radio,select */
+                                                               ,'type':"text"
+                                                               /* value - mixed */
+                                                               ,'value':""
+                                                               ,'style':{}
+                                                               ,'property':{
+                                                                   /* ONLY RADIO AND CHECKBOX */
+                                                                   'label':{
+                                                                        'id_db':0// ROW ID [COLUMN ROW]
+                                                                        ,'name':""
+                                                                        /* type: text,input,checkbox,radio,select */
+                                                                        ,'type':"text"
+                                                                        /* valu - mixed */
+                                                                        ,'value':""
+                                                                   }
+                                                                   /* END ONLY RADIO AND CHECKBOX */
+                                                                   /* ONLY SELECT */
+                                                                    ,'glossary_id_db':0
+                                                                    ,'glossary_name':''
+                                                                    ,'glossary_position_id_db':0
+                                                                    ,'glossary_position_value':''
+                                                                   /* END ONLY SELECT */
                                                                }
                                                         }
                                                     }//END ROW PROPERTY
