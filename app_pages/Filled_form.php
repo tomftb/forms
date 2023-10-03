@@ -54,6 +54,7 @@ final class Filled_form extends Page{
         //'Page/ProjectVariable/ProjectVariableTable.js',
         //'Page/ProjectVariable/ProjectVariableCreate.js',
         //'Page/ProjectVariable/ProjectVariable.js',
+        'Page/Form/Form_creator.js',
         'Page/Filled_form/Filled_form_show_filled.js',
         'Page/Filled_form/Filled_form_table.js',
         'Page/Filled_form/Filled_form.js',
