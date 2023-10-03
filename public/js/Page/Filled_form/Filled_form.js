@@ -16,7 +16,7 @@ class Filled_form{
     Stage = new Object();
     Constant = new Object();
     Variable = new Object();
-    Table = new Object();
+    Filled_form_table = new Object();
     ErrorStack = new Object();
     Department = new Object();
     Footer=new Object();
@@ -68,7 +68,7 @@ class Filled_form{
         this.ErrorStack = new ErrorStack();
         this.Xhr=new Xhr2();
         this.Xhr2=new Xhr2();
-        this.Table = new Filled_form_table(this);
+        this.Filled_form_table = new Filled_form_table(this);
         this.Filled_form_show=new Filled_form_show_filled(this);
         this.Utilities = new Utilities();
         this.setLoadInfo();
@@ -87,7 +87,7 @@ class Filled_form{
     setUpParameters(){
         console.log('Filled_form.setUpParameters()'); 
         /* TO DO -> EXTEND FOR ALL GLOSSARY */
-        this.Xhr.setOnError({o:this.Table, m:'setError'});
+        this.Xhr.setOnError({o:this.Filled_form_table, m:'setError'});
         
         this.Xhr.run(this.getXhrParm('GET','loadFilledFormDefault','setUpDefaults'));
     }
@@ -106,7 +106,7 @@ class Filled_form{
         }
         catch (error) {
             console.log(error);
-            this.Table.setError('Application error occurred! Contact with Administrator!');
+            this.Filled_form_table.setError('Application error occurred! Contact with Administrator!');
             return false;
         }
         /*
@@ -114,7 +114,7 @@ class Filled_form{
          */
         this.permissions=json.data.permissions;
         //console.log(this.permissions);
-        this.Table.updateBody(json.data.form);
+        this.Filled_form_table.updateBody(json.data.form);
     }
     setUrl(appUrl,url){
         //console.log('ProjectItems::setUrl()'); 
@@ -170,7 +170,7 @@ class Filled_form{
         console.log(m);
         console.log(u);
         /* CLEAR TABLE */
-        this.Table.clearTable();   
+        this.Filled_form_table.clearTable();   
         /*
          * property:
          * t = type GET/POST 
@@ -330,7 +330,7 @@ class Filled_form{
         catch (error) {
             console.log(error);
             /* SHOW ERROR MODAL */ 
-            this.Table.setError(error);
+            this.Filled_form_table.setError(error);
             return {};
         }
         return {};
@@ -427,7 +427,7 @@ class Filled_form{
         catch (error) {
             //console.log(error);
             /* SHOW ERROR MODAL */ 
-            this.Table.setError(error);
+            this.Filled_form_table.setError(error);
            // return false
         }
         //return {};
@@ -463,7 +463,7 @@ if(error===false){
     window.addEventListener('load', function(){
     //console.log('page is fully loaded');
     try{
-        FilledForm.Table.setLink();
+        FilledForm.Filled_form_table.setLink();
         /* SETUP PARAMETERS => Glossary */
         FilledForm.setUpParameters();
         FilledForm.setCreateFormButton(document.getElementById("createForm"));
