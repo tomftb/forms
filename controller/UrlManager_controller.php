@@ -152,12 +152,15 @@ final class UrlManager_controller{
         ,['getHideFormGlossary','HIDE_FORM']
         ,['getRemoveFormGlossary','REMOVE_FORM']
         ,['getFormStageDefaults','LOG_INTO_FORM_STAGE']
+        ,['reloadFormStage','LOG_INTO_FORM_STAGE']
         ,['getFormStageList','LOG_INTO_FORM_STAGE']
         ,['getFormStageCreate','CREATE_FORM_STAGE']
         ,['saveFormStage','CREATE_FORM_STAGE']
         ,['getFormStageShowData','SHOW_FORM_STAGE']
         ,['getFormStageHideData','HIDE_FORM_STAGE']
         ,['getFormStageRemoveData','REMOVE_FORM_STAGE']
+        ,['removeFormStage','REMOVE_FORM_STAGE']
+        ,['hideFormStage','HIDE_FORM_STAGE']
     ];
         
     public function __construct(){
