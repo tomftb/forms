@@ -13,8 +13,10 @@ class Form_stage_create_section{
         ,'error':new Object()
     }
     section_counter = 0;
+    subsection_counter = 1;
     Section = new Object();
     uniqid = '';
+    glossary = new Object();
     
     constructor(Parent){
         try{
@@ -36,6 +38,10 @@ class Form_stage_create_section{
     setUniqid(){
         this.uniqid=Math.floor(Math.random() * 1000000).toString()+"_preview";
         console.log(this.uniqid);
+    }
+    setGlossary(glossary){
+        console.log('Form_stage_create_section.setGlossary()',glossary);
+        this.glossary=glossary;
     }
     setActionField(){
         console.log('Form_stage_create_section.setActionField()');
@@ -60,7 +66,8 @@ class Form_stage_create_section{
                     console.log('Form_stage_create_section.setAddButton() onclick()');
                     console.log(self.ele.dynamic);
                     console.log(self.section_counter);
-                    self.Section[self.section_counter] = new Form_stage_section(self.ele.dynamic,self.section_counter,self.parameters);
+                    self.Section[self.section_counter] = new Form_stage_section(self.ele.dynamic,self.glossary,self.ErrorStack,self.parameters);
+                    self.Section[self.section_counter].set(self.section_counter,self.subsection_counter);
                     //self.addField(self);
                     self.section_counter++;
                     //console.log(self.ele.dynamic_fields);
@@ -115,34 +122,66 @@ class Form_stage_create_section{
         console.log(ele);
         this.ele.main = ele;
     }
+    setParameters(parameters){
+        console.log('Form_stage_create_section.set()');
+        this.parameters = parameters;
+    }
     set(ele,parameters){
         console.log('Form_stage_create_section.set()');
+        this.setCreateSectionProperties(ele,parameters);
+        this.setSections();
+        console.log(this.ele);
+    }
+    setWithData(ele,parameters,StageData){
+        console.log("Form_stage_create_section.setSetionsWithData()\r\n",StageData);
+        this.setCreateSectionProperties(ele,parameters);
+        this.setSectionsWithData(StageData);
+    }
+    setSections(){
+        console.log("Form_stage_create_section.setSections()");
         /*
-         * RESET FIELD COUNTER
+         * Create sections without data
          */
-        this.setSectionCounter(parameters);
-        
-        /*
-         * RESET FIELD SUBSETION DEFAULT COUNTER
-         */
-        //this.subsection_counter = 2;
-        this.parameters = parameters;
+        for(var i = 0; i < this.section_counter ; i++){
+            this.Section[i] = new Form_stage_section(this.ele.dynamic,this.glossary,this.ErrorStack,this.parameters);
+            this.Section[i].set(i,this.subsection_counter);
+        }
+    }
+    setSectionsWithData(StageData){
+        console.log("Form_stage_create_section.setSectionsWithData()\r\n",StageData);
+        if(!StageData.hasOwnProperty('section')){
+            console.log('Form_stage_create_section.setSectionsWithData() no `section` property.');
+            return false;
+        }
+        for(var i = 0; i <  StageData.section.length; i++){
+            this.Section[i] = new Form_stage_section(this.ele.dynamic,this.glossary,this.ErrorStack,this.parameters);
+            this.Section[i].setWithData(i,StageData.section[i]);
+        }
+    }
+    setSectionCounter(){
+        this.Utilities.propertyExists(this.parameters,'FORM_STAGE_SECTION_COUNT','No `FORM_STAGE_SECTION_COUNT` parameter!');
+        this.section_counter = parseInt(this.parameters.FORM_STAGE_SECTION_COUNT,10);
+    }
+    setSubsectionCounter(){
+        this.Utilities.propertyExists(this.parameters,'FORM_STAGE_SUBSECTION_COUNT','No `FORM_STAGE_SUBSECTION_COUNT` parameter!');
+        this.subsection_counter = parseInt(this.parameters.FORM_STAGE_SUBSECTION_COUNT,10);
+        if(this.subsection_counter<1){
+            throw 'Subsection counter `'+this.subsection_counter+'` is less than 1!';
+        }
+        if(this.subsection_counter>12){
+            throw 'Subsection counter `'+this.subsection_counter+'` is greater than 12!';
+        }
+    }
+    setCreateSectionProperties(ele,parameters){
+        console.log("Form_stage_create_section.setCreateSectionProperties()");
+        this.setParameters(parameters);
+        this.setSectionCounter();
+        this.setSubsectionCounter();
         this.setUniqid();
         this.setMainEle(ele);
         this.setDynamicField();
-        this.setSections(parameters);
         this.setActionField();
-        this.setErrorField();       
-        console.log(this.ele);
-    }
-    setSectionCounter(parameters){
-        this.Utilities.propertyExists(parameters,'FORM_STAGE_SECTION_COUNT','No `FORM_STAGE_SECTION_COUNT` parameter!');
-        this.section_counter = parseInt(parameters.FORM_STAGE_SECTION_COUNT,10);
-    }
-    setSections(parameters){
-        for(var i = 0; i < this.section_counter ; i++){
-            this.Section[i] = new Form_stage_section(this.ele.dynamic,i,parameters);
-        }
+        this.setErrorField();      
     }
     setError(self,code,msg){
         /*
@@ -160,7 +199,8 @@ class Form_stage_create_section{
         console.log('Form_stage_create_section.checkErrors()');
         try{
             if(self.ErrorStack.check()){
-                console.log('Form_stage_create_section.checkErrors() errors exists');
+                console.clear();
+                console.error('Form_stage_create_section.checkErrors() errors exists');
                 this.ele.error.classList.add('alert','alert-danger');
                 this.ele.error.setAttribute('role','alert');
                 self.Html.removeChilds(self.ele.error);
@@ -174,7 +214,8 @@ class Form_stage_create_section{
             }
         }
         catch(e){
-            console.log('Form_stage_create_section.checkErrors()',e);
+            console.clear();
+            console.error("Form_stage_create_section.checkErrors()\n",e);
             alert('Application error occurred! Contact with Administrator!');
         }  
     }

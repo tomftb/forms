@@ -7,23 +7,30 @@ class Form_stage_preview{
     subsection_max = 12;
     uniqid = '';
     counter = 0;
+    glossary = new Object();
     
-    constructor(ele,data){
-        //console.log('Form_stage_preview.construct()',ele,data);
+    constructor(){
+        console.log('Form_stage_preview.construct()');
         this.setUniqid();
         this.Html = new Html();
         this.Utilities = new Utilities();
-        /*
+    }
+    setGlossary(glossary){
+         this.glossary = glossary;
+    }
+    setUniqid(){
+        this.uniqid=Math.floor(Math.random() * 1000000).toString()+"_preview";
+        console.log(this.uniqid);
+    }
+    load(ele,data){
+        console.log('Form_stage_preview.load()');
+         /*
          * CLEAR PREVIEW ELEMENT FIELD
          */
         this.Html.removeChilds(ele);
         this.setStage(ele,data);
         console.log('Form_stage_preview.construct() END');
         console.log(ele);
-    }
-    setUniqid(){
-        this.uniqid=Math.floor(Math.random() * 1000000).toString()+"_preview";
-        console.log(this.uniqid);
     }
     setStage(ele,data){
         //console.log('Form_stage_preview.setStage()');
@@ -96,7 +103,7 @@ class Form_stage_preview{
         catch(e){
             console.log('data.type - ',data.type);
             console.log('Form_stage_preview.setRowProperty()',e);
-            throw 'Form_stage_preview.setRowProperty() Unsupported - '+data.type;
+            throw "Form_stage_preview.setRowProperty()\n"+e;
         }
     }
     setRow_text(ele,data){
@@ -126,8 +133,15 @@ class Form_stage_preview{
             ele.append(row);
     }
     setRow_select(ele,data){
-        console.log('Form_stage_preview.setRow_select()',data);
-        this.Utilities.propertyExists(data.property,'options',"Row data `select` `property` doesn't have `options` property!");
+        console.log("Form_stage_preview.setRow_select()\r\n",data,"\r\n",this.glossary);
+        console.log(this.glossary[data.property.glossary_id_db]);
+        this.Utilities.propertyExists(data,'glossary',"Row data doesn't have `glossary` property!");
+        this.Utilities.propertyExists(data.glossary,'id_glossary',"Row data `glossary doesn't have `id_glossary` property!");
+        this.Utilities.propertyExists(data.glossary,'id_glossary_position',"Row data `glossary` doesn't have `id_glossary_position` property!");
+        this.Utilities.propertyExists(this.glossary,data.glossary.id_glossary,"Glossary doesn't have `"+data.property.id_glossary+"` property!");
+        this.Utilities.propertyExists(this.glossary[data.glossary.id_glossary],'positions',"Glossary `"+data.glossary.id_glossary+"` doesn't have `positions` property!");
+        this.Utilities.propertyExists(this.glossary[data.glossary.id_glossary].positions,data.glossary.id_glossary_position,"Glossary property `"+data.glossary.id_glossary+"` `positions` doesn't have `"+data.glossary.id_glossary_position+"` property!");
+        //this.Utilities.propertyExists(data.property,'options',"Row data `select` `property` doesn't have `options` property!");
         
         var row = this.Html.getRow();
         var col = this.Html.getCol(12);
@@ -137,13 +151,17 @@ class Form_stage_preview{
         var select=document.createElement('select');
             select.classList.add('form-control');
         
-            for(const prop in data.property.options){
+            for(const prop in this.glossary[data.glossary.id_glossary].positions){
+                //console.log(prop);
+                //console.log(data.property.glossary_position_id_db);
                 var option = document.createElement('option');
-                    option.value=data.property.options[prop];
-                    option.append(document.createTextNode(data.property.options[prop]));
+                    option.value=prop;
+                    option.append(document.createTextNode(this.glossary[data.glossary.id_glossary].positions[prop].name));
+                    if(prop === data.glossary.id_glossary_position){
+                        option.setAttribute('selected','');
+                    }
                     select.append(option);
             }
-            
             form_div.append(select);
             col.append(form_div);
             row.append(col);
@@ -151,11 +169,11 @@ class Form_stage_preview{
     }
     setRow_checkbox(ele,data){
         console.log('Form_stage_preview.setRow_checkbox()',data);
-        this.Utilities.propertyExists(data.property,'label',"Row data `checkbox` `property` doesn't have `label` property!");
+        this.Utilities.propertyExists(data,'child',"Row data `checkbox` doesn't have `child` property!");
         /*
          * LABEL CHECK
          */
-        this.Utilities.propertyExists(data.property.label,'value',"Row data `checkbox` `property` `label` doesn't have `value` property!");
+        this.Utilities.propertyExists(data.child,'value',"Row data `child` doesn't have `value` property!");
         var id = this.uniqid+"_checkbox_"+this.counter.toString();
         var row = this.Html.getRow();
         var col = this.Html.getCol(12);
@@ -168,7 +186,7 @@ class Form_stage_preview{
         var label=document.createElement('label');
             label.classList.add('form-check-label'); 
             label.setAttribute('for',id);   
-            label.append(document.createTextNode(data.property.label.value));
+            label.append(document.createTextNode(data.child.value));
             form_check.append(input,label);
             col.append(form_check);
             row.append(col);
@@ -176,11 +194,11 @@ class Form_stage_preview{
     }
     setRow_radio(ele,data){
         console.log('Form_stage_preview.setRow_radio()',data);
-         this.Utilities.propertyExists(data.property,'label',"Row data `radio` `property` doesn't have `label` property!");
+         this.Utilities.propertyExists(data,'child',"Row data `radio` doesn't have `child` property!");
         /*
          * LABEL CHECK
          */
-        this.Utilities.propertyExists(data.property.label,'value',"Row data `radio` `property` `label` doesn't have `value` property!");
+        this.Utilities.propertyExists(data.child,'value',"Row data `radio` `child` doesn't have `value` property!");
         var row = this.Html.getRow();
         var col = this.Html.getCol(12);
                 var id = this.uniqid+"_checkbox_"+this.counter.toString();
@@ -195,7 +213,7 @@ class Form_stage_preview{
         var label=document.createElement('label');
             label.classList.add('form-check-label');
             label.setAttribute('for',id);   
-            label.append(document.createTextNode(data.property.label.value));
+            label.append(document.createTextNode(data.child.value));
             form_check.append(input,label);
             col.append(form_check);
             row.append(col);

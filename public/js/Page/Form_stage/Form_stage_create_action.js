@@ -56,7 +56,7 @@ class Form_stage_create_action{
                     if (confirm('Opuścić okno bez zapisu?') === true) {
                         window.onbeforeunload = null;
                         $(self.Parent.link['main']).modal('hide');
-                        
+                        self.Parent.Form_stage_list.reload(self.Parent.Form_stage_list);
                         return false;
                     }
                     else{ 
@@ -66,6 +66,7 @@ class Form_stage_create_action{
                if (confirm('Wyjść?') === true) {
                     window.onbeforeunload = null;
                     $(self.Parent.link['main']).modal('hide');
+                    self.Parent.Form_stage_list.reload(self.Parent.Form_stage_list);
                }
                else{ 
                }

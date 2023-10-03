@@ -2,22 +2,31 @@ class Form_stage_create extends Modal{
     permissions=new Array();
     appUrl='';
     router='';
-    Department = new Object();
-    Title = new Object();
-    Property = new Object();
-    Xhr=new Object();
-    Form_stage_list = new Object();
-    Form_stage_create_department = new Object();
-    Form_stage_create_action = new Object();
-    Form_stage_create_section = new Object();
+    
     Parse = new Object();
     ErrorStack = new Object();
+    Property = new Object();
+    Xhr=new Object();
+    
+    Form_stage_title = new Object();
+    Form_stage_department = new Object();
+    Form_stage_list = new Object();
+    Form_stage_create_action = new Object();
+    Form_stage_create_section = new Object();
+    Form_stage_preview = new Object();
+
+    setData='setNoData';
+
+    //glossary = new Array();
     FormData = {
         'id_db':'N/A'
         ,'user':{
             'create_user_login':'N/A'
             ,'create_user_email':'N/A'
             ,'create_date':'N/A'
+            ,'mod_user_login':'N/A'
+            ,'mod_user_email':'N/A'
+            ,'mod_date':'N/A'
         }
         ,'stage':{
             0:{
@@ -76,62 +85,67 @@ class Form_stage_create extends Modal{
         this.router=router;  
         this.appUrl=appUrl;  
         this.Parse=new Parse();
-        
         this.setLoad(this.Xhr,this.appUrl);
-        
         this.Form_stage_list=Form_stage_list;        
         this.Form_stage_create_action=new Form_stage_create_action(this);
         this.Form_stage_create_section=new Form_stage_create_section(this);
+        this.Form_stage_preview=new Form_stage_preview();
     }
     /*
      * SET PROPERTY
      */
     setProperty(property){
-        //this.FormStage.create_user_id=property.user.userid;
-        //this.FormStage.create_user_email=property.user.mail;
-        //this.FormStage.create_user_login=property.user.username;
+        console.log('Form_stage_create.setProperty()');
         this.permissions=property.user.perm;
-        //const date = new Date();
-        //this.FormStage.create_date=date.getFullYear().toString()+"-"+date.getMonth().toString()+"-"+date.getDate().toString()+" "+date.getHours().toString()+":"+date.getMinutes().toString()+":"+date.getSeconds().toString();
-        //2023-08-09 15:15:24
+        this.department=property.department;
+        this.Form_stage_create_section.setGlossary(property.glossary);
+        this.Form_stage_preview.setGlossary(property.glossary);
     }
     /*
      * CREATE
      */
     create(response){
-        try{
-            console.log('Form_stage_create.create()');
-            console.log(response);
-             /*
-             * PARSE RESPONSE
-             */
-            this.response = this.Parse.getSimpleJson(response);
-            console.log(this.response);
-        }
-        catch(e){
-            console.log("Form_stage_create.create() parse catch()",e);
-            this.Form_stage_list.setError(e);
-            return false;
-        }
+        this.setData='setCreateData';
+        this.setResponse(response);
+        this[this.setData]();
+    }
+    show(response){
+        this.setData='setShowData';
+        this.setResponse(response);
+        this[this.setData]();
+    }
+    setNoData(){
+        console.log('Form_stage_create.setNoData()');
+    }
+    setCreateData(){
+        console.log('Form_stage_create.setCreateData()');
         try{           
             /*
              * CLEAR ErrorStack
              */
             this.ErrorStack.clearStack();
             /*
-             * SETUP MODAL
+             * CLEAR FormData
              */
-            super.clearData();
-            super.setExitKeys();
-            super.setHead('Dodaj etap formularza','bg-info');
-            super.setCloseModal();
-            super.setInfo("Form Stage ID: "+(this.FormData.id_db).toString()+", Create user: "+this.FormData.user.create_user_login+" (e-mail: "+this.FormData.user.create_user_email+"), Create date: "+this.FormData.user.create_date);
-            //console.log(this.link['adapted']);  
-            console.log(this.link);
+            this.FormData = {
+                        'id_db':'N/A'
+                        ,'user':{
+                            'create_user_login':'N/A'
+                            ,'create_user_email':'N/A'
+                            ,'create_date':'N/A'
+                            ,'mod_user_login':'N/A'
+                            ,'mod_user_email':'N/A'
+                            ,'mod_date':'N/A'
+                        }
+                        ,'stage':{
+                            0:{}
+                        }
+            };
             /*
-             * SET MAIN DYNAMIC FIELD
+             * SETUP MODAL PROPERTIES
              */
-            this.setModalMain();
+            this.setModalProperties('Dodaj etap formularza');
+            this.setModalCreateMain();
             /*
              * SET PREVIEW FIELD
              */
@@ -146,8 +160,76 @@ class Form_stage_create extends Modal{
             super.showModal();
         }
         catch(e){
-            console.log("Form_stage_create.create() modal catch()",e);
+            console.error("Form_stage_create.create() modal catch()\r\n",e);
             this.Form_stage_list.setError('Application error occurred! Contact with Administrator!');
+        }
+    }
+    setShowData(){
+        console.log('Form_stage_create.setShowData()');
+        try{
+            /*
+             * CLEAR ErrorStack
+             */
+            this.ErrorStack.clearStack();
+            this.FormData={
+                'id_db':this.response.id_db
+                ,'user':{
+                    'create_user_login':this.response.stage[0].create_user_login
+                    ,'create_user_email':this.response.stage[0].create_user_email
+                    ,'create_date':this.response.stage[0].create_date
+                    ,'mod_user_login':this.response.stage[0].mod_user_login
+                    ,'mod_user_email':this.response.stage[0].mod_user_email
+                    ,'mod_date':this.response.stage[0].mod_date
+                }
+                ,'stage':{
+                    0:this.response.stage[0]
+                }
+            };
+            this.setModalProperties('Wyświetl etap formularza');
+
+            /*
+             * SET ACTION
+             */
+            this.Form_stage_create_action.set(this.link);
+            console.log(this.link);
+        }
+        catch(e){
+            console.error("Form_stage_show.create() modal catch()\r\n",e);
+            this.Form_stage_list.setError('Application error occurred! Contact with Administrator!');
+            return false;
+        }
+        try{           
+            /*
+             * SET MAIN DYNAMIC FIELD
+             */
+            this.setModalData();
+            /*
+             * SET PREVIEW FIELD
+             */
+            this.setModalPreview();
+            super.showModal();
+        }
+        catch(e){
+            console.error("Form_stage_show.create() modal catch()\r\n",e);
+            this.Form_stage_list.setError(e);//'Application error occurred! Contact with Administrator!'
+        }
+    }
+    setResponse(response){
+        try{
+            console.log('Form_stage_create.setResponse()');
+            console.log(response);
+             /*
+             * PARSE RESPONSE
+             */
+            this.response = this.Parse.getSimpleJson(response);
+            console.log(this.response);
+        }
+        catch(e){
+            console.error("Form_stage_create.setResponse() parse catch()\r\n",e);
+            this.Form_stage_list.setError("Application error occurred! Contact with Administrator!");
+            this.setData='setNoData';
+            //throw "Application error occurred! Contact with Administrator!";
+            //return false;
         }
     }
     setModalPreview(){
@@ -165,24 +247,22 @@ class Form_stage_create extends Modal{
              */
             this.link['adapted'].append(row);
     }
-    setModalMain(){
-        console.log('Form_stage_create.setModalPreview()');
+    setModalProperties(title){
+        console.log('Form_stage_show.setModalProperties()');
+        /*
+         * SETUP MODAL
+         */
+            super.clearData();
+            super.setExitKeys();
+            super.setHead(title,'bg-info');
+            super.setCloseModal();
+            /*
+             * SET MAIN DYNAMIC FIELD
+             */
         var row=this.Html.getRow();
             row.setAttribute('id','main');
         var col=this.Html.getCol(12);
             row.append(col);
-            /*
-             * SET TITLE
-             */
-            this.Title = new Form_stage_create_title(this,col);
-            /*
-             * SET DEPARTMENT
-             */
-            this.Department = new Form_stage_create_department(this,col,this.response.department);
-            /*
-             * SET SECTION ROW
-             */
-            this.Form_stage_create_section.set(col,this.response.parameters);
             /*
              * SET LINK TO DYNAMIC
              */
@@ -190,7 +270,44 @@ class Form_stage_create extends Modal{
             /*
              * APPEND TO ADAPTED
              */
-            this.link['adapted'].append(row);  
+            this.link['adapted'].append(row);       
+            super.setInfo("Form Stage ID: "+(this.FormData.id_db).toString()+", Create user: "+this.FormData.user.create_user_login+" (e-mail: "+this.FormData.user.create_user_email+"), Create date: "+this.FormData.user.create_date+", Modification user: "+this.FormData.user.mod_user_login+" (e-mail: "+this.FormData.user.mod_user_email+"), Version: "+this.FormData.user.mod_date); 
+    }
+    setModalCreateMain(){
+        console.log('Form_stage_create.setModalPreview()');
+        /*
+         * SET TITLE
+         */
+        this.Form_stage_title = new Form_stage_title(this,this.link['dynamic'],'');
+        /*
+         * SET DEPARTMENT
+         */
+        this.Form_stage_department = new Form_stage_department(this,this.link['dynamic']);
+        this.Form_stage_department.setDepartmentList(this.department);
+        this.Form_stage_department.set();
+        /*
+         * SET SECTION ROW
+         */
+        this.Form_stage_create_section.set(this.link['dynamic'],this.response.parameters);
+    }
+    setModalData(){
+        console.log('Form_stage_show.setModalData()');
+        console.log(this.response.stage);
+        /*
+         * SET TITLE
+         */
+        this.Form_stage_title = new Form_stage_title(this,this.link['dynamic'],this.response.stage[0].title);
+        /*
+         * SET DEPARTMENT
+         */
+        this.Form_stage_department = new Form_stage_department(this,this.link['dynamic']);
+        this.Form_stage_department.setDepartmentList(this.department);
+        this.Form_stage_department.addStageDepartment(this.response.stage[0].department_id,this.response.stage[0].department_name);
+        this.Form_stage_department.set();
+        /*
+         * SET SECTION ROW WITH DATA
+         */
+        this.Form_stage_create_section.setWithData(this.link['dynamic'],this.response.parameters,this.response.stage[0]);
     }
     updateData(response){
         console.log('Form_stage_create.updateData()');
@@ -202,35 +319,20 @@ class Form_stage_create extends Modal{
         /*
          * UPDATE Modal info
          */
-        super.setInfo("Form Stage ID: "+(this.FormData.stage[0].id_db).toString()+", Create user: "+this.FormData.user.create_user_login+" (e-mail: "+this.FormData.user.create_user_email+"), Create date: "+this.FormData.user.create_date);
+        super.setInfo("Form Stage ID: "+(this.FormData.stage[0].id_db).toString()+", Create user: "+this.FormData.user.create_user_login+" (e-mail: "+this.FormData.user.create_user_email+"), Create date: "+this.FormData.user.create_date+", Modification user: "+this.FormData.user.mod_user_login+" (e-mail: "+this.FormData.user.mod_user_email+"), Version: "+this.FormData.user.mod_date);
         /*
          * UPDATE SECTION, SUBSECTION AND ROW IDS
          */  
         console.log(this.FormData);
         console.log(this.Form_stage_create_section);
         this.Form_stage_create_section.updateId(this.FormData.stage[0].section);
-        //this.FormData.user = response.user;
-        //this.FormData.stage = response.stage;
-    }
-    getTitle(self){
-        console.log('Form_stage_create.getTitle()');
-        return self.Title.getValue();
-    }
-    getDepartmentName(self){
-        console.log('Form_stage_create.getDepartmentName()');
-        return self.Department.getName();
-    }
-    getDepartmentId(self){
-        console.log('Form_stage_create.getDepartmetnId()');
-        return self.Department.getValue();
     }
     getSectionData(self){
         console.log('Form_stage_create.getSectionData()');
-         /*
+        /*
          * self.Parent references to this object Form_stage_create
          */
         return self.Form_stage_create_section.getData();
-        //return {};
     }
     preview(self){
         console.log('Form_stage_create.preview()');
@@ -244,10 +346,12 @@ class Form_stage_create extends Modal{
                     ,'section':self.getSectionData(self)
                 }
             };
-            new Form_stage_preview(self.link['preview'],stage);
+            self.Form_stage_preview.load(self.link['preview'],stage);
         }
         catch(e){
-            console.log("Form_stage_create.preview() catch()",e);
+            //console.clear();
+            console.log("Form_stage_create.preview() catch()\r\n");
+            console.error(e);
             /*
              * SET MODAL ERROR
              */
@@ -261,14 +365,13 @@ class Form_stage_create extends Modal{
                 console.log('');
                 return false;
             }
-            self.FormData.stage[0].department_name = self.getDepartmentName(self);
-            self.FormData.stage[0].department_id = self.getDepartmentId(self);
-            self.FormData.stage[0].title = self.getTitle(self);
+            self.FormData.stage[0].department_name = self.Form_stage_department.getName();
+            self.FormData.stage[0].department_id = self.Form_stage_department.getValue();
+            self.FormData.stage[0].title = self.Form_stage_title.getValue();
             self.FormData.stage[0].section = self.getSectionData(self);
-
             /*
-            * self.Parent references to this object Form_stage_create
-            */
+             * self.Parent references to this object Form_stage_create
+             */
             console.log(self.FormData.stage);
             new Form_stage_save(self);
         }
@@ -279,6 +382,5 @@ class Form_stage_create extends Modal{
              */
             self.setError('Application error occurred! Contact with Administrator!');
         }
-        
     }
 }

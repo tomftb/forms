@@ -6,16 +6,17 @@ class Form_stage_create_text{
     
     uniqid='';
     type = 'text';
-    id_db = 0;
+
     input = new Object();
     
     data = {
-        'value':''
+        'id_db':0
+        ,'value':''
+        ,'type':'text'
         ,'class':new Object()
         ,'style':new Object()
         ,'property':new Object()
     }
-    
     constructor(Parent){
         try{
             //console.log('Form_stage_create_text.construct()');
@@ -32,7 +33,6 @@ class Form_stage_create_text{
             this.Prototype.setFields();
             this.Prototype.setHeaderField();
             this.uniqid = this.Prototype.getUniqid();
-            this.setInput();
         }
         catch(e){
             console.log('Form_stage_create_text.construct() catch()',e);
@@ -41,18 +41,35 @@ class Form_stage_create_text{
             Parent.checkErrors(this);
         }
     }
+    setInputWithData(StageRow){
+        console.log("Form_stage_create_text.setInputWithData()",StageRow);
+        this.data.id_db = StageRow.id_db;
+        this.data.value = StageRow.value;
+        this.data.type = StageRow.type;
+        this.setInput();
+    }
     setInput(){
-        console.log('Form_stage_create_text.setInputField()');
-        var text_div=document.createElement('div');
-            text_div.classList.add('form-group','mb-1');
-        var input=document.createElement('input');
-            input.classList.add('form-control');
-            input.setAttribute('id',this.uniqid);
-            input.setAttribute('name',this.uniqid);
-            input.setAttribute('type','text');/* TO DO */
-            text_div.append(input);
-            this.input=input;
-            this.Prototype.ele.input.append(text_div);
+        try{
+            console.log('Form_stage_create_text.setInput()');
+            var text_div=document.createElement('div');
+                text_div.classList.add('form-group','mb-1');
+            var input=document.createElement('input');
+                input.classList.add('form-control');
+                input.setAttribute('id',this.uniqid);
+                input.setAttribute('name',this.uniqid);
+                input.setAttribute('type',this.data.type);/* TO DO */
+                input.setAttribute('placeholder','Write text...');/* TO DO */
+                input.value=this.data.value;
+                text_div.append(input);
+                this.input=input;
+                this.Prototype.ele.input.append(text_div);
+        }
+        catch(e){
+            console.log('Form_stage_create_text.setInput() catch()',e);
+            //alert('Application error occurred! Contact with Administrator!');
+            this.Prototype.setError(this,'overall_input','Section row input error has occured! Contact with Administrator!');
+            this.Prototype.checkErrors(this);
+        }
     }
     setData(data_row,data_row_id){
         console.log('Form_stage_create_text.setData()');
@@ -61,7 +78,7 @@ class Form_stage_create_text{
     getData(){
         console.log('Form_stage_create_text.getData()',this.input);
         return {
-            'id_db':this.id_db
+            'id_db':this.data.id_db
             ,'value':this.input.value
             ,'name':this.input.name
             ,'type':'text'
@@ -80,6 +97,6 @@ class Form_stage_create_text{
     }
     updateIdDb(row){
         console.log('Form_stage_create_text.setData()');
-        this.id_db = row.id_db;
+        this.data.id_db = row.id_db;
     }
 }

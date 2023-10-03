@@ -6,12 +6,14 @@ class Form_stage_create_input{
     type = 'input';
     input = new Object();
     data = {
-        'value':''
+        'id_db':0
+        ,'value':''
+        ,'type':'text'
         ,'class':new Object()
         ,'style':new Object()
         ,'property':new Object()
     }
-    id_db = 0;
+
     
     constructor(Parent){
         try{
@@ -32,7 +34,6 @@ class Form_stage_create_input{
             this.Prototype.setFields();
             this.Prototype.setHeaderField();
             this.uniqid = this.Prototype.getUniqid();
-            this.setInput();
         }
         catch(e){
             console.log('Form_stage_create_input.construct() catch()',e);
@@ -41,21 +42,37 @@ class Form_stage_create_input{
             Parent.checkErrors(this);
         }
     }
+    setInputWithData(StageRow){
+        console.log('Form_stage_create_input.setInputWithData()');
+        this.data.id_db = StageRow.id_db; 
+        this.data.value = StageRow.value;
+        this.data.type = StageRow.type;
+        this.setInput();
+    }
     setInput(){
-        console.log('Form_stage_create_input.setInputField()');
-        var text_div=document.createElement('div');
-            text_div.classList.add('form-group','mb-1');//
-        var text_input=document.createElement('input');
-            text_input.classList.add('form-control');
-            text_input.setAttribute('readonly','');
-            text_input.setAttribute('disabled','');
-            text_input.setAttribute('id',this.uniqid);
-            text_input.setAttribute('name',this.uniqid);
-            text_input.setAttribute('type','text');/* TO DO */
-            text_input.setAttribute('placeholder','Write...');
-            text_div.append(text_input);
-            this.input = text_input;
-            this.Prototype.ele.input.append(text_div);
+        try{
+            console.log('Form_stage_create_input.setInput()');
+            var text_div=document.createElement('div');
+                text_div.classList.add('form-group','mb-1');//
+            var text_input=document.createElement('input');
+                text_input.classList.add('form-control');
+                text_input.setAttribute('readonly','');
+                text_input.setAttribute('disabled','');
+                text_input.setAttribute('id',this.uniqid);
+                text_input.setAttribute('name',this.uniqid);
+                text_input.setAttribute('value',this.data.value);/* TO DO */
+                text_input.setAttribute('type',this.data.type);/* TO DO */
+                text_input.setAttribute('placeholder','Write...');
+                text_div.append(text_input);
+                this.input = text_input;
+                this.Prototype.ele.input.append(text_div);
+        }
+        catch(e){
+            console.log('Form_stage_create_input.setInput() catch()',e);
+            //alert('Application error occurred! Contact with Administrator!');
+            this.Prototype.setError(this,'overall_input','Section row input error has occured! Contact with Administrator!');
+            this.Prototype.checkErrors(this);
+        }
     }
     setData(data_row,data_row_id){
         console.log('Form_stage_create_input.setData()');
@@ -65,7 +82,7 @@ class Form_stage_create_input{
         //this.data.value=this.input.value;
         //return this.data;
         return {
-            'id_db':this.id_db
+            'id_db':this.data.id_db
             ,'value':this.input.value
             ,'name':this.input.name
             ,'type':'input'
@@ -84,6 +101,6 @@ class Form_stage_create_input{
     }
     updateIdDb(row){
         console.log('Form_stage_create_input.updateIdDb()');
-        this.id_db = row.id_db;
+        this.data.id_db = row.id_db;
     }
 }

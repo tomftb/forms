@@ -17,6 +17,9 @@ class Form_stage_save{
     }
     save(fd){
         console.log('Form_stage_save.save()');
+        this.Parent.Xhr.setOnError({'o':this.Parent,m:'setError'});
+        //console.log(this.Parent);
+        //return true;
         /*
          * RUN XHR
          */
@@ -42,7 +45,7 @@ class Form_stage_save{
                 this.Parent.setSuccess('Zapis się powiódł');
         }
         catch (e) {
-            console.log('Form_stage_save.updateData() response catch()',e);
+            console.error("Form_stage_save.updateData() response catch()\r\n",e);
             this.Parent.setError(e);
             //this.Parent.setError('Application error occurred! Contact with Administrator!');
             return false;

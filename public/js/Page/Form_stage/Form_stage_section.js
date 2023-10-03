@@ -2,7 +2,7 @@ class Form_stage_section{
 
     Html = new Object();
     Utilites = new Object();
-    
+    ErrorStack = new Object();
     id_db = 0;
     subsection_min = 1;
     subsection_max = 12;
@@ -18,22 +18,53 @@ class Form_stage_section{
         ,'footer':new Object()
     };
     Subsection = new Object();
+
     parameters = new Object();
+    glossary = new Object();
+    column_count = 1;
+    column_size = 1;
+    tmp_column_size = 1;
+    rest_column_size = 0;
     
-    constructor(parent_ele,section_counter,parameters){
+    constructor(parent_ele,glossary,ErrorStack,parameters){
         console.log('Form_stage_section.constructor()');
         this.parameters = parameters;
+        this.glossary = glossary;
+        //console.log(this.glossary);
         this.senUniqid(); 
         this.Html = new Html();
         this.Utilities = new Utilities();
+        this.ErrorStack = ErrorStack;
         this.ele.parent = parent_ele;
-        this.section_counter = section_counter;
-        this.setSubsectionCounter(parameters);
         /*
          * SET Dynamic Main Field
          */
         this.setDynamic();
         this.setMain();
+
+        //this.setSubsectionCounter(parameters);
+        //console.log(this.ele.parent);
+        //console.log(this.Subsection);
+    }
+    set(section_counter,subsection_counter){
+        this.section_counter = section_counter;
+        this.subsection_counter = subsection_counter;
+        this.setSectionProperties();
+        this.setBodyColumn(this,this.subsection_counter);
+    }
+    setWithData(section_counter,StageDataSection){
+        console.log("Form_stage_section.setWithData()StageDataSection:\r\n",StageDataSection);
+        this.section_counter = section_counter;
+        this.id_db = parseInt(StageDataSection.id_db,10);
+        this.Utilities.propertyExists(StageDataSection,'id_db','Object `StageDataSection` doesn\'t have `id_db` property!');
+        this.Utilities.propertyExists(StageDataSection,'subsection','Object `StageDataSection` doesn\'t have `subsection` property!');
+        this.subsection_counter = StageDataSection.subsection.length;
+        this.checkSubsectionCounter(StageDataSection.subsection);
+        this.setSectionProperties();
+        this.setBodyColumnWithData(StageDataSection.subsection);
+    }
+    setSectionProperties(){
+        console.log('Form_stage_section.setSectionProperties()');
         /*
          * SET HEAD OPTION BODY AND FOOTER FILED
          */
@@ -41,17 +72,14 @@ class Form_stage_section{
         this.setHead();
         this.setBody();
         this.setFooter();
-        console.log(this.ele.parent);
-        console.log(this.Subsection);
     }
-    setSubsectionCounter(parameters){
-        this.Utilities.propertyExists(parameters,'FORM_STAGE_SUBSECTION_COUNT','No `FORM_STAGE_SUBSECTION_COUNT` parameter!');
-        this.subsection_counter = parseInt(parameters.FORM_STAGE_SUBSECTION_COUNT,10);
+    checkSubsectionCounter(){
+        console.log("Form_stage_section.setWithData() subsection length - ",this.subsection_counter);       
         if(this.subsection_counter<1){
-            throw 'Subsection counter `'+this.subsection_counter+'` is less than 1!';
+            throw 'Subsection counter `'+length+'` is less than 1!';
         }
         if(this.subsection_counter>12){
-            throw 'Subsection counter `'+this.subsection_counter+'` is greater than 12!';
+            throw 'Subsection counter `'+length+'` is greater than 12!';
         }
     }
     senUniqid(){
@@ -106,7 +134,6 @@ class Form_stage_section{
         var row=this.Html.getRow();
             row.setAttribute('id',this.uniqid+"_body");
             this.ele.body=row;
-            this.setBodyColumn(this,this.subsection_counter);
             this.ele.dynamic.append(row);
     }
     setFooter(){
@@ -179,9 +206,13 @@ class Form_stage_section{
                     //console.log("value - ",value);
                     if(current_value>value){
                         if (confirm('Zmniejszyć ilość kolumn?') === true) {
-                            self.Html.removeChilds(self.ele.body);
-                            self.setBodyColumn(self,value);
-                        }
+                                self.Html.removeChilds(self.ele.body);
+                                /*
+                                * CLEAR
+                                */
+                                self.Subsection = new Object();
+                                self.setBodyColumn(self,value);
+                            }
                         else{
                             // NO
                             //console.log("reject change");
@@ -194,6 +225,10 @@ class Form_stage_section{
                     }
                     else{
                         self.Html.removeChilds(self.ele.body);
+                         /*
+                        * CLEAR
+                        */
+                        self.Subsection = new Object();
                         self.setBodyColumn(self,value);
                     }  
                 }
@@ -239,55 +274,72 @@ class Form_stage_section{
             };
         ele.append(button);
     }
+    setBodyColumnWithData(StageDataSubsection){
+        console.log('Form_stage_section.setBodyColumnWitData()');
+        //console.log(StageDataSubsection);
+        var length = StageDataSubsection.length;
+        this.setBodyColumnCount(this,length);
+        this.setBodyColumnSize(this,length);
+        var column_size = 1;
+        var i=1;
+        for(const prop in StageDataSubsection){
+            column_size = this.getBodyColumnSize(this);
+            var col=this.Html.getCol(column_size);
+            //console.log(StageDataSubsection[prop]);
+            this.Utilities.propertyExists(StageDataSubsection[prop],'id_db','Object `StageDataSubsection[prop]` dosn\'t have `id_db` property!');
+            this.Utilities.propertyExists(StageDataSubsection[prop],'row','Object `StageDataSubsection[prop]` dosn\'t have `row` property!');
+            this.Subsection[prop] = new Form_stage_create_subsection(this,col,column_size,this.glossary);
+            this.Subsection[prop].setWithData(StageDataSubsection[prop]);
+            this.ele.body.append(col);
+            i++;
+        }
+    }
     setBodyColumn(self,current){
         console.log('Form_stage_section.setBodyColumn()');
-        var total = Math.round(current);
-        if(total>self.subsection_max){
-            console.log('Form_stage_section.setBodyColumn() EXCEPTION MAX');
-            total = self.subsection_max;
-        }
-        if(total<self.subsection_min){
-            console.log('Form_stage_section.setBodyColumn() EXCEPTION MIN');
-            total = self.subsection_min;
-        }
+        self.setBodyColumnCount(self,current);
+        self.setBodyColumnSize(self,current);
+        var column_size = 1;
         /*
+         * DEFAULT COLUMN
+         */
+        for(var i=1; i<self.column_count+1;i++){
+            column_size = self.getBodyColumnSize(self);
+            var col=self.Html.getCol(column_size);
+            self.Subsection[i] = new Form_stage_create_subsection(self,col,column_size,self.glossary);
+            self.Subsection[i].setWithoutData();
+            /*
+             * PREPEND / APPEND
+             */
+            //self.ele.dynamic_fields[id]['body'].prepend(col);
+            self.ele.body.append(col);
+        }
+    }
+    setBodyColumnCount(self,current){
+        self.column_count = Math.round(current);
+        if(self.column_count>self.subsection_max){
+            console.log('Form_stage_section.setBodyColumn() EXCEPTION MAX');
+            self.column_count = self.subsection_max;
+        }
+        if(self.column_count<self.subsection_min){
+            console.log('Form_stage_section.setBodyColumn() EXCEPTION MIN');
+            self.column_count = self.subsection_min;
+        }
+    }
+    setBodyColumnSize(self,current){
+          /*
          * MAX BOOTSTRAP COLUMN EQUAL 12
          */
-        //console.log(self.subsection_max/current);
-        var column_size = Math.floor(self.subsection_max/current);//round
-        var tmp_column_size = column_size;
-        var rest = self.subsection_max - (column_size*total);
-            //console.log('total column - ',total);
-            //console.log('column size - ',column_size);
-            //console.log('rest column size - ',rest);
-            /*
-             * CLEAR
-             */
-            self.Subsection = new Object();
-            /*
-             * DEFAULT COLUMN
-             */
-            for(var i=1; i<total+1;i++){
-                tmp_column_size=column_size;
-               // console.log(rest);
-                if(rest>0){
-                    tmp_column_size+=1;
-                    //console.log('tmp column size - ',tmp_column_size);
-                    rest--;
-                }
-                var col=self.Html.getCol(tmp_column_size);
-                self.Subsection[i] = new Form_stage_create_subsection(self,col,tmp_column_size);
-                  //  Form_stage_create_subsection.set(col);
-                /*
-                 * PREPEND
-                 */
-                //self.ele.dynamic_fields[id]['body'].prepend(col);
-                /*
-                 * 
-                 * APPEND
-                 */
-                self.ele.body.append(col);
-            }
+        self.column_size = Math.floor(self.subsection_max/current);//round
+        self.tmp_column_size = self.column_size;
+        self.rest_column_size = self.subsection_max - (self.column_size*self.column_count);
+    }
+    getBodyColumnSize(self){
+        self.tmp_column_size=self.column_size;
+        if(self.rest_column_size>0){
+            self.tmp_column_size+=1;
+            self.rest_column_size--;
+        }
+        return self.tmp_column_size;
     }
     setError(self,code,msg){
         console.log('Form_stage_section.setError()');

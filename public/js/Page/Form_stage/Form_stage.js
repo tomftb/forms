@@ -5,7 +5,9 @@ class Form_stage{
     Xhr = new Object();
     Form_stage_list = new Object();
     Form_stage_create = new Object();
-    Department = new Object();
+    Form_stage_show = new Object();
+    Form_stage_remove = new Object();
+    Form_stage_hide = new Object();
     Parse = new Object();
     response;
 
@@ -14,7 +16,6 @@ class Form_stage{
         this.appUrl=app_url; 
         this.router=router;
         this.Xhr=new Xhr2();
-        this.Department=new Department();
         this.Parse=new Parse();
         /*
          * FORM STAGE TABLE
@@ -24,6 +25,16 @@ class Form_stage{
          * FORM STAGE MODAL
          */
         this.Form_stage_create=new Form_stage_create(router,app_url,this.Form_stage_list); 
+        /*
+         * 
+         * FORM STAGE REMOVE
+         */
+        this.Form_stage_remove = new Form_stage_remove(router,app_url,this.Form_stage_list); 
+        /*
+         * 
+         * FORM STAGE HIDE
+         */
+        this.Form_stage_hide = new Form_stage_hide(router,app_url,this.Form_stage_list); 
     }
     loadDefaultList(){
         console.log('Form_stage.loadDefaultList()');
@@ -31,6 +42,7 @@ class Form_stage{
          *  INITIALISE PARENT MODAL LINKS
          */
         this.Form_stage_create.init();
+        //this.Form_stage_show.init();
         /*
          * INITIALISE PARENT TABLE LINKS
          */
@@ -51,13 +63,14 @@ class Form_stage{
          */
         this.Xhr.run({
                     t:'GET',
-                    u:self.router+'getFormStageDefaults',
+                    u:this.router+'getFormStageDefaults',
                     c:true,
                     d:null,
                     o:this,
                     m:'setProperties'
         });
     }
+
     setProperties(response){
         console.log('Form_stage.setProperties()');
         try{
@@ -72,13 +85,10 @@ class Form_stage{
              */            
             this.Form_stage_list.setBody(this.response.list);
             /*
-             * SET DEPARTMENT - TURN OFF
-             */
-            /*
              * SET USER DATA
              */
             this.Form_stage_create.setProperty(this.response);
-             //this.Form_stage_create.setDepartmentList(this.response.department);
+            //this.Form_stage_show.setProperty(this.response);
         }
         catch (error){
             console.log(error);
@@ -129,17 +139,43 @@ class Form_stage{
             console.log(self);
         };
     }
+    showStage(response){
+        console.clear();
+        console.log('Form_stage.showStage()');  
+        //console.log(response);
+        /*
+         * FORM STAGE MODAL
+         */
+        this.Form_stage_create.show(response);
+    }
     editStage(response){
         console.log('Form_stage.editStage()');  
         console.log(response);
+        
     }
     removeStage(response){
         console.log('Form_stage.removeStage()');  
-        console.log(response);
+        //console.log(response);
+        try{            
+            this.Form_stage_remove.init(); 
+            this.Form_stage_remove.remove(response);
+        }
+        catch(e){
+            console.error("Form_stage.removeStage()",e);
+            this.Form_stage_list.setError('Application error occurred! Contact with Administrator!');
+        }
     }
     hideStage(response){
         console.log('Form_stage.hideStage()');  
         console.log(response);
+        try{
+            this.Form_stage_hide.init(); 
+            this.Form_stage_hide.hide(response);
+        }
+        catch(e){
+            console.error("Form_stage.hideStage()",e);
+            this.Form_stage_list.setError('Application error occurred! Contact with Administrator!');
+        }
     }
 }
 /*

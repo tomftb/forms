@@ -63,7 +63,7 @@ class Form_stage_list extends Table{
             'set':'getButton'// //getDisabledButton
             ,'title':'Wyświetl'
             ,'class':'btn-info'
-            ,'action':'editStage'
+            ,'action':'showStage'
             ,'url':'getFormStageShowData&id='
             ,'permission':'SHOW_FORM_STAGE'
         }
@@ -132,7 +132,7 @@ class Form_stage_list extends Table{
             return col;
     }
     setBodyRowColButton(value){
-        console.log('Form_stage_list.setBodyRowColButton()',value);
+        //console.log('Form_stage_list.setBodyRowColButton()',value);
         var col = document.createElement('TD');
         var buttonGroup=this.setButtonGroup(value[this.body[0]]);
             col.appendChild(buttonGroup);
@@ -141,7 +141,7 @@ class Form_stage_list extends Table{
         return col;
     }
     setButtonGroup(id){
-        console.log('Form_stage_list.setGroupBtn() id - ',id);
+        //console.log('Form_stage_list.setGroupBtn() id - ',id);
         //console.log(Ajax);
         /* ADD LOAD INFO */
         var btnGroup=document.createElement('DIV');
@@ -161,10 +161,11 @@ class Form_stage_list extends Table{
     }
     getButton(prop,id){
         //console.log('Form_stage_list.getButton()');
-        console.log(this.Parent);
+        //console.log(this.Parent);
         var button  = this.Html.getButton(prop.title,[prop.class,'btn']);
         var self = this;
             button.onclick = function (){
+                console.clear();
                 console.log('Form_stage_list.getButton() onclick()');
                 self.unsetError();
                 self.Xhr.setOnError({o:self, m:'setError'});
@@ -237,6 +238,33 @@ class Form_stage_list extends Table{
                     m:'set'
         });
         
+    }
+    reload(self){
+        console.log('Form_stage.reload()');
+        console.log(self);
+        /*
+         * RUN XHR
+         */
+        this.Xhr.run({
+                    t:'GET',
+                    u:self.router+'reloadFormStage',
+                    c:true,
+                    d:null,
+                    o:self,
+                    m:'reloadBody'
+        });
+    }
+    reloadBody(response){
+        console.log('Form_stage_list.reloadBody()');
+        console.log(response);
+        /*
+         * CLEAR TABLE BODY
+         */
+        super.clearBody();
+        /*
+         * SET NEW TABE BODY DATA
+         */
+        this.set(response);
     }
     set(response){
         console.log('Form_stage_list.set()');

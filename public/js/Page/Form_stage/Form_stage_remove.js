@@ -1,21 +1,20 @@
-class Form_stage_remove extends Modal{
-    Html = new Object();
-    id = 0 ;
-    constructor(){
-        super();
-        console.log('Form_stage_create.construct()');
-        this.Html = new Html();
+class Form_stage_remove extends Form_stage_modal_prototype{
+    
+    constructor(router,app_url,Form_stage_list){
+        super(router,app_url,Form_stage_list);
+        console.log('Form_stage_remove.construct()');
     }
-    setId(id){
-        this.id = id;
-    }
-    getButton(){
-        var self = this;
-        var button  = this.Html.getButton('Wyświetl',['btn-info']);
-            button.onclick = function(){
-                console.log(self.id);
-            };
-        return button;
-         
+    remove(response){
+        console.log("Form_stage_remove.remove()");//\r\n",response
+        super.setTitle('Usunięcie etapu formularza','bg-danger');
+        super.setButton('Usuń','btn-danger');
+        super.setTask('removeFormStage');
+        super.setResponse(response);
+        super.setData();
+        super.setModalProperties();
+        /*
+         * SHOW MODAL
+         */
+        super.showModal();
     }
 }

@@ -1,4 +1,4 @@
-class Form_stage_create_title{    
+class Form_stage_title{    
     Html = new Object();
 
     Prototype = new Object();
@@ -25,9 +25,9 @@ class Form_stage_create_title{
     max = 1024;
     min = 3;
    
-    constructor(Parent,ele){
+    constructor(Parent,ele,value){
         try{
-            console.log('Form_stage_create_title.construct()');
+            console.log('Form_stage_title.construct()');
             this.Parent = Parent;
             /*
              * Prototype
@@ -37,14 +37,19 @@ class Form_stage_create_title{
             this.Prototype.unsetBorder();
             this.Prototype.setUniqid(this.type);
             this.Prototype.setFields();
+            this.setValue(value);
             this.setInput();
         }
         catch(e){
-            console.log('Form_stage_create_title.construct() catch()',e);
+            console.error("Form_stage_title.construct() catch()\r\n",e);
+            Parent.setError(e);
         }
     }
     getValue(){
         return this.input.value;
+    }
+    setValue(value){
+        this.value = value;
     }
     getInputField(){
         var self=this;
@@ -55,19 +60,19 @@ class Form_stage_create_title{
         this.input.setAttribute('maxlength',this.max);
         this.input.value=this.value;
         this.input.oninput = function(){
-            console.log('Form_stage_create_title.getInput() oninput()');
+            console.log('Form_stage_title.getInput() oninput()');
             self.checkLength(self,this.value);
             self.checkErrors(self);
         };
         this.input.onblur = function(){
-            console.log('Form_stage_create_title.getInput() onblur()');
+            console.log('Form_stage_title.getInput() onblur()');
             self.checkLength(self,this.value);
             self.checkErrors(self);
         };
         return  this.input;
     }
     setInput(){
-        console.log('Form_stage_create_title.setInput()');
+        console.log('Form_stage_title.setInput()');
         var row=this.Html.getRow();
         var col_1=this.Html.getCol(1);
         var col_2=this.Html.getCol(11);
@@ -94,23 +99,23 @@ class Form_stage_create_title{
         this.input.value=this.value;
         this.input.oninput = function(){
             try{
-                console.log('Form_stage_create_title.getInput() oninput()');
+                console.log('Form_stage_title.getInput() oninput()');
                 self.checkLength(self,this.value);
                 self.checkErrors(self);
             }
             catch(e){
-                console.log('Form_stage_create_title.getInput() oninput() catch',e);
+                console.log('Form_stage_title.getInput() oninput() catch',e);
                 self.Prototype.setError(self.Prototype,'_title_oninput','Application error occurred! Contact with Administrator!');
             }
         };
         this.input.onblur = function(){
             try{
-                console.log('Form_stage_create_title.getInput() onblur()');
+                console.log('Form_stage_title.getInput() onblur()');
                 self.checkLength(self,this.value);
                 self.checkErrors(self);
             }
             catch(e){
-                console.log('Form_stage_create_title.getInput() onblur() catch',e);
+                console.log('Form_stage_title.getInput() onblur() catch',e);
                 self.Prototype.setError(self.Prototype,'_title_onblur','Application error occurred! Contact with Administrator!');
             }
         };
@@ -130,13 +135,13 @@ class Form_stage_create_title{
             this.Prototype.ele.input.append(row);
     }
     checkLength(self,value){
-        console.log('Form_stage_create_title.checkLength()',value); 
+        console.log('Form_stage_title.checkLength()',value); 
         self.value_length=value.length;
         self.checkMin(self);
         self.checkMax(self);
     }
     checkMax(self){
-        console.log('Form_stage_create_title.checkMax()'); 
+        console.log('Form_stage_title.checkMax()'); 
         if(self.value_length>self.max){
             self.Prototype.setError(self.Prototype,'_max','Wprowadzono za dużo znaków ('+self.value_length+').');
         }
@@ -145,7 +150,7 @@ class Form_stage_create_title{
         }
     }
     checkMin(self){
-        console.log('Form_stage_create_title.checkMin()');  
+        console.log('Form_stage_title.checkMin()');  
         if(self.value_length<self.min){
             self.Prototype.setError(self.Prototype,'_min','Wprowadź minimalną ilości znaków ('+self.value_length+').');
         }
@@ -154,15 +159,15 @@ class Form_stage_create_title{
         }
     }
     checkErrors(self){
-        console.log('Form_stage_create_title.checkErrors()');
+        console.log('Form_stage_title.checkErrors()');
         if(self.Prototype.ErrorStack.check()){
-            console.log('Form_stage_create_title.checkErrors() errors exists');
+            console.log('Form_stage_title.checkErrors() errors exists');
             self.title.classList.remove('text-dark');//text-danger
             self.title.classList.add('text-danger');//text-danger
             self.input.classList.add('border-danger');
         }
         else{
-            //console.log('Form_stage_create_title.checkErrors() no errors');
+            //console.log('Form_stage_title.checkErrors() no errors');
             self.title.classList.remove('text-danger');//text-danger
             self.title.classList.add('text-dark');//text-danger
             self.input.classList.remove('border-danger');

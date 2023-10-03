@@ -1,6 +1,7 @@
 class Form_stage_prototype{  
     Html = new Object();
     ErrorStack = new Object();
+    Utilities = new Object();
     /*
      * REFERENCES TO ELEMENTS
      */
@@ -28,8 +29,9 @@ class Form_stage_prototype{
         
     constructor(Parent,main_ele){
         try{
-            //console.log('Form_stage_create_input_prototype.construct()');
+            //console.log('Form_stage_prototype.construct()');
             this.Html=new Html();
+            this.Utilities=new Utilities();
             /*
              * PARENT EXTENDS MODAL
              */
@@ -41,7 +43,7 @@ class Form_stage_prototype{
             this.main = main_ele;
         }
         catch(e){
-            console.log('Form_stage_create_input_prototype.construct() catch()',e);
+            console.log('Form_stage_prototype.construct() catch()',e);
             alert('Application error occurred! Contact with Administrator!');
         }
     }
@@ -97,7 +99,7 @@ class Form_stage_prototype{
             this.ele.all_col.append(row);
     }
     setHeaderField(){
-        console.log('Form_stage_create_input_prototype.setHeaderField()');
+        console.log('Form_stage_prototype.setHeaderField()');
         var row=this.Html.getRow();
             row.classList.add('mt-1','mb-1');
             row.setAttribute('id',this.uniqid+'_head_field');
@@ -112,7 +114,7 @@ class Form_stage_prototype{
             this.ele.all_col.prepend(row);
     }
     setInputField(){
-        console.log('Form_stage_create_input_prototype.setInputField()');
+        console.log('Form_stage_prototype.setInputField()');
         var row=this.Html.getRow();
             row.setAttribute('id',this.uniqid+'_input_field');
         var col=this.Html.getCol(12);  
@@ -121,7 +123,7 @@ class Form_stage_prototype{
             this.ele.all_col.append(row);
     }
     setOptionsField(){
-        console.log('Form_stage_create_input_prototype.setOptionsField() column_size - ');
+        console.log('Form_stage_prototype.setOptionsField() column_size - ');
         var row=this.Html.getRow();
             row.setAttribute('id',this.uniqid+'_options_field');
         var col = this.Html.getCol(12);
@@ -142,36 +144,36 @@ class Form_stage_prototype{
         self.ErrorStack.remove(self.uniqid+code);
     }
     checkErrors(self){
-        console.log('Form_stage_create_input_prototype.checkErrors()');
+        console.log('Form_stage_prototype.checkErrors()');
         try{
             if(self.ErrorStack.check()){
-                console.log('Form_stage_create_input_prototype.checkErrors() errors exists');
+                console.log('Form_stage_prototype.checkErrors() errors exists');
                 self.ele.error.classList.add('alert','alert-danger');
                 self.ele.error.setAttribute('role','alert');
                 self.Html.removeChilds(self.ele.error);
                 self.ele.error.innerHTML = self.ErrorStack.getHtmlWithMask(self.uniqid);
             }
             else{
-                console.log('Form_stage_create_input_prototype.checkErrors() no errors');
+                console.log('Form_stage_prototype.checkErrors() no errors');
                 self.ele.error.classList.remove('alert','alert-danger');
                 self.ele.error.removeAttribute('role');
                 self.Html.removeChilds(self.ele.error);
             }
         }
         catch(e){
-            console.log('Form_stage_create_input_prototype.checkErrors()',e);
+            console.log('Form_stage_prototype.checkErrors()',e);
             alert('Application error occurred! Contact with Administrator!');
         }  
     }
     setFields(){
-        console.log('Form_stage_create_input_prototype.setFields()');        
+        console.log('Form_stage_prototype.setFields()');        
         this.setAllField();
         this.setInputField();
         this.setOptionsField();
         this.setErrorField();       
     }
     setRemoveButton(ele){
-        console.log('Form_stage_create_input_prototype.setRemoveButton() uniqid - '+this.uniqid);
+        console.log('Form_stage_prototype.setRemoveButton() uniqid - '+this.uniqid);
         var self = this;
         var i=document.createElement('i');
             i.classList.add('fa','fa-minus');
@@ -198,7 +200,7 @@ class Form_stage_prototype{
                     }
                 }
                 catch(e){
-                    console.log('Form_stage_create_input_prototype.setRemoveButton() onclick() catch()',e);
+                    console.log('Form_stage_prototype.setRemoveButton() onclick() catch()',e);
                     self.setError(self,'_rm_onclick','Prototype error has occured! Contact with Administrator!');
                     self.checkErrors(self);
                 }
