@@ -22,6 +22,7 @@ class Filled_form{
     Footer=new Object();
     Heading=new Object();
     loadModal;
+    Form_creator = new Object();
     /*
      * USER APPLIACTION PERMISSIONS
      */
@@ -71,6 +72,7 @@ class Filled_form{
         this.Filled_form_show=new Filled_form_show_filled(this);
         this.Utilities = new Utilities();
         this.setLoadInfo();
+        this.Form_creator = new Form_creator();
     }
     getXhrParm(type,url,method){
         return {
@@ -85,6 +87,8 @@ class Filled_form{
     setUpParameters(){
         console.log('Filled_form.setUpParameters()'); 
         /* TO DO -> EXTEND FOR ALL GLOSSARY */
+        this.Xhr.setOnError({o:this.Table, m:'setError'});
+        
         this.Xhr.run(this.getXhrParm('GET','loadFilledFormDefault','setUpDefaults'));
     }
     setUpDefaults(response){
@@ -434,6 +438,14 @@ class Filled_form{
     showHideModal(response){
         console.log('Filled_form.showHideModal()');  
     }
+    setCreateFormButton(ele){
+        console.log('Filled_form.setCreateFormButton()');  
+        //console.log(ele);
+        var self = this;
+        ele.onclick = function(){
+            self.Form_creator.creator();  
+        };
+    }
 }
 /*
  * 
@@ -454,6 +466,7 @@ if(error===false){
         FilledForm.Table.setLink();
         /* SETUP PARAMETERS => Glossary */
         FilledForm.setUpParameters();
+        FilledForm.setCreateFormButton(document.getElementById("createForm"));
     }
     catch (error){
         console.log(error);
