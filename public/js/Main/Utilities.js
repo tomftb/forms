@@ -179,11 +179,45 @@ class Utilities {
     propertyExists(o,p,m){
         /*
          * o - object
-         * p - proeprty
+         * p - property
          * m - message
          */
         if(!o.hasOwnProperty(p)){
             throw m;
+        }
+    }
+    arrayKeyExists(a,k,m){
+        console.log('Utilities.arrayKeyExists()');
+        /*
+         * a - array
+         * k - key
+         * m - message
+         */
+        var error = function(m){
+            throw m;
+        };
+        var ok = function(m){
+            //no error
+        };
+        var run = error;
+        console.log(k);
+        for(var i = 0; i<a.length;i++){
+            console.log(i);
+            if(i===k){
+                run = ok;
+            };
+        };
+        run(m);
+    }
+    arrayIncludes(a,v,m){
+        console.log('Utilities.arrayIncludes()');
+        /*
+         * a - array
+         * v - value
+         * m - message
+         */
+        if(!a.includes(v)){
+             throw m;
         }
     }
 }
