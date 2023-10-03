@@ -58,7 +58,8 @@ final class Form_stage_page extends Page{
         'Page/ProjectStage/ProjectStageTable.js',
         'Page/ProjectStage/ProjectStage.js',
         
-        'Page/Form_stage/Form_stage_show.js',
+        //'Page/Form_stage/Form_stage_show.js',
+        'Page/Form_stage/Form_stage_modal_prototype.js',
         'Page/Form_stage/Form_stage_edit.js',
         'Page/Form_stage/Form_stage_remove.js',
         'Page/Form_stage/Form_stage_hide.js',
@@ -68,8 +69,8 @@ final class Form_stage_page extends Page{
         'Page/Form_stage/Form_stage_save.js',
         'Page/Form_stage/Form_stage_create_action.js',
         'Page/Form_stage/Form_stage_prototype.js',
-        'Page/Form_stage/Form_stage_create_row/Form_stage_create_department.js',
-        'Page/Form_stage/Form_stage_create_row/Form_stage_create_title.js',
+        'Page/Form_stage/Form_stage_department.js',
+        'Page/Form_stage/Form_stage_title.js',
 
         'Page/Form_stage/Form_stage_create_row/Form_stage_create_input.js',
         'Page/Form_stage/Form_stage_create_row/Form_stage_create_input_select.js',
