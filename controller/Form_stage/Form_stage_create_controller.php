@@ -1,37 +1,13 @@
 <?php
-/**
- * Description of Forms_stage_controller
- *
- * @author tomborc
- */
+
  final class Form_stage_create_controller extends Base_controller {
 
     private ?string $set = 'setData';// setData//setError
     private ?object $command;
-    /*
-            [
-        'stage'=>[
-            0=>'Stage'//Stage
-        ]
-        ,'section'=>[
-            0=>'Section'//Section
-        ]
-        ,'subsection'=>[
-            0=>'Subsection'//Subsection
-        ]
-        ,'row'=>[
-            0=>'Row'//Row
-        ]
-        ,'row_child'=>[
-            0=>'Row'//Row
-        ]
-    ];*/
     private ?int $error_lvl=0;
-
     private ?string $msg = 'Nie wprowadzono danych';
-    
     private ?object $Utilities;
-    
+    private ?int $stage_id=0;
     public function __construct(){
         parent::__construct();
         $this->Log->log(0,"[".__METHOD__."]");
@@ -41,11 +17,23 @@
         $this->Model->{'Form_stage_section'}=new \Form_stage_section_model();
         $this->Model->{'Form_stage_subsection'}=new \Form_stage_subsection_model();
         $this->Model->{'Form_stage_row'}=new \Form_stage_row_model();
+        
     }
     public function __call($m,$a){
         Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
     }
-    public function create(object $data){
+    public function saveFormStage(){
+        $this->Log->log(0,"[".__METHOD__."]");
+        (array) $post = json_decode(filter_input(INPUT_POST,'data'));
+        if(json_last_error()){
+            throw new \exception(json_last_error_msg(),0);
+        }
+        self::create($post);
+        $response = self::get();
+        $response->id_db = 0;
+        parent::returnJson($response);
+    }
+    private function create(object $data){
         $this->Log->log(0,"[".__METHOD__."]");
         $this->data = $data;
         //$this->Log->logMulti(0,$data);
@@ -55,20 +43,14 @@
          * insert
          * update
          */
-
         foreach($data->stage as $k => &$s){
-            //print_r($data->stage->{$k});
             $this->command->{$k} = new stdClass();
             self::stage($this->command->{$k},$s);
         }
         /*
          * COMMAND
          */
-         
-        //print_r($this->command);
-        //die();
         $this->{$this->set}();
-        
     }
     private function setCommand(object &$command, int $id=0,string $sufix = 'Stage'):void{//'Stage'
         $this->Log->log(0,"[".__METHOD__."] SET TASK FOR - ".$sufix);        
@@ -95,8 +77,11 @@
          * id
          * section
          */
-        $this->Utilities->propertyExists($stage,'id_db','['.__METHOD__.']Property `id_db` not exists in object!');
-        $this->Utilities->propertyExists($stage,'section','['.__METHOD__.']Property `section` not exists in object!');
+        $this->Utilities->propertyExists($stage,'id_db','['.__METHOD__.'] Property `id_db` doesn\'t exists in object!');
+        $this->Utilities->propertyExists($stage,'section','['.__METHOD__.'] Property `section` doesn\'t exists in object!');
+        $this->Utilities->propertyExists($stage,'department_id','['.__METHOD__.'] Property `department_id` doesn\'t exists in object!');
+        $this->Utilities->propertyExists($stage,'department_name','['.__METHOD__.'] Property `department_name` doesn\'t exists in object!');
+        $this->Utilities->propertyExists($stage,'title','['.__METHOD__.'] Property `title` doesn\'t exists in object!');
         $this->Log->logMulti(0,$stage->id_db);
         self::setId($stage->id_db);
         $command->{'run'} = '';
@@ -114,12 +99,11 @@
          * id
          * subsection
          */
-        $this->Utilities->propertyExists($section,'id_db','['.__METHOD__.'] Property `id_db` not exists in object!');
+        $this->Utilities->propertyExists($section,'id_db','['.__METHOD__.'] Property `id_db` doesn\'t exists in object!');
         $this->Utilities->propertyExists($section,'subsection','Dodaj kolumnę',0);
         self::setId($section->id_db);
         $command->{'run'} = '';
         $command->{'subsection'} = new stdClass();
-        //self::setTask($section->id_db,$this->task['section'],'Section');
         self::setCommand($command,$section->id_db,'Section');
         foreach($section->subsection as $k => &$s){
             $command->{'subsection'}->{$k} = new stdClass();
@@ -128,7 +112,7 @@
     }
     private function subsection(object &$command,object $subsection){
         //$this->Log->logMulti(0,$subsection);
-        $this->Utilities->propertyExists($subsection,'id_db','['.__METHOD__.'] Property `id_db` not exists in object!');
+        $this->Utilities->propertyExists($subsection,'id_db','['.__METHOD__.'] Property `id_db` doesn\'t exists in object!');
         $this->Utilities->propertyExists($subsection,'row','Dodaj dane do kolumny',0);
         self::setId($subsection->id_db);
         $command->{'run'} = '';
@@ -143,12 +127,12 @@
     private function row(object &$command,object &$row){
         $this->Log->log(0,"[".__METHOD__."]");
         //$this->Log->logMulti(0,$row);
-        $this->Utilities->propertyExists($row,'type','['.__METHOD__.'] Property `type` not exists in row object!');
-        $this->Utilities->propertyExists($row,'id_db','['.__METHOD__.'] Property `id_db` not exists in row object!');
+        $this->Utilities->propertyExists($row,'type','['.__METHOD__.'] Property `type` doesn\'t exists in row object!');
+        $this->Utilities->propertyExists($row,'id_db','['.__METHOD__.'] Property `id_db` doesn\'t exists in row object!');
         $this->Utilities->propertyExists($row,'property','['.__METHOD__.'] Property `property` not exists in row object!');
-        $this->Utilities->propertyExists($row,'style','['.__METHOD__.'] Property `style` not exists in row object!');
-        $this->Utilities->propertyExists($row,'value','['.__METHOD__.'] Property `value` not exists in row object!');
-        $this->Utilities->propertyExists($row,'name','['.__METHOD__.'] Property `name` not exists in row object!');
+        $this->Utilities->propertyExists($row,'style','['.__METHOD__.'] Property `style` doesn\'t exists in row object!');
+        $this->Utilities->propertyExists($row,'value','['.__METHOD__.'] Property `value` doesn\'t exists in row object!');
+        $this->Utilities->propertyExists($row,'name','['.__METHOD__.'] Property `name` doesn\'t exists in row object!');
         self::setId($row->id_db);
         $command->{'run'} = '';
         $command->{'type'} = $row->type;
@@ -178,28 +162,33 @@
     private function set_select(object &$command,object &$row){
         $this->Log->log(0,"[".__METHOD__."]");
         $this->Log->logMulti(0,$row);
+        $this->Utilities->propertyExists($row,'glossary','['.__METHOD__.'] Property `glossary` doesn\'t exists in row object!');
+        $this->Utilities->propertyExists($row->glossary,'id_glossary','['.__METHOD__.'] Property `id_glossary` doesn\'t exists in row->glossary object!');
+        $this->Utilities->propertyExists($row->glossary,'name','['.__METHOD__.'] Property `name` doesn\'t exists in row->glossary object!');
+        $this->Utilities->propertyExists($row->glossary,'id_glossary_position','['.__METHOD__.'] Property `id_glossary_position` doesn\'t exists in row->glossary object!');
+        $this->Utilities->propertyExists($row->glossary,'position_name','['.__METHOD__.'] Property `position_name` doesn\'t exists in row->glossary object!');
     }
     private function set_radio(object &$command,object &$row){
         $this->Log->log(0,"[".__METHOD__."]");
         $this->Log->logMulti(0,$row);
-        $this->Utilities->propertyExists($row->property,'label','['.__METHOD__.'] Property `label` not exists in row->property object!');
-        $this->Utilities->propertyExists($row->property->label,'id_db','['.__METHOD__.'] Property `id_db` not exists in row->property->label object!');
-        $this->Utilities->propertyExists($row->property->label,'value','['.__METHOD__.'] Property `value` not exists in row->property->label object!');
-        $this->Utilities->propertyExists($row->property->label,'name','['.__METHOD__.'] Property `name` not exists in row->property->label object!');
-        $this->Utilities->propertyExists($row->property->label,'type','['.__METHOD__.'] Property `type` not exists in row->property->label object!');
-        self::setId($row->property->label->id_db);
-        self::setCommand($command,$row->property->label->id_db,'RowChild');
+        $this->Utilities->propertyExists($row,'child','['.__METHOD__.'] Property `child` doesn\'t exists in row->property object!');
+        $this->Utilities->propertyExists($row->child,'id_db','['.__METHOD__.'] Property `id_db` doesn\'t exists in row->child object!');
+        $this->Utilities->propertyExists($row->child,'value','['.__METHOD__.'] Property `value` doesn\'t exists in row->child object!');
+        $this->Utilities->propertyExists($row->child,'name','['.__METHOD__.'] Property `name` doesn\'t exists in row->child object!');
+        $this->Utilities->propertyExists($row->child,'type','['.__METHOD__.'] Property `type` doesn\'t exists in row->child object!');
+        self::setId($row->child->id_db);
+        self::setCommand($command,$row->child->id_db,'RowChild');
     }
     private function set_checkbox(object &$command,object &$row){
         $this->Log->log(0,"[".__METHOD__."]");
         $this->Log->logMulti(0,$row->property);
-        $this->Utilities->propertyExists($row->property,'label','['.__METHOD__.'] Property `label` not exists in row->property object!');
-        $this->Utilities->propertyExists($row->property->label,'id_db','['.__METHOD__.'] Property `od_db` not exists in row->property->label object!');
-        $this->Utilities->propertyExists($row->property->label,'value','['.__METHOD__.'] Property `value` not exists in row->property->label object!');
-        $this->Utilities->propertyExists($row->property->label,'name','['.__METHOD__.'] Property `name` not exists in row->property->label object!');
-        $this->Utilities->propertyExists($row->property->label,'type','['.__METHOD__.'] Property `type` not exists in row->property->label object!');
-        self::setId($row->property->label->id_db);
-        self::setCommand($command,$row->property->label->id_db,'RowChild');
+        $this->Utilities->propertyExists($row,'child','['.__METHOD__.'] Property `child` doesn\'t exists in row object!');
+        $this->Utilities->propertyExists($row->child,'id_db','['.__METHOD__.'] Property `id_db` doesn\'t exists in row->child object!');
+        $this->Utilities->propertyExists($row->child,'value','['.__METHOD__.'] Property `value` doesn\'t exists in row->child object!');
+        $this->Utilities->propertyExists($row->child,'name','['.__METHOD__.'] Property `name` doesn\'t exists in row->child object!');
+        $this->Utilities->propertyExists($row->child,'type','['.__METHOD__.'] Property `type` doesn\'t exists in row->child object!');
+        self::setId($row->child->id_db);
+        self::setCommand($command,$row->child->id_db,'RowChild');
     }
     private function setData():void{
         $this->Log->log(0,"[".__METHOD__."]");
@@ -238,7 +227,6 @@
             Throw New \Exception ('['.__METHOD__.'] Wrong ID data type - '.$type,0);
         }
     }
-
     private function setStage(object $command){
         $this->Log->log(0,"[".__METHOD__."]");        
         foreach($this->data->stage as $k => &$s){
@@ -289,19 +277,14 @@
     }
     private function setRowChild(object $command,object &$row,int $id_parent=0){
         $this->Log->log(0,"[".__METHOD__."]");
-        //$this->Log->log(0,$command);
-        //$this->Log->log(0,$row);
-        
-        //print_r($command);
-        //print_r($row);
         self::{$command->{'run'}}($row,$id_parent);
-        //die();
     }
     private function insertStage(object &$stage){
         $this->Log->log(0,"[".__METHOD__."]");      
         $this->Model->{'Form_stage'}->insert($stage);
         $stage->id_db = $this->Model->{'Form_stage'}->lastInsertId();
-        self::setCreateUser();
+        $this->stage_id = $stage->id_db;
+        //self::setCreateUser();
     }
     private function updateStage(object &$stage){
         $this->Log->log(0,"[".__METHOD__."]");
@@ -309,7 +292,7 @@
          * UPDATE WITH DELETE_STATUS = 0
          */
         $this->Model->{'Form_stage'}->update($stage);
-        //self::setCreateUser();
+        $this->stage_id = $stage->id_db;
     }
     private function insertSection(object &$section,int $id_parent=0){
         $this->Log->log(0,"[".__METHOD__."]");        
@@ -319,7 +302,6 @@
     private function updateSection(object &$section,int $id_parent=0){
         $this->Log->log(0,"[".__METHOD__."]");        
         $this->Model->{'Form_stage_section'}->update($section);
-        
     }
     private function insertSubsection(object &$subsection,int $id_parent=0){
         $this->Log->log(0,"[".__METHOD__."]");   
@@ -334,74 +316,91 @@
         $this->Log->log(0,"[".__METHOD__."]");   
         $this->Model->{'Form_stage_row'}->insert($row,$id_parent);
         $row->id_db = $this->Model->{'Form_stage_row'}->lastInsertId();
-        //self::{'insertRow_'.$row->type}($row);  
+        self::insertRowProperty($row);
+        self::insertRowStyle($row);
+        self::{'insertRow_'.$row->type}($row);  
     }
     private function updateRow(object &$row,int $id_parent=0){
         $this->Log->log(0,"[".__METHOD__."]");   
         $this->Model->{'Form_stage_row'}->update($row);
-        //self::{'updateRow_'.$row->type}($row);  
+        self::insertRowProperty($row);
+        self::insertRowStyle($row);
+        self::{'updateRow_'.$row->type}($row);  
     }
     private function insertRowChild(object &$row,int $id_parent=0){
         $this->Log->log(0,"[".__METHOD__."]");      
-        $this->Model->{'Form_stage_row'}->insertChild($row->{'property'}->{'label'},$id_parent,$row->id_db);
-        $row->{'property'}->{'label'}->id_db = $this->Model->{'Form_stage_row'}->lastInsertId();
-       // $row->id_db = $this->Model->{'Form_stage_row'}->lastInsertId();
-        //self::{'insertRow_'.$row->type}($row);  
+        $this->Model->{'Form_stage_row'}->insertChild($row->{'child'},$id_parent,$row->id_db);
+        $row->{'child'}->id_db = $this->Model->{'Form_stage_row'}->lastInsertId();
     }
     private function updateRowChild(object &$row,int $id_parent=0){
         $this->Log->log(0,"[".__METHOD__."]");   
-        $this->Model->{'Form_stage_row'}->updateChild($row->{'property'}->{'label'});
-       // $this->Model->{'Form_stage_row'}->update($row);
-        //self::{'updateRow_'.$row->type}($row);  
+        $this->Log->logMulti(0,$row->{'child'});
+        $this->Model->{'Form_stage_row'}->updateChild($row->{'child'});
     }
     private function noRowChild(object &$row,int $id_parent=0){
         $this->Log->log(0,"[".__METHOD__."]");   
-       // $this->Model->{'Form_stage_row'}->update($row);
-        //self::{'updateRow_'.$row->type}($row);  
     }
-    private function setCreateUser(){
-        $this->data->user->create_date = date("Y-m-d H:i:s");
-        $this->data->user->create_user_email = $_SESSION['mail'];
-        $this->data->user->create_user_login = $_SESSION['username'];
+    private function insertRowProperty(object $row):void{
+        $this->Model->{'Form_stage_row'}->deleteProperty($row->id_db);
+        foreach($row->property as $name => $value){
+            $this->Model->{'Form_stage_row'}->insertProperty($row->id_db,$name,$value);
+        }
     }
-    public function get(){
+    private function insertRowStyle(object $row):void{
+        $this->Model->{'Form_stage_row'}->deleteStyle($row->id_db);
+        foreach($row->style as $name => $value){
+            $this->Model->{'Form_stage_row'}->insertStyle($row->id_db,$name,$value);
+        }
+    }
+    private function insertRowGlossary(object $row):void{
+        $this->Model->{'Form_stage_row'}->deleteGlossary($row->id_db);
+        $this->Model->{'Form_stage_row'}->insertGlossary($row->glossary,$row->id_db);
+    }
+    //private function setCreateUser(){
+     //   $this->data->user->create_date = date("Y-m-d H:i:s");
+    //    $this->data->user->create_user_email = $_SESSION['mail'];
+    //    $this->data->user->create_user_login = $_SESSION['username'];
+   // }
+    private function setUser(){
+        $this->data->user = $this->Model->{'Form_stage'}->getStageUserById($this->stage_id);
+    }
+    private function get(){
+        $this->Log->log(0,"[".__METHOD__."]");   
         /*
          * TO FIX - GET FROM DATABASE
          */
+        //$this->stage_id = $stage->id_db;
+        self::setUser();
         return $this->data;
+    }//        
+    private function insertRow_text(object $row){
+        
     }
-    //private function insertRow_text(object &$row){
-    //    $this->Log->log(0,"[".__METHOD__."]");   
-    //}
-   // private function insertRow_input(object &$row){
-    //    $this->Log->log(0,"[".__METHOD__."]");   
-   // }
-   // private function insertRow_select(object &$row){
-    //    $this->Log->log(0,"[".__METHOD__."]");   
-    //}
-   // private function insertRow_checkbox(object &$row){
-    //    $this->Log->log(0,"[".__METHOD__."]");   
-     //   $this->Log->log(0,$row);  
-     //   die();
-   // }
-   // private function insertRow_radio(object &$row){
-   //     $this->Log->log(0,"[".__METHOD__."]");   
-   // }
-   // private function updateRow_text(object &$row){
-    //    $this->Log->log(0,"[".__METHOD__."]");   
-   // }
-   // private function updateRow_input(object &$row){
-    //    $this->Log->log(0,"[".__METHOD__."]");   
-    //}
-   // private function updateRow_select(object &$row){
-   //     $this->Log->log(0,"[".__METHOD__."]");   
-   // }
-   // private function updateRow_checkbox(object &$row){
-    //    $this->Log->log(0,"[".__METHOD__."]");   
-    //    $this->Log->log(0,$row);  
-    //    die();
-   // }
-   // private function updateRow_radio(object &$row){
-   //     $this->Log->log(0,"[".__METHOD__."]");   
-   // }
+    private function updateRow_text(object $row){
+        
+    }
+    private function insertRow_input(object $row){
+        
+    }
+    private function updateRow_input(object $row){
+        
+    }
+    private function insertRow_select(object $row){
+        self::insertRowGlossary($row);
+    }
+    private function updateRow_select(object $row){
+        self::insertRowGlossary($row);
+    }
+    private function insertRow_checkbox(object $row){
+        
+    }
+    private function updateRow_checkbox(object $row){
+        
+    }
+    private function insertRow_radio(object $row){
+        
+    }
+    private function updateRow_radio(object $row){
+        
+    }
 }
