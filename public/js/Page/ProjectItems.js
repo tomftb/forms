@@ -96,6 +96,7 @@ class ProjectItems{
     }
     setUpParameters(){
         console.log('ProjectItems::setUpParameters()'); 
+        this.Xhr.setOnError({o:this.Table, m:'setError'});
         /* TO DO -> EXTEND FOR ALL GLOSSARY */
         this.Xhr.run(this.getXhrParm('GET','getNewStageDefaults&type=tx','setUpGlossary'));
     }
