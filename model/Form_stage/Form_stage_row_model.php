@@ -104,10 +104,83 @@ class Form_stage_row_model extends Database_model {
                 . ',`value`'
                 . ' FROM `form_stage_row` '
                 . ' WHERE '
-                . '`id_parent`=:id_parent'
+                . '`id_parent`=:id_parent '
+                . 'AND `id_row` IS NULL'
                 ,[
                     ':id_parent'=>[$id_parent,'INT']
                 ]
                 ,'FETCH_OBJ','fetchAll');
+    }
+    public function insertProperty(string|int $id_row=0, string $name='',string $value=''):void{
+        $this->Main->query2(
+                "INSERT INTO `form_stage_row_property` (`id_row`,`name`,`value`) VALUES (:id_row,:name,:value);"
+                ,[
+                    ':id_row'=>[$id_row,'STR']
+                    ,':value'=>[$value,'STR']
+                    ,':name'=>[$name,'STR']
+                ]
+        );
+    }
+    public function deleteProperty(string|int $id_row=0):void{
+        $this->Main->query2("DELETE FROM `form_stage_row_property` "
+                . " WHERE "
+                . "`id_row`=:id_row"
+                ,[
+                    ':id_row'=>[$id_row,'INT']
+                ]
+        );
+    }
+    public function insertStyle(string|int $id_row=0, string $name='',string $value=''):void{
+        $this->Main->query2(
+                "INSERT INTO `form_stage_row_style` (`id_row`,`name`,`value`) VALUES (:id_row,:name,:value);"
+                ,[
+                    ':id_row'=>[$id_row,'STR']
+                    ,':value'=>[$value,'STR']
+                    ,':name'=>[$name,'STR']
+                ]
+        );
+    }
+    public function deleteStyle(string|int $id_row=0):void{
+                $this->Main->query2("DELETE FROM `form_stage_row_style` "
+                . " WHERE "
+                . "`id_row`=:id_row"
+                ,[
+                    ':id_row'=>[$id_row,'INT']
+                ]
+        );
+    }
+    public function deleteGlossary(string|int $id_row=0):void{
+                $this->Main->query2("DELETE FROM `form_stage_row_glossary` "
+                . " WHERE "
+                . "`id_row`=:id_row"
+                ,[
+                    ':id_row'=>[$id_row,'INT']
+                ]
+        );
+    }
+    public function insertGlossary(object $row_glossary,string|int $id_row=0):void{
+        //print_r($row_glossary);
+        $this->Main->query2(
+                "INSERT INTO `form_stage_row_glossary` (`id_row`,`id_glossary`,`name`,`id_glossary_position`,`position_name`) VALUES (:id_row,:id_glossary,:name,:id_glossary_position,:position_name);"
+                ,[
+                    ':id_row'=>[$id_row,'STR']
+                    ,':id_glossary'=>[$row_glossary->id_glossary,'STR']
+                    ,':name'=>[$row_glossary->name,'STR']
+                    ,':id_glossary_position'=>[$row_glossary->id_glossary_position,'STR']
+                    ,':position_name'=>[$row_glossary->position_name,'STR']
+                ]
+        );
+    }
+    public function getGlossaryByIdRow(string|int $id_row=0):array{
+        foreach($this->Main->squery('SELECT `id_glossary`,`name`,`id_glossary_position`,`position_name` FROM `form_stage_row_glossary` WHERE `id_row`=:id_row',[':id_row'=>[$id_row,'INT']],'FETCH_OBJECT','fetchAll') as $form_stage_row_glossary){
+            return $form_stage_row_glossary;
+        }
+        Throw New \Exception('form_stage_row_glossary with id_row - `'.$id_row.'` not exists in database!',0);
+    }
+    public function getChild(string|int $id_row=0):array{
+        foreach($this->Main->squery('SELECT `id` as `id_db`,`value`,`name`,`type` FROM `form_stage_row` WHERE `id_row`=:id_row',[':id_row'=>[$id_row,'INT']],'FETCH_OBJECT','fetchAll') as $form_stage_row_glossary){
+            return $form_stage_row_glossary;
+        }
+        Throw New \Exception('form_stage_row with id_row - `'.$id_row.'` not exists in database!',0);
     }
 }
