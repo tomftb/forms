@@ -53,7 +53,7 @@ class Filled_form_table extends Table{
     button={
         'show':{
             'set':'getButton'// //getDisabledButton
-            ,'title':'Wyświetl'
+            ,'title':'Kreator'
             ,'class':'btn-info'
             ,'action':'showFormModal'
             ,'url':'getFormDescription&id='
