@@ -10,6 +10,7 @@
             <div class="btn pull-left mt-0" > 
                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                     <!-- BUTTONS -->
+                    <button id='createForm' class="btn btn-info pull-left mr-0 mb-0 mt-0 ml-1" >Dodaj formularz</button>
                 </div>
             </div>
         </div>
