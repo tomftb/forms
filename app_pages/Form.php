@@ -49,9 +49,8 @@ final class Form extends Page{
         'Page/ProjectConstantCreate.js',
         'Page/ProjectConstant.js',
         'Page/ProjectVariable/ProjectVariableTable.js',
-        'Page/ProjectVariable/ProjectVariableCreate.js',
-        'Page/ProjectVariable/ProjectVariable.js',
-        //'Page/Forms/Forms.js',
+        'Page/ProjectVariable/ProjectVariableCreate.js'
+        ,'Page/ProjectVariable/ProjectVariable.js'
         ];
     public function __construct(){
         parent::__construct();	
