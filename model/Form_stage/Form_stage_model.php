@@ -1,9 +1,4 @@
 <?php
-/**
- * Description of Form_stage_model
- *
- * @author tomborc
- */
 class Form_stage_model extends Database_model {
     public function __construct(){
         parent::__construct();
@@ -34,6 +29,40 @@ class Form_stage_model extends Database_model {
                             ,':department_id'=>[$data->department_id,'INT']
                             ,':department_name'=>[$data->department_name,'STR']
                             ,':title'=>[$data->title,'STR']
+                ]
+                ,parent::getAlterUserParm()
+                )
+        );
+    }
+    public function remove(object $data):void{
+        $this->Main->query2("UPDATE `form_stage` SET "
+                . "`delete_status`='1'"
+                . ",`delete_reason`=:reason"
+                . ",`delete_date`='".parent::getDate()."' "
+                . ",".parent::getUpdateSql()." "
+                . " WHERE "
+                . "`id`=:id"
+                , array_merge(
+                           [
+                            ':id'=>[$data->id_db,'INT']
+                            ,':reason'=>[$data->reason,'STR']
+                ]
+                ,parent::getAlterUserParm()
+                )
+        );
+    }
+    public function hide(object $data):void{
+        $this->Main->query2("UPDATE `form_stage` SET "
+                . "`hide_status`='1'"
+                . ",`hide_reason`=:reason"
+                . ",`hide_date`='".parent::getDate()."' "
+                . ",".parent::getUpdateSql()." "
+                . " WHERE "
+                . "`id`=:id"
+                , array_merge(
+                           [
+                            ':id'=>[$data->id_db,'INT']
+                            ,':reason'=>[$data->reason,'STR']
                 ]
                 ,parent::getAlterUserParm()
                 )
@@ -80,6 +109,7 @@ class Form_stage_model extends Database_model {
                 . ',`create_date`'
                 . ',`mod_user_login`'
                 . ',`mod_user_email`'
+                . ',`mod_date`'
                 . ',`buffer_user_id`'
                 . ',`hide_status`'
                 . ',`hide_reason`'
@@ -96,5 +126,11 @@ class Form_stage_model extends Database_model {
           //  return $form_stage;
         //}
         //Throw New \Exception('form_stage with id - `'.$id.'` not exists in database!',0);
+    }
+    public function getStageUserById(string|int $id=0):array{       
+        foreach($this->Main->squery('SELECT `create_user_login`,`create_user_email`,`create_date`,`mod_user_login`,`mod_user_email`,`mod_date` FROM `form_stage` WHERE `id`=:id',[':id'=>[$id,'INT']],'FETCH_OBJECT','fetchAll') as $form_stage_row_glossary){
+            return $form_stage_row_glossary;
+        }
+        Throw New \Exception('form_stage with id - `'.$id.'` not exists in database!',0);
     }
 }
