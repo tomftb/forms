@@ -1,4 +1,4 @@
-class Form_stage_show extends Modal{
+class Form_stage_remove extends Modal{
     Html = new Object();
     id = 0 ;
     constructor(){

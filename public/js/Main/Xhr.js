@@ -97,6 +97,13 @@ class Xhr2 {
         console.log('Xhr2::run()\r\nUID:');
         console.log(this.uid);
         console.log(property);
+        if(!this.onError.hasOwnProperty('o')){
+            throw 'Run this.setOnError() to setup property `o`';
+        }
+        //console.log(this.onError);
+        if(!this.onError.hasOwnProperty('m')){
+            throw 'Run this.setOnError() to setup property `m`';
+        }
         //console.log('TYPE:');
         //console.log(property.t);
         /*
