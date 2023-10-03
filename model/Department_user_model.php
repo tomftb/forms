@@ -9,17 +9,19 @@ class Department_user_model extends Database_model {
     }
     public function getUserDepartments(string|int $id_user=0):array{
         return $this->Main->squery("SELECT "
-            ."`d`.`ID` as `i`"
-            .", `d`.`NAME` as `n`"
-            ." FROM " 
-            ."`department_user` as `du` "
-            .",`department` as `d` "
-            ." WHERE "
-            . " `du`.`id_department`=`d`.`ID` "
-            . " AND `du`.`id_user`=:id_user "
+                ."`d`.`ID` as `id`"
+                .", `d`.`NAME` as `name`"
+                ." FROM " 
+                ."`department_user` as `du` "
+                .",`department` as `d` "
+                ." WHERE "
+                . " `du`.`id_department`=`d`.`ID` "
+                . " AND `du`.`id_user`=:id_user "
                 ,[
                     ':id_user'=>[$id_user,'INT']
                 ]
+                ,'FETCH_OBJ'
+                ,'fetchAll'
         );
     }
 
