@@ -1,21 +1,22 @@
 <?php
-final class Glossary_controller extends Base_controller {
+final class Slo_controller extends Base_controller {
 
     public function __construct(){
         parent::__construct();
         $this->Log->log(0,"[".__METHOD__."]");
-        $this->Model->{'Glossary'}=new \Glossary_model();
-        $this->Model->{'Glossary_position'}=new \Glossary_position_model();
+        $this->Model->{'Slo'}=new \Slo_model();
+
     }
     public function __call($m,$a){
         Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
     }
-    public function getAllWithPositions(){
-        $data = $this->Model->{'Glossary'}->getIdName();
-        foreach($data as &$glossary){
-            $glossary->{'position'}=new stdClass();
-            $glossary->{'position'} = $this->Model->{'Glossary_position'}->getIdNameByIdGlossary($glossary->{'id'});
+    public function getByName(string $name=''):object{
+        (object) $Slo = new StdClass();
+        foreach($this->Model->{'Slo'}->getByName($name) as $position){
+            $this->Log->logMulti(0,$position);
+            $Slo->{$position['id']} = new stdClass();
+            $Slo->{$position['id']} = $position['nazwa'];
         }
-        return $data;
+        return $Slo;
     }
 }
