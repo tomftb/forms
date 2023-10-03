@@ -72,7 +72,7 @@ class Filled_form{
         this.Filled_form_show=new Filled_form_show_filled(this);
         this.Utilities = new Utilities();
         this.setLoadInfo();
-        this.Form_creator = new Form_creator();
+        this.Form_creator = new Form_creator(appUrl,url,this.Filled_form_table);
     }
     getXhrParm(type,url,method){
         return {
