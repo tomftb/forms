@@ -96,6 +96,7 @@ final class TaskManager_controller{
         array_push($this->modul,new \Form_stage_remove_controller());
         array_push($this->modul,new \Form_stage_show_controller());
         array_push($this->modul,new \Form_stage_edit_controller());
+        array_push($this->modul,new \Form_stage_create_controller());
     }
     
     public function loadMethod($method=''){
