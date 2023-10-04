@@ -161,6 +161,7 @@ final class UrlManager_controller{
         ,['getFormStageRemoveData','REMOVE_FORM_STAGE']
         ,['removeFormStage','REMOVE_FORM_STAGE']
         ,['hideFormStage','HIDE_FORM_STAGE']
+        ,['getFormCreator','CREATE_FORM']
     ];
         
     public function __construct(){
@@ -171,7 +172,7 @@ final class UrlManager_controller{
         $this->Log->log(2,"[".__METHOD__."]");
         $GET=filter_input_array(INPUT_GET);
         if(empty($GET)){ 
-           Throw New Exception("No task to run",0);
+           Throw New Exception("[".__METHOD__."] No task to run",0);
         }
         foreach($GET as $key => $value){
             $this->urlData[$key]=$value;
@@ -184,7 +185,7 @@ final class UrlManager_controller{
         $this->Log->log(0,"[".__METHOD__."]");
         if(!array_key_exists($this->availableFunction["task"], $this->urlData)){  
             $this->Log->logMulti(2,$this->urlGetData,__LINE__."::".__METHOD__." urlGetData");
-            Throw New Exception('Wrong function to execute',0);
+            Throw New Exception("[".__METHOD__."] Wrong function to execute",0);
         }
     }
     private function checkUrlTask()
@@ -195,14 +196,14 @@ final class UrlManager_controller{
         {
             $this->Log->logMulti(2,$task);
             if($task[0]==$this->urlData['task']){
-                $this->Log->log(0,"[".__METHOD__."] task in availableTask => ".$task[0]); 
+                $this->Log->log(0,"[".__METHOD__."] Task in availableTask => ".$task[0]); 
                 self::setTaskPerm($task[1]);
                 $found=true;
                 break;
             }   
         }
         if(!$found){
-            Throw New Exception("[".__METHOD__.'] Task not exists => '.$this->urlData['task'],1);
+            Throw New Exception("[".__METHOD__.'] Task not exists `'.$this->urlData['task']."` add to this availableTask property?",1);
         }
     }
     private function setTaskPerm($perm){
