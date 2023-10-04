@@ -289,7 +289,6 @@ class Xhr2 {
             console.error("Xhr2.setOnError()o:\r\n",o,"method_name\r\n",method_name);
             throw 'Xhr2.setOnError2.() `o[method_name]` is not a function!';
         }
-        return true;
         this.onError={
             'o':o
             ,'m':method_name
