@@ -93,29 +93,68 @@ class Xhr2 {
         this.uid=Math.random();
         //console.log(this.uid);
     }
-    run(property){
-        console.log('Xhr2::run()\r\nUID:');
-        console.log(this.uid);
-        console.log(property);
+    get(o,m,u){
+        console.log("Xhr2.get()\r\nUID:",this.uid);
+        /*
+         * u - url
+         * o - object
+         * m - method
+         */
+        this.run({
+                    't':'GET',
+                    'u':u,
+                    'c':true,
+                    'd':null,
+                    'o':o,
+                    'm':m
+            });
+    }
+    post(o,m,u,d){
+                this.run({
+                    't':'POST',
+                    'u':u,
+                    'c':true,
+                    'd':d,
+                    'o':o,
+                    'm':m
+            });
+    }
+    checkOnError(){
         if(!this.onError.hasOwnProperty('o')){
-            throw 'Run this.setOnError() to setup property `o`';
+            throw 'Run this.setOnError({\'o\':\'object\',\'m\':\'method_name\'}) or this.setOnError2(object,method_name) to setup property `o`';
         }
         //console.log(this.onError);
         if(!this.onError.hasOwnProperty('m')){
-            throw 'Run this.setOnError() to setup property `m`';
+            throw 'Run this.setOnError({\'o\':\'object\',\'m\':\'method_name\'}) or this.setOnError2(object,method_name) to setup property `m`';
         }
+    }
+    checkOnLoad(property){
+        if(!property.hasOwnProperty('o')){
+            throw 'Run `property` doesn\'t have object `o` property!';
+        }
+        if(!property.hasOwnProperty('m')){
+            throw 'Run `property` doesn\'t have method - `m` property!';
+        }
+        if(typeof property.o[property.m] !=='function'){
+            throw 'Run `property.o[property.m]` not a function!';
+        }
+    }
+    run(property){
+        console.log("Xhr2::run()\r\nUID:",this.uid);
+        console.log(property);
+        this.checkOnError();
+        this.checkOnLoad(property);
         //console.log('TYPE:');
         //console.log(property.t);
         /*
          * property:
          * t = type GET/POST 
          * u = url
-         * c = capture
+         * c = capture [async,user,password]
          * d = data
          * o = object
          * m = method
          */      
-       
         var Error=this.onError;
         var LoadEnd = this.LoadEnd;
         var LoadStart = this.LoadStart;
@@ -166,7 +205,6 @@ class Xhr2 {
                     return true;
                 }
                 LoadEnd(); 
-                
             };
             req.ontimeout = function (e){
                 console.log("The request took too long!");
@@ -175,20 +213,20 @@ class Xhr2 {
                 //console.log('Xhr2::onload()');
                 //console.log(e);
                 //console.log(typeof property.o[property.m]);
-                if(typeof property.o[property.m] !=='function'){
-                    console.log("Xhr2::onload() Wrong Object or Method!");
-                    console.log("Xhr2::onload() Object:");
-                    console.log(property.o);
-                    console.log("Xhr2::onload() Method:");
-                    console.log(property.m);
-                    console.log("Xhr2::onload() Method TYPE:");
-                    console.log(Error);
+                //if(typeof property.o[property.m] !=='function'){
+                    //console.log("Xhr2::onload() Wrong Object or Method!");
+                   // console.log("Xhr2::onload() Object:");
+                   // console.log(property.o);
+                   // console.log("Xhr2::onload() Method:");
+                   // console.log(property.m);
+                   // console.log("Xhr2::onload() Method TYPE:");
+                  //  console.log(Error);
                     //console.log(typeof property.o[property.m]);
-                    Error.o[Error.m]('Xhr2::onload() An Application Error Has Occurred!');
-                }
-                else{
-                    property.o[property.m](this.response);
-                }
+                  //  Error.o[Error.m]('Xhr2::onload() An Application Error Has Occurred!');
+                //}
+               // else{
+                    property.o[property.m](this.response,property.o);
+               // }
             };
             req.onerror =  function(e){
                 console.log('Xhr2.onerror()');
@@ -230,6 +268,32 @@ class Xhr2 {
             console.log('Xhr2.setOnError() property');
             this.onError=property;
         }
+    }
+    setOnError2(o,method_name){
+        console.log('Xhr2.setOnError()');
+        if(typeof o !=='object'){
+            console.error("Xhr2.setOnError()o:\r\n",o);
+            throw 'Xhr2.setOnError2.() argument `o` is not a object!';
+        }
+       
+        if(typeof method_name !=='string'){
+            console.error("Xhr2.setOnError()method_name:\r\n",method_name);
+            throw 'Xhr2.setOnError2.() argument `method_name` is not a string!';
+        }
+        method_name = method_name.trim();
+        if(method_name ===''){
+             console.error("Xhr2.setOnError()method_name:\r\n",method_name);
+            throw 'Xhr2.setOnError2.() argument `method_name` is empty string (trim)!';
+        }
+        if(typeof o[method_name] !=='function'){
+            console.error("Xhr2.setOnError()o:\r\n",o,"method_name\r\n",method_name);
+            throw 'Xhr2.setOnError2.() `o[method_name]` is not a function!';
+        }
+        return true;
+        this.onError={
+            'o':o
+            ,'m':method_name
+        };
     }
     setOnLoadEnd(f){
         //console.log('Xhr2::setOnLoadEnd()');
