@@ -260,6 +260,7 @@ class ProjectReport extends ProjectReportView
                 console.log('ProjectReport::createAvaliableStageRow().onclick()');
                 console.log(self.router);
                 console.log(prop);     
+                self.Xhr.setOnError2(self.Modal,'setError');
                 self.Xhr.run({
                     t:'GET',
                     u:self.router+'psShortDetails&id='+prop.i,
