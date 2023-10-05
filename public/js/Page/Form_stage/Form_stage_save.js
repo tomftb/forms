@@ -4,19 +4,23 @@ class Form_stage_save{
 
     constructor(Parent){
         console.log('Form_stage_save.construct()');
+        //console.log(Parent);
+        //console.log(Parent.FormData);
         this.Parent = Parent;
         try{
             var fd = new FormData();
                 fd.append('data',JSON.stringify(Parent.FormData));
+                //console.log(fd);
             this.save(fd);
         }
         catch(e){
-            console.log('Form_stage_save.construct() catch',e);
+            console.log("Form_stage_save.construct() catch()",e);
             this.Parent.setError('Application error occurred! Contact with Administrator!');
         }
     }
     save(fd){
         console.log('Form_stage_save.save()');
+        //console.log(fd);
         this.Parent.Xhr.setOnError({'o':this.Parent,m:'setError'});
         //console.log(this.Parent);
         //return true;
