@@ -138,7 +138,9 @@ class Form_stage_create extends Modal{
                             ,'mod_date':'N/A'
                         }
                         ,'stage':{
-                            0:{}
+                            0:{
+                                'id_db':0// STAGE ID
+                            }
                         }
             };
             /*
@@ -365,6 +367,7 @@ class Form_stage_create extends Modal{
                 console.log('');
                 return false;
             }
+            console.log(self.FormData);
             self.FormData.stage[0].department_name = self.Form_stage_department.getName();
             self.FormData.stage[0].department_id = self.Form_stage_department.getValue();
             self.FormData.stage[0].title = self.Form_stage_title.getValue();
