@@ -36,7 +36,7 @@
     private function create(object $data){
         $this->Log->log(0,"[".__METHOD__."]");
         $this->data = $data;
-        //$this->Log->logMulti(0,$data);
+        $this->Log->logMulti(0,$data);
         $this->Utilities->propertyExists($data,'stage');
         /*
          * CHECK AND SET TASK:
@@ -71,7 +71,7 @@
     }
     private function stage(object &$command,object &$stage){
         $this->Log->log(0,"[".__METHOD__."]");
-        //$this->Log->logMulti(0,$stage);
+        $this->Log->logMulti(0,$stage);
         /*
          * property:
          * id
