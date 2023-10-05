@@ -10,10 +10,10 @@
         parent::__construct();
         $this->Log->log(0,"[".__METHOD__."]");
         $this->Model->{'Uprawnienia'}=new \Uprawnienia_model();
-        $this->Model->{'Department_user'}=new \Department_user_model();
         $this->Model->{'Form_stage'}=new \Form_stage_model();
         $this->Model->{'Parametry'}=new \Parametry_model();
         $this->Controller->{'Glossary'}=new \Glossary_controller();
+        $this->Controller->{'Department'}=new \Department_controller();
     }
     public function __call($m,$a){
         Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
@@ -33,7 +33,7 @@
         parent::returnJson(
                 [
                     'user'=>$_SESSION
-                    ,'department'=>self::getUserDepartments()
+                    ,'department'=>$this->Controller->{'Department'}->getUserDepartments()
                     ,'list'=>$this->Model->{'Form_stage'}->getList('0','0')
                     ,'glossary'=>$this->Controller->{'Glossary'}->getAllWithPositions()
                 ]
@@ -55,14 +55,6 @@
                     'parameters'=>self::getParameters()       
                 ]
         );
-    }
-    private function getUserDepartments(){
-        (object)$departments = new stdClass();
-        foreach($this->Model->{'Department_user'}->getUserDepartments($_SESSION['userid']) as $department){
-            $departments->{$department->{'id'}} = $department->{'name'}; //new stdClass();
-            //$departments->{$department->{'id'}}->{'name'}=$department->{'name'};
-        }
-        return $departments;
     }
     public function getParameters(){
         (object) $parameters = new stdClass();
