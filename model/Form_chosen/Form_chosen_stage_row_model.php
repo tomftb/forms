@@ -1,10 +1,5 @@
 <?php
-/**
- * Description of Form_stage_row_model
- *
- * @author tomborc
- */
-class Form_stage_row_model extends Database_model {
+class Form_chosen_stage_row_model extends Database_model {
     public function __construct(){
         parent::__construct();
     }
@@ -13,9 +8,22 @@ class Form_stage_row_model extends Database_model {
     }
     public function insert(object $data,int $id_parent=0):void{
         $this->Main->query2(
-                "INSERT INTO `form_stage_row` (`id_parent`,`value`,`name`,`type`,".parent::getUserKey().") VALUES (:id_parent,:value,:name,:type,".parent::getUserValue().");"
+                "INSERT INTO `form_chosen_stage_row` ("
+                . "`id_parent`"
+                .",`id_form_stage_row`"
+                . ",`value`"
+                . ",`name`"
+                . ",`type`"
+                . ",".parent::getUserKey().") VALUES ("
+                . ":id_parent"
+                .",:id_form_stage_row"
+                . ",:value"
+                . ",:name"
+                . ",:type"
+                . ",".parent::getUserValue().");"
                 ,array_merge([
                             ':id_parent'=>[$id_parent,'INT']
+                            ,':id_form_stage_row'=>[$data->id,'INT']
                             ,':value'=>[$data->value,'STR']
                             ,':name'=>[$data->name,'STR']
                             ,':type'=>[$data->type,'STR']
@@ -24,8 +32,9 @@ class Form_stage_row_model extends Database_model {
         );
     }
     public function update(object $data):void{
-        $this->Main->query2("UPDATE `form_stage_row` SET "
-                . "`value`=:value"
+        $this->Main->query2("UPDATE `form_chosen_stage_row` SET "
+                . "`id_form_stage_row`=:id_form_stage_row"
+                . ",`value`=:value"
                 . ",`name`=:name"
                 . ",`type`=:type"
                 . ",`delete_status`='0'"
@@ -37,6 +46,7 @@ class Form_stage_row_model extends Database_model {
                 , array_merge(
                            [
                             ':id'=>[$data->id_db,'INT']
+                            ,':id_form_stage_row'=>[$data->id,'INT']
                             ,':value'=>[$data->value,'STR']
                             ,':name'=>[$data->name,'STR']
                             ,':type'=>[$data->type,'STR']
@@ -46,7 +56,7 @@ class Form_stage_row_model extends Database_model {
         );
     }
     public function setNewVersion(int $id_parent=0){
-                $this->Main->query2("UPDATE `form_stage_row` SET "
+                $this->Main->query2("UPDATE `form_chosen_stage_row` SET "
                 . "`delete_status`='1'"
                 . ",`delete_reason`='NEW VERSION'"
                 . ",`delete_date`='".parent::getDate()."'"
@@ -63,7 +73,7 @@ class Form_stage_row_model extends Database_model {
     }
     public function insertChild(object $data,int $id_parent=0,int $id_row):void{
         $this->Main->query2(
-                "INSERT INTO `form_stage_row` (`id_parent`,`id_row`,`value`,`name`,`type`,".parent::getUserKey().") VALUES (:id_parent,:id_row,:value,:name,:type,".parent::getUserValue().");"
+                "INSERT INTO `form_chosen_stage_row` (`id_parent`,`id_row`,`value`,`name`,`type`,".parent::getUserKey().") VALUES (:id_parent,:id_row,:value,:name,:type,".parent::getUserValue().");"
                 ,array_merge([
                             ':id_parent'=>[$id_parent,'INT']
                             ,':id_row'=>[$id_row,'STR']
@@ -75,7 +85,7 @@ class Form_stage_row_model extends Database_model {
         );
     }
     public function updateChild(object $data):void{
-        $this->Main->query2("UPDATE `form_stage_row` SET "
+        $this->Main->query2("UPDATE `form_chosen_stage_row` SET "
                 . "`value`=:value"
                 . ",`name`=:name"
                 . ",`type`=:type"
@@ -102,7 +112,23 @@ class Form_stage_row_model extends Database_model {
                 . ',`name`'
                 . ',`type`'
                 . ',`value`'
-                . ' FROM `form_stage_row` '
+                . ' FROM `form_chosen_stage_row` '
+                . ' WHERE '
+                . '`id_parent`=:id_parent '
+                . 'AND `id_row` IS NULL'
+                ,[
+                    ':id_parent'=>[$id_parent,'INT']
+                ]
+                ,'FETCH_OBJ','fetchAll');
+    }
+    public function getNoIdDbByIdParent(string|int $id_parent=0):array{
+        return $this->Main->squery('SELECT '
+                . '`id`'
+                . ',\'\' as `id_db`'
+                . ',`name`'
+                . ',`type`'
+                . ',`value`'
+                . ' FROM `form_chosen_stage_row` '
                 . ' WHERE '
                 . '`id_parent`=:id_parent '
                 . 'AND `id_row` IS NULL'
@@ -113,7 +139,7 @@ class Form_stage_row_model extends Database_model {
     }
     public function insertProperty(string|int $id_row=0, string $name='',string $value=''):void{
         $this->Main->query2(
-                "INSERT INTO `form_stage_row_property` (`id_row`,`name`,`value`) VALUES (:id_row,:name,:value);"
+                "INSERT INTO `form_chosen_stage_row_property` (`id_row`,`name`,`value`) VALUES (:id_row,:name,:value);"
                 ,[
                     ':id_row'=>[$id_row,'STR']
                     ,':value'=>[$value,'STR']
@@ -122,7 +148,7 @@ class Form_stage_row_model extends Database_model {
         );
     }
     public function deleteProperty(string|int $id_row=0):void{
-        $this->Main->query2("DELETE FROM `form_stage_row_property` "
+        $this->Main->query2("DELETE FROM `form_chosen_stage_row_property` "
                 . " WHERE "
                 . "`id_row`=:id_row"
                 ,[
@@ -132,7 +158,7 @@ class Form_stage_row_model extends Database_model {
     }
     public function insertStyle(string|int $id_row=0, string $name='',string $value=''):void{
         $this->Main->query2(
-                "INSERT INTO `form_stage_row_style` (`id_row`,`name`,`value`) VALUES (:id_row,:name,:value);"
+                "INSERT INTO `form_chosen_stage_row_style` (`id_row`,`name`,`value`) VALUES (:id_row,:name,:value);"
                 ,[
                     ':id_row'=>[$id_row,'STR']
                     ,':value'=>[$value,'STR']
@@ -141,7 +167,7 @@ class Form_stage_row_model extends Database_model {
         );
     }
     public function deleteStyle(string|int $id_row=0):void{
-                $this->Main->query2("DELETE FROM `form_stage_row_style` "
+                $this->Main->query2("DELETE FROM `form_chosen_stage_row_style` "
                 . " WHERE "
                 . "`id_row`=:id_row"
                 ,[
@@ -150,7 +176,7 @@ class Form_stage_row_model extends Database_model {
         );
     }
     public function deleteGlossary(string|int $id_row=0):void{
-                $this->Main->query2("DELETE FROM `form_stage_row_glossary` "
+                $this->Main->query2("DELETE FROM `form_chosen_stage_row_glossary` "
                 . " WHERE "
                 . "`id_row`=:id_row"
                 ,[
@@ -161,7 +187,19 @@ class Form_stage_row_model extends Database_model {
     public function insertGlossary(object $row_glossary,string|int $id_row=0):void{
         //print_r($row_glossary);
         $this->Main->query2(
-                "INSERT INTO `form_stage_row_glossary` (`id_row`,`id_glossary`,`name`,`id_glossary_position`,`position_name`) VALUES (:id_row,:id_glossary,:name,:id_glossary_position,:position_name);"
+                "INSERT INTO `form_chosen_stage_row_glossary` ("
+                . "`id_row`"
+                . ",`id_glossary`"
+                . ",`name`"
+                . ",`id_glossary_position`"
+                . ",`position_name`"
+                . ") VALUES ("
+                . ":id_row"
+                . ",:id_glossary"
+                . ",:name"
+                . ",:id_glossary_position"
+                . ",:position_name"
+                . ");"
                 ,[
                     ':id_row'=>[$id_row,'STR']
                     ,':id_glossary'=>[$row_glossary->id_glossary,'STR']
@@ -172,15 +210,48 @@ class Form_stage_row_model extends Database_model {
         );
     }
     public function getGlossaryByIdRow(string|int $id_row=0):array{
-        foreach($this->Main->squery('SELECT `id_glossary`,`name`,`id_glossary_position`,`position_name` FROM `form_stage_row_glossary` WHERE `id_row`=:id_row',[':id_row'=>[$id_row,'INT']],'FETCH_OBJECT','fetchAll') as $form_stage_row_glossary){
+        foreach($this->Main->squery('SELECT `id_glossary`,`name`,`id_glossary_position`,`position_name` FROM `form_chosen_stage_row_glossary` WHERE `id_row`=:id_row',[':id_row'=>[$id_row,'INT']],'FETCH_OBJECT','fetchAll') as $form_stage_row_glossary){
             return $form_stage_row_glossary;
         }
         Throw New \Exception('form_stage_row_glossary with id_row - `'.$id_row.'` not exists in database!',0);
     }
     public function getChild(string|int $id_row=0):array{
-        foreach($this->Main->squery('SELECT `id` as `id_db`,`value`,`name`,`type` FROM `form_stage_row` WHERE `id_row`=:id_row',[':id_row'=>[$id_row,'INT']],'FETCH_OBJECT','fetchAll') as $form_stage_row_glossary){
+        foreach($this->Main->squery('SELECT `id` as `id_db`,`value`,`name`,`type` FROM `form_chosen_stage_row` WHERE `id_row`=:id_row',[':id_row'=>[$id_row,'INT']],'FETCH_OBJECT','fetchAll') as $form_stage_row_glossary){
             return $form_stage_row_glossary;
         }
-        Throw New \Exception('form_stage_row with id_row - `'.$id_row.'` not exists in database!',0);
+        Throw New \Exception(__METHOD__.' form_chosen_stage_row with id_row - `'.$id_row.'` not exists in database!',0);
+    }
+    public function getListByIdParent(string|int $id_parent=0):array{
+        return $this->Main->squery('SELECT '
+                . '`id`'
+                . ',`id_form_stage_row`'
+                . ',`name`'
+                . ',`type`'
+                . ',`value`'
+                . ' FROM `form_chosen_stage_row` '
+                . ' WHERE '
+                . '`id_parent`=:id_parent '
+                . 'AND `id_row` IS NULL'
+                ,[
+                    ':id_parent'=>[$id_parent,'INT']
+                ]
+                ,'FETCH_OBJ','fetchAll');
+    }
+    public function getChildByIdParent(string|int $id_row=0):array{
+        return $this->Main->squery('SELECT '
+                . '`id` as `id_db`'
+                . ',`value`'
+                . ',`name`'
+                . ',`type` '
+                . ' FROM '
+                . ' `form_chosen_stage_row` '
+                . ' WHERE '
+                . ' `id`=:id_row'
+                . ' AND `id_row` IS NULL'
+                ,[
+                    ':id_row'=>[$id_row,'INT']
+                ]
+                ,'FETCH_OBJECT'
+                ,'fetchAll');
     }
 }

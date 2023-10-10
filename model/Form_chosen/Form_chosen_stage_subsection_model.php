@@ -1,10 +1,6 @@
 <?php
-/**
- * Description of Form_stage_subsection_model
- *
- * @author tomborc
- */
-class Form_stage_subsection_model extends Database_model {
+
+class Form_chosen_stage_subsection_model extends Database_model {
     public function __construct(){
         parent::__construct();
     }
@@ -13,15 +9,24 @@ class Form_stage_subsection_model extends Database_model {
     }
     public function insert(object $data, int $id_parent=0):void{
         $this->Main->query2(
-                "INSERT INTO `form_stage_subsection` (`id_parent`,".parent::getUserKey().") VALUES (:id_parent,".parent::getUserValue().");"
+                "INSERT INTO `form_chosen_stage_subsection` ("
+                . "`id_parent`"
+                .",`id_form_stage_subsection`"
+                . ",".parent::getUserKey().""
+                . ") VALUES ("
+                . ":id_parent"
+                .",:id_form_stage_subsection"
+                . ",".parent::getUserValue().");"
                 ,array_merge([
                             ':id_parent'=>[$id_parent,'INT']
-                ], parent::getUserParm()
+                            ,':id_form_stage_subsection'=>[$data->id,'INT']
+                ]
+                , parent::getUserParm()
                 )
         );
     }
     public function update(object $data):void{
-        $this->Main->query2("UPDATE `form_stage_subsection` SET "
+        $this->Main->query2("UPDATE `form_chosen_stage_subsection` SET "
                 . "".parent::getUpdateSql().""
                 . " WHERE "
                 . "`id`=:id"
@@ -34,7 +39,7 @@ class Form_stage_subsection_model extends Database_model {
         );
     }
     public function setNewVersion(int $id_parent=0){
-                $this->Main->query2("UPDATE `form_stage_subsection` SET "
+                $this->Main->query2("UPDATE `form_chosen_stage_subsection` SET "
                 . "`delete_status`='1'"
                 . ",`delete_reason`='NEW VERSION'"
                 . ",`delete_date`='".parent::getDate()."'"
@@ -52,7 +57,31 @@ class Form_stage_subsection_model extends Database_model {
     public function getByIdParent(string|int $id_parent=0):array{
         return $this->Main->squery('SELECT '
                 . '`id` as `id_db`'
-                . ' FROM `form_stage_subsection` '
+                . ' FROM `form_chosen_stage_subsection` '
+                . ' WHERE '
+                . '`id_parent`=:id_parent'
+                ,[
+                    ':id_parent'=>[$id_parent,'INT']
+                ]
+                ,'FETCH_OBJ','fetchAll');
+    }
+    public function getNoIdDbByIdParent(string|int $id_parent=0):array{
+        return $this->Main->squery('SELECT '
+                . '`id`'
+                . ',\'\' as `id_db`'
+                . ' FROM `form_chosen_stage_subsection` '
+                . ' WHERE '
+                . '`id_parent`=:id_parent'
+                ,[
+                    ':id_parent'=>[$id_parent,'INT']
+                ]
+                ,'FETCH_OBJ','fetchAll');
+    }
+    public function getListByIdParent(string|int $id_parent=0){
+        return $this->Main->squery('SELECT '
+                . '`id`'
+                . ',`id_form_stage_subsection`'
+                . ' FROM `form_chosen_stage_subsection` '
                 . ' WHERE '
                 . '`id_parent`=:id_parent'
                 ,[
