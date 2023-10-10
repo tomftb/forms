@@ -1,6 +1,7 @@
 class Filled_form_table extends Table{
     Html= new Object();
     Parent = new Object();
+    Parse = new Object();
     /* FROM ProjectConst 'getprojectsconstslike&u=0&v=1&b=' */
     defaultTask='';
     appUrl='';
@@ -88,26 +89,25 @@ class Filled_form_table extends Table{
         console.log('Filled_form_table.construct()');  
         super();
         this.Parent=Parent;
+        this.Parse = new Parse();
         this.Html = new Html();
+       
+    }
+    init(permissions){
+        console.log('Filled_form_table.init()');  
+        //console.log(permissions);
+        /* SET HEAD */
+        super.setHead(this.head);
+         /* SET PERMISSIONS */
+        this.setButtonsPermissions(permissions);
     }
     setProperties(appUrl,url){
-        //console.log('ProjectConst::setProperties()');
+        console.log('Filled_form_table.setProperties()');
         this.appUrl=appUrl;
         this.router=url;
-        //console.log(appUrl);
-        //console.log(url);
-    }
-    runPOST(action){
-        console.log('ProjectStageTable::runPost()',action);
-        this.Table.unsetError();
-        /* SET HEAD */
-        this.Table.setHead(this.head);
-        /* GET DATA => SET BODY */
-        this.Table.receivePost(this,'setBody',router+action.u,action.d);
     }
     run(task){
-        //console.log('ProjectStageTable.run()\ntask');
-        //console.log(task);
+        console.log("Filled_form_table.run()\r\ntask",task);
         super.unsetError();
         this.defaultTask=task;
         /* CLEAR TABLE */
@@ -118,33 +118,25 @@ class Filled_form_table extends Table{
         super.getData(this,'setBody',this.router+task);
     }
     updateBody(responseData){
-        console.log('Filled_form_table.updateBody()');
-        //console.log(responseData);
-        //console.log(this.Parent.permissions);
-        /* CLEAR TABLE */
-        super.clearTable();
-        /* SET HEAD */
-        super.setHead(this.head);
-        /* SET PERMISSIONS */
-        this.setButtonsPermissions(this.Parent.permissions);
+        //console.log('Filled_form_table.updateBody()');
         /* UPDATE BODY DATA */
         for(const prop in responseData){
+            //console.log(prop);
+            //console.log(responseData[prop]);
             //console.log(responseData[prop]);
             this.updateBodyRow(responseData[prop]);
         }
     }
-    setBody(response){
-        //console.log('Filled_form_table.setBody()');
-        //console.log(response);
-        /* PARSE RESPONSE */
-        try{
-            var data = JSON.parse(response);
-            this.updateBody(data);
-        }
-        catch(error){
-            super.setError('Application error occurred! Contact with Administrator!');
-        }        
-    }
+    //setBody(response){
+       // console.log('Filled_form_table.setBody()');
+      ///  try{
+        //    var data = JSON.parse(response);
+        //    this.updateBody(data);
+        //}
+       // catch(error){
+         //   super.setError('Application error occurred! Contact with Administrator!');
+      //  }        
+  //  }
     updateBodyRow(bodyRow){      
         //console.log('Filled_form_table.updateBodyRow()');
         var tr=document.createElement('TR');
@@ -208,28 +200,15 @@ class Filled_form_table extends Table{
     }
     getButton(prop,id){
         //console.log('Filled_form_table.getShowButton()');
-        var btnEle  = this.getButtonEle(prop.title,prop.class);
+        var button  = this.getButtonEle(prop.title,prop.class);
         var self = this;
-        var AjaxRun = this.getXhrRunProperty(prop.url+id);
-            AjaxRun.m=prop.action;
-            btnEle.onclick = function (){
-                //$(self.Parent.Modal.link['main']).modal('show');
+            button.onclick = function (){
+                console.log("Filled_form_table.getButton() onclick()");
+                self.Xhr.setOnError2(self,'setError');
                 self.unsetError();
-                self.Xhr.setOnError({o:self, m:'setError'});
-                self.Xhr.run(AjaxRun);
+                self.Xhr.get(self.Parent,prop.action,self.Parent.router+prop.url+id);
             };
-        return btnEle;
-    }
-    getXhrRunProperty(task){
-        var run={
-            t:"GET",
-            u:this.Parent.router+task,
-            c:true,
-            d:null,
-            o:this.Parent,
-            m:''
-        };
-        return run;
+        return button;
     }
     checkPermission(permissions,perm){
         for (const p in permissions){
@@ -249,7 +228,59 @@ class Filled_form_table extends Table{
             }
         }
     }
-    test(){
-        console.log('Filled_form_table.test()');
+
+    reload(){
+        console.log('Filled_form_table.reload()');
+        console.log(self);
+        /*
+         * RUN XHR
+         */
+        this.Xhr.setOnError2(this,'setError');
+        this.Xhr.get(this,'reloadBody',self.router+'reloadFormList');
+    }
+    reloadBody(response){
+        console.log('Filled_form_table.reloadBody()');
+         /*
+         * CLEAR TABLE BODY
+         */
+        super.clearBody();
+        /*
+         * SET NEW TABE BODY DATA
+         */
+        this.set(response);
+    }
+    set(response){
+        console.log('Filled_form_table.set()');
+        console.log(response);
+        /*
+         * CLEAR TABLE HEAD ERROR
+         */
+        super.clearError();
+        /*
+         * SET RESPONSE
+         */
+        this.setResponse(response);
+         /*
+          * SET BODY
+          */
+        this.updateBody(this.response.form);
+    }
+    setResponse(response){
+        console.log('Filled_form_table.setResponse()');
+        try {
+            /*
+             * PARSE RESPONSE
+             */
+            this.response = this.Parse.getSimpleJson(response);
+            //console.log(this.response);
+        }
+        catch (e) {
+            console.log('Form_stage_list.setResponse().catch()');
+            console.log(e);
+            this.setError(e);
+            //this.setError('Application error occurred! Contact with Administrator!');
+            return {};
+        }
+        return {};
     }
 }

@@ -1,9 +1,4 @@
 <?php
-/**
- * Description of Form_stage_section_model
- *
- * @author tomborc
- */
 class Form_stage_section_model extends Database_model {
     public function __construct(){
         parent::__construct();
@@ -52,6 +47,18 @@ class Form_stage_section_model extends Database_model {
     public function getByIdParent(string|int $id_parent=0):array{
         return $this->Main->squery('SELECT '
                 . '`id` as `id_db`'
+                . ' FROM `form_stage_section` '
+                . ' WHERE '
+                . '`id_parent`=:id_parent'
+                ,[
+                    ':id_parent'=>[$id_parent,'INT']
+                ]
+                ,'FETCH_OBJ','fetchAll');
+    }
+    public function getNoIdDbByIdParent(string|int $id_parent=0):array{
+        return $this->Main->squery('SELECT '
+                . '`id` as `id`'
+                . ',\'\' as `id_db`'
                 . ' FROM `form_stage_section` '
                 . ' WHERE '
                 . '`id_parent`=:id_parent'

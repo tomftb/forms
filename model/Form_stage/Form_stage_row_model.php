@@ -1,9 +1,4 @@
 <?php
-/**
- * Description of Form_stage_row_model
- *
- * @author tomborc
- */
 class Form_stage_row_model extends Database_model {
     public function __construct(){
         parent::__construct();
@@ -99,6 +94,22 @@ class Form_stage_row_model extends Database_model {
     public function getByIdParent(string|int $id_parent=0):array{
         return $this->Main->squery('SELECT '
                 . '`id` as `id_db`'
+                . ',`name`'
+                . ',`type`'
+                . ',`value`'
+                . ' FROM `form_stage_row` '
+                . ' WHERE '
+                . '`id_parent`=:id_parent '
+                . 'AND `id_row` IS NULL'
+                ,[
+                    ':id_parent'=>[$id_parent,'INT']
+                ]
+                ,'FETCH_OBJ','fetchAll');
+    }
+    public function getNoIdDbByIdParent(string|int $id_parent=0):array{
+        return $this->Main->squery('SELECT '
+                . '`id`'
+                . ',\'\' as `id_db`'
                 . ',`name`'
                 . ',`type`'
                 . ',`value`'

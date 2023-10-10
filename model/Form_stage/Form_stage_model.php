@@ -92,6 +92,45 @@ class Form_stage_model extends Database_model {
                 ,'fetchAll'
         );
     }
+    public function getAvailableList():array{
+        return $this->Main->squery("SELECT "
+                . "`id` as `id_db`"
+                . ",`department_id`"
+                . ",`department_name`"
+                . ",`title` "
+                . " FROM "
+                . "`form_stage` "
+                . "WHERE "
+                . "`hide_status`='0' "
+                . "AND `delete_status`='0' "
+                . "AND `id`>0 "
+                . " ORDER BY "
+                . "`create_date`"
+                ,[]
+                ,'FETCH_OBJ'
+                ,'fetchAll'
+        );
+    }
+    public function getAvailableListNoIdDb():array{
+        return $this->Main->squery("SELECT "
+                . "`id`"
+                . ",'' as `id_db`"
+                . ",`department_id`"
+                . ",`department_name`"
+                . ",`title` "
+                . " FROM "
+                . "`form_stage` "
+                . "WHERE "
+                . "`hide_status`='0' "
+                . "AND `delete_status`='0' "
+                . "AND `id`>0 "
+                . " ORDER BY "
+                . "`create_date`"
+                ,[]
+                ,'FETCH_OBJ'
+                ,'fetchAll'
+        );
+    }
     public function exists(string|int $id=0):string{
         foreach($this->Main->squery('SELECT `id` as `id` FROM `form_stage` WHERE `id`=:id',[':id'=>[$id,'INT']]) as $form_stage){
             return $form_stage['id'];

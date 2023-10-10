@@ -2,12 +2,14 @@
 
  final class Form_stage_create_controller extends Base_controller {
 
-    private ?string $set = 'setData';// setData//setError
+    private ?string $set = 'setError';// setData//setError
     private ?object $command;
     private ?int $error_lvl=0;
-    private ?string $msg = 'Nie wprowadzono danych';
+    private ?string $msg = 'Nie utworzono żadnego bloku danych';
     private ?object $Utilities;
     private ?int $stage_id=0;
+    private $data;
+    
     public function __construct(){
         parent::__construct();
         $this->Log->log(0,"[".__METHOD__."]");
@@ -26,7 +28,7 @@
         $this->Log->log(0,"[".__METHOD__."]");
         (array) $post = json_decode(filter_input(INPUT_POST,'data'));
         if(json_last_error()){
-            throw new \exception(json_last_error_msg(),0);
+            throw new \exception("[".__METHOD__."] json error - ".json_last_error_msg(),1);
         }
         self::create($post);
         $response = self::get();
@@ -82,6 +84,7 @@
         $this->Utilities->propertyExists($stage,'department_id','['.__METHOD__.'] Property `department_id` doesn\'t exists in object!');
         $this->Utilities->propertyExists($stage,'department_name','['.__METHOD__.'] Property `department_name` doesn\'t exists in object!');
         $this->Utilities->propertyExists($stage,'title','['.__METHOD__.'] Property `title` doesn\'t exists in object!');
+        $this->Utilities->isValueEmpty($stage->title,'Wprowadź tytuł',0);
         $this->Log->logMulti(0,$stage->id_db);
         self::setId($stage->id_db);
         $command->{'run'} = '';

@@ -228,7 +228,7 @@ class Form_stage_create extends Modal{
         }
         catch(e){
             console.error("Form_stage_create.setResponse() parse catch()\r\n",e);
-            this.Form_stage_list.setError("Application error occurred! Contact with Administrator!");
+            this.Form_stage_list.setError(e);
             this.setData='setNoData';
             //throw "Application error occurred! Contact with Administrator!";
             //return false;

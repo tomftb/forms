@@ -153,9 +153,11 @@ class Form_stage_create_section{
             console.log('Form_stage_create_section.setSectionsWithData() no `section` property.');
             return false;
         }
-        for(var i = 0; i <  StageData.section.length; i++){
-            this.Section[i] = new Form_stage_section(this.ele.dynamic,this.glossary,this.ErrorStack,this.parameters);
-            this.Section[i].setWithData(i,StageData.section[i]);
+        //for(var i = 0; i <  StageData.section.length; i++){
+        for(const prop in StageData.section){  
+            console.log(StageData.section[prop]);
+            this.Section[prop] = new Form_stage_section(this.ele.dynamic,this.glossary,this.ErrorStack,this.parameters);
+            this.Section[prop].setWithData(prop,StageData.section[prop]);
         }
     }
     setSectionCounter(){

@@ -1,10 +1,5 @@
 <?php
-/**
- * Description of Forms_stage_controller
- *
- * @author tomborc
- */
- final class Form_stage_controller extends Base_controller {
+final class Form_stage_controller extends Base_controller {
 
     public function __construct(){
         parent::__construct();
@@ -21,12 +16,6 @@
     public function loadFormDefault(){
         $this->Log->log(0,"[".__METHOD__."]");
         parent::returnJson(['permissions'=>$_SESSION['perm'],'forms'=>[]]);
-    }
-    public function getHideFormGlossary(){
-        
-    }
-    public function getRemoveFormGlossary(){
-        
     }
     public function getFormStageDefaults(){
         $this->Log->log(0,"[".__METHOD__."]");

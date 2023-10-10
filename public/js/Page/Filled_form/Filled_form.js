@@ -73,6 +73,7 @@ class Filled_form{
         this.Utilities = new Utilities();
         this.setLoadInfo();
         this.Form_creator = new Form_creator(appUrl,url,this.Filled_form_table);
+
     }
     getXhrParm(type,url,method){
         return {
@@ -114,6 +115,8 @@ class Filled_form{
          */
         this.permissions=json.data.permissions;
         //console.log(this.permissions);
+        //this.Filled_form_table.setHead();
+        this.Filled_form_table.init(this.permissions);
         this.Filled_form_table.updateBody(json.data.form);
     }
     setUrl(appUrl,url){
@@ -412,7 +415,8 @@ class Filled_form{
         return fd;
     }
     showFormModal(response){
-        console.log('Filled_form.showFormModal()');  
+        console.log("Filled_form.showFormModal()",response);  
+        this.Form_creator.details(response);
     }
     
     showFilledModal(response){
@@ -433,10 +437,32 @@ class Filled_form{
         //return {};
     }
     showRemoveModal(response){
-        console.log('Filled_form.showRemoveModal()');  
+        console.log('Filled_form.showRemoveModal()');   
+        console.log(response);
+        try {
+            var Form_remove = new Form_creator_remove(this.router,this.appUrl,this.Filled_form_table);
+                Form_remove.remove(response);
+            }
+        catch (error) {
+            console.error("Filled_form.showHideModal()\r\n",error);
+            /* SHOW ERROR MODAL */ 
+            this.Filled_form_table.setError('Application error occurred! Contact with Administrator!');
+           // return false
+        }
     }
     showHideModal(response){
         console.log('Filled_form.showHideModal()');  
+        console.log(response);
+        try {
+            var Form_hide = new Form_creator_hide(this.router,this.appUrl,this.Filled_form_table);
+                Form_hide.hide(response);
+        }
+        catch (error) {
+            console.error("Filled_form.showHideModal()\r\n",error);
+            /* SHOW ERROR MODAL */ 
+            this.Filled_form_table.setError('Application error occurred! Contact with Administrator!');
+           // return false
+        }
     }
     setCreateFormButton(ele){
         console.log('Filled_form.setCreateFormButton()');  

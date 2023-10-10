@@ -8,10 +8,7 @@ final class Form_stage_show_controller extends Base_controller {
     public function __construct(){
         parent::__construct();
         $this->Log->log(0,"[".__METHOD__."]");
-        $this->Model->{'Form_stage'}=new \Form_stage_model();
-        $this->Model->{'Form_stage_section'}=new \Form_stage_section_model();
-        $this->Model->{'Form_stage_subsection'}=new \Form_stage_subsection_model();
-        $this->Model->{'Form_stage_row'}=new \Form_stage_row_model();
+        $this->Controller->{'Form_stage_get'}=new \Form_stage_get_controller();
         $this->Controller->{'Form_stage_controller'}=new \Form_stage_controller();
     }
     public function __call($m,$a){
@@ -40,70 +37,7 @@ final class Form_stage_show_controller extends Base_controller {
     }
     private function setData(){
         $this->Log->log(0,"[".__METHOD__."]");
-        self::setStage();
+        $this->stage_data=$this->Controller->{'Form_stage_get'}->get($this->id_db);
         self::setCreateUser();
     }    
-    private function setStage(){
-        $this->Log->log(0,"[".__METHOD__."]");
-        $this->stage_data = $this->Model->{'Form_stage'}->get($this->id_db);
-        foreach($this->stage_data as &$stage){
-            self::setSection($stage);
-        }
-    }
-    private function setSection(object &$stage):void{
-        $this->Log->log(0,"[".__METHOD__."]");
-        $stage->{'section'} = new stdClass();
-        $stage->{'section'} = $this->Model->{'Form_stage_section'}->getByIdParent($stage->{'id_db'});
-        foreach($stage->{'section'} as &$section){
-            self::setSubsection($section);
-        }
-    }
-    private function setSubsection(object &$section){
-        $this->Log->log(0,"[".__METHOD__."]");
-        $section->{'subsection'} = new stdClass();
-        $section->{'subsection'} = $this->Model->{'Form_stage_subsection'}->getByIdParent($section->{'id_db'});
-        foreach($section->{'subsection'} as &$subsection){
-            self::setRow($subsection);
-        }
-    }
-    private function setRow(object &$subsection){
-        $this->Log->log(0,"[".__METHOD__."]");
-        $subsection->{'row'} = new stdClass();
-        $subsection->{'row'} = $this->Model->{'Form_stage_row'}->getByIdParent($subsection->{'id_db'});
-        $this->Log->logMulti(0,$subsection->{'row'});
-        foreach($subsection->{'row'} as &$row){
-            $row->{'property'} = new stdClass();
-            $row->{'style'} = new stdClass();
-            self::{'setRow_'.$row->{'type'}}($row);
-        }
-       
-    }
-    private function setRow_text(object &$row){
-        
-    }
-    private function setRow_input(object &$row){
-        
-    }
-    private function setRow_select(object &$row){
-        $this->Log->log(0,"[".__METHOD__."]");
-        $row->{'glossary'} = new stdClass();
-        $row->{'glossary'} = $this->Model->{'Form_stage_row'}->getGlossaryByIdRow($row->id_db);
-    }
-    private function setRow_checkbox(object &$row){
-        /*
-         * GET AND SET CHILD
-         */
-        $this->Log->log(0,"[".__METHOD__."]");
-        $row->{'child'} = $this->Model->{'Form_stage_row'}->getChild($row->id_db);
-    }
-    private function setRow_radio(object &$row){
-        /*
-         * GET AND SET CHILD
-         */
-        $this->Log->log(0,"[".__METHOD__."]");
-        $row->{'child'} = $this->Model->{'Form_stage_row'}->getChild($row->id_db);
-    }
-    private function getRowchild(){
-        
-    }
 }
