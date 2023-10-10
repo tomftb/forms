@@ -53,13 +53,13 @@ class Form_stage_section{
         this.setBodyColumn(this,this.subsection_counter);
     }
     setWithData(section_counter,StageDataSection){
-        console.log("Form_stage_section.setWithData()StageDataSection:\r\n",StageDataSection);
+        console.log("Form_stage_section.setWithData()StageDataSection:\r\n",section_counter,StageDataSection);
         this.section_counter = section_counter;
         this.id_db = parseInt(StageDataSection.id_db,10);
         this.Utilities.propertyExists(StageDataSection,'id_db','Object `StageDataSection` doesn\'t have `id_db` property!');
         this.Utilities.propertyExists(StageDataSection,'subsection','Object `StageDataSection` doesn\'t have `subsection` property!');
-        this.subsection_counter = StageDataSection.subsection.length;
-        this.checkSubsectionCounter(StageDataSection.subsection);
+        this.subsection_counter = this.Utilities.countObjectProp(StageDataSection.subsection);//StageDataSection.subsection.length;
+        this.checkSubsectionCounter();
         this.setSectionProperties();
         this.setBodyColumnWithData(StageDataSection.subsection);
     }
@@ -76,10 +76,10 @@ class Form_stage_section{
     checkSubsectionCounter(){
         console.log("Form_stage_section.setWithData() subsection length - ",this.subsection_counter);       
         if(this.subsection_counter<1){
-            throw 'Subsection counter `'+length+'` is less than 1!';
+            throw 'Subsection counter `'+this.subsection_counter+'` is less than 1!';
         }
         if(this.subsection_counter>12){
-            throw 'Subsection counter `'+length+'` is greater than 12!';
+            throw 'Subsection counter `'+this.subsection_counter+'` is greater than 12!';
         }
     }
     senUniqid(){
@@ -277,7 +277,7 @@ class Form_stage_section{
     setBodyColumnWithData(StageDataSubsection){
         console.log('Form_stage_section.setBodyColumnWitData()');
         //console.log(StageDataSubsection);
-        var length = StageDataSubsection.length;
+        var length = this.Utilities.countObjectProp(StageDataSubsection);//StageDataSubsection.length
         this.setBodyColumnCount(this,length);
         this.setBodyColumnSize(this,length);
         var column_size = 1;
