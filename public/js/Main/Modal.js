@@ -102,11 +102,27 @@ class Modal{
             this.Html.showField(this.link['extra'],this.loadNotify);
         }
     }
+    getShowLoad(){
+        var self = this;
+        var action = function(msg){
+            console.log("Modal.getShowLoad()\r\n",msg);
+            return self.showLoad(msg);
+        };
+        return action;
+    }
     hideLoad(){
         //console.log('Modal::hideLoad()');
         if(this.loadNotify!==''){
             this.Html.hideField(this.link['extra']);
         }
+    }
+    getHideLoad(){
+        var self = this;
+        var action = function(msg){
+            console.log("Modal.getShowLoad()\r\n",msg);
+            return self.getHideLoad(msg);
+        };
+        return action;
     }
     setInfo(msg){
         //console.log('Modal::setInfo()');
@@ -122,6 +138,14 @@ class Modal{
         this.Html.removeChilds(this.link.error);
         this.link.error.append(document.createTextNode(msg.toString()));
     }
+    getSetError(){
+        var self = this;
+        var action = function(msg){
+            console.log("Modal.getSetError()\r\n",msg);
+            return self.setError(msg);
+        };
+        return action;
+    }
     unsetError(){
         this.Html.addClass(this.link['error'],'d-none');
         this.Html.removeChilds(this.link.error);
@@ -132,10 +156,14 @@ class Modal{
         this.Html.removeChilds(this.link.error);
         this.link.error.append(document.createTextNode(msg.toString()));
     }
+    getSetSuccess(){
+        var self = this;
+        var action = function(msg){
+            return self.setSuccess(msg);
+        };
+        return action;
+    }
     setLoad(Xhr,appUrl){
-           //setLoadModalInfo(Xhr){
-        //console.log('ProjectItems::setLoadModalInfo()');
-        //var M = this.Modal;
         var self=this;
             this.loadNotify='<img src="'+appUrl+'/img/loading_60_60.gif" alt="load_gif">';
         var start = function(){
@@ -146,7 +174,13 @@ class Modal{
             };
         Xhr.setOnLoadStart(start);
         Xhr.setOnLoadEnd(end);
-    //} 
+    }
+    getSetLoad(){
+        var self = this;
+        var action = function(Xhr,appUrl){
+            return self.setLoad(Xhr,appUrl);
+        };
+        return action;
     }
     setLoadError(){
         //console.log('ProjectItems::modalXhrError()');
