@@ -1,27 +1,15 @@
 class Form_stage_title{    
     Html = new Object();
-
     Prototype = new Object();
-    
-
-    select = new Object();
-    value = "";
-
     title = new Object();
-    help = new Object();
     error = new Object();
-
     uniqid = '';
     type='title';
     runError = 'setError';
-    
     input = new Object();
     value = "";
     value_length = 0;
-    title = new Object();
     help = new Object();
-    error = new Object();
-
     max = 1024;
     min = 3;
    
@@ -99,7 +87,7 @@ class Form_stage_title{
         this.input.value=this.value;
         this.input.oninput = function(){
             try{
-                console.log('Form_stage_title.getInput() oninput()');
+                //console.log('Form_stage_title.getInput() oninput()');
                 self.checkLength(self,this.value);
                 self.checkErrors(self);
             }
@@ -110,7 +98,7 @@ class Form_stage_title{
         };
         this.input.onblur = function(){
             try{
-                console.log('Form_stage_title.getInput() onblur()');
+                //console.log('Form_stage_title.getInput() onblur()');
                 self.checkLength(self,this.value);
                 self.checkErrors(self);
             }
@@ -135,13 +123,13 @@ class Form_stage_title{
             this.Prototype.ele.input.append(row);
     }
     checkLength(self,value){
-        console.log('Form_stage_title.checkLength()',value); 
+        //console.log('Form_stage_title.checkLength()',value); 
         self.value_length=value.length;
         self.checkMin(self);
         self.checkMax(self);
     }
     checkMax(self){
-        console.log('Form_stage_title.checkMax()'); 
+        //console.log('Form_stage_title.checkMax()'); 
         if(self.value_length>self.max){
             self.Prototype.setError(self.Prototype,'_max','Wprowadzono za dużo znaków ('+self.value_length+').');
         }
@@ -150,7 +138,7 @@ class Form_stage_title{
         }
     }
     checkMin(self){
-        console.log('Form_stage_title.checkMin()');  
+        //console.log('Form_stage_title.checkMin()');  
         if(self.value_length<self.min){
             self.Prototype.setError(self.Prototype,'_min','Wprowadź minimalną ilości znaków ('+self.value_length+').');
         }
@@ -159,7 +147,7 @@ class Form_stage_title{
         }
     }
     checkErrors(self){
-        console.log('Form_stage_title.checkErrors()');
+        //console.log('Form_stage_title.checkErrors()');
         if(self.Prototype.ErrorStack.check()){
             console.log('Form_stage_title.checkErrors() errors exists');
             self.title.classList.remove('text-dark');//text-danger
