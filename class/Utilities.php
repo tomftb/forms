@@ -35,9 +35,9 @@ class Utilities
         }
         return (self::response());
     }
-    public function isValueEmpty($value=''){
+    public function isValueEmpty(string $value='',string $msg="VALUE IS EMPTY", int $lvl=1){
         if(trim($value)===''){
-           Throw New exception ("VALUE IS EMPTY",1);
+           Throw New exception ($msg,$lvl);
         }
     }
     public function checkInputGetValSanitizeString($key)
