@@ -313,7 +313,7 @@ class ManageUser
         $this->utilities->setGet('id',$this->inpArray);
         array_push($this->actData,$this->inpArray['id']);
 
-        array_push($this->actData,$this->Model->{'Uprawnienia'}->getUserPermissionsListWithDefault($this->inpArray['id']));
+        array_push($this->actData,$this->Model->{'Uprawnienia'}->getUserPermissionsListWithDefaultAndShortcut($this->inpArray['id']));
         $this->utilities->jsonResponse($this->actData,'uPermOff');
     }
     protected function combineSlo($slo,$sloKey,$usrSol,$sloUserKey){
