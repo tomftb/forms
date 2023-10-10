@@ -1,10 +1,5 @@
 <?php
-/**
- * Description of Form_controller
- *
- * @author tomborc
- */
- final class Form_controller extends Base_controller {
+final class Form_controller extends Base_controller {
 
     public function __construct(){
         parent::__construct();
@@ -15,11 +10,5 @@
     }
     public function loadFormDefault(){
         parent::returnJson(['permissions'=>$_SESSION['perm'],'forms'=>[]]);
-    }
-    public function getHideFormGlossary(){
-        
-    }
-    public function getRemoveFormGlossary(){
-        
     }
 }
