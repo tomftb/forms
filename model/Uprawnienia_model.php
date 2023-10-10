@@ -40,6 +40,15 @@ class Uprawnienia_model extends Database_model {
                 . "`uprawnienia` as `u`;"
                 ,[':id_uzytkownik'=>[$id_uzytkownik,'INT']]);
     }
+    public function getUserPermissionsListWithDefaultAndShortcut(string|int $id_uzytkownik=0):array{
+        return $this->Main->squery("SELECT "
+                . "`u`.`ID`"
+                . ",CONCAT('[',`u`.`SKROT`, '] ',`u`.`NAZWA`) as `NAZWA`"
+                . ", (select CASE WHEN count(`uu`.`id_uprawnienie`)>0 THEN 't' ELSE 'n' END as 'DEF' FROM `uzyt_i_upr` as `uu` where `u`.`id`=`uu`.`id_uprawnienie` AND `uu`.`id_uzytkownik`=:id_uzytkownik) as `DEFAULT` "
+                . "FROM "
+                . "`uprawnienia` as `u`;"
+                ,[':id_uzytkownik'=>[$id_uzytkownik,'INT']]);
+    }
     public function removeUserPermission(string|int $id_uzytkownik=0, string|int $id_uprawnienie=0):void{
         $this->Main->query('DELETE FROM `uzyt_i_upr` WHERE `id_uzytkownik`=:id_uzytkownik AND `id_uprawnienie`=:id_uprawnienie',[':id_uzytkownik'=>[$id_uzytkownik,'INT'],':id_uprawnienie'=>[$id_uprawnienie,'INT']]); 
     }
