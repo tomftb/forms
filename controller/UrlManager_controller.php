@@ -161,7 +161,12 @@ final class UrlManager_controller{
         ,['getFormStageRemoveData','REMOVE_FORM_STAGE']
         ,['removeFormStage','REMOVE_FORM_STAGE']
         ,['hideFormStage','HIDE_FORM_STAGE']
-        ,['getFormCreator','CREATE_FORM']
+        ,['getFormStagesList','CREATE_FORM']
+        ,['reloadFormList','LOG_INTO_FORM']
+        ,['saveForm','SAVE_FORM']
+        ,['getFormDescription','SHOW_FORM']
+        ,['hideForm','HIDE_FORM']
+        ,['removeForm','REMOVE_FORM']
     ];
         
     public function __construct(){
