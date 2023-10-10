@@ -10,54 +10,28 @@ final class Filled_form extends Page{
         'Main/Footer.php'
         ];
     private $js=[
-        'Main/Utilities.js',
-        'Main/Html.js',
-        'Main/Modal.js',
-        'Main/ErrorStack.js',
-        'Main/Xhr.js',
-        'Main/Table.js',
-        'Main/Glossary.js',
-        'Main/headerView.js',
-        'Utilities/Department.js',
-        'Utilities/Style.js',
-        'Utilities/RomanList.js',
-        'Utilities/AlphabeticalList.js',
-        'Utilities/TabStop.js',
-        'Utilities/ToolFields.js',
-        'Utilities/Tool.js',
-        'Main/StageData/StageDataRefill.js',
-        'Main/StageData/StageDataUpdate.js',
-        'Main/StageData/StageData.js',
-        'Utilities/DocPreviewTabStop.js',
-        'Utilities/DocPreviewParagraph.js',
-        'Utilities/DocPreviewPage.js',
-        'Utilities/DocPreview.js',
-        'Utilities/Parse.js',
-        //'Page/ProjectStage/ProjectStageToolVariable.js',
-        //'Page/ProjectStage/ProjectStageToolFile.js',
-        //'Page/ProjectStage/ProjectStageTool.js',
-        //'Page/ProjectStage/ProjectStageProperty.js',
-        //'Page/ProjectStage/Row.js',
-        //'Page/ProjectStage/SubSection.js',
-        //'Page/ProjectStage/Section.js',
-        //'Page/ProjectStage/ProjectStageCreateHead.js',
-        //'Page/ProjectStage/ProjectStageCreate.js',
+        'Main/Utilities.js'
+        ,'Main/Html.js'
+        ,'Main/Modal.js'
+        ,'Main/ErrorStack.js'
+        ,'Main/Xhr.js'
+        ,'Main/Table.js'
+        ,'Utilities/Parse.js'
 
-        //'Page/ProjectStage/ProjectStageCreateTable.js',
-        //'Page/ProjectStage/ProjectStageCreateImage.js',
-
-        //'Page/ProjectStage/ProjectStageTable.js',
-        //'Page/ProjectStage/ProjectStage.js',
-        //'Page/ProjectConstantTable.js',
-        //'Page/ProjectConstantCreate.js',
-        //'Page/ProjectConstant.js',
-        //'Page/ProjectVariable/ProjectVariableTable.js',
-        //'Page/ProjectVariable/ProjectVariableCreate.js',
-        //'Page/ProjectVariable/ProjectVariable.js',
-        'Page/Form/Form_creator.js',
-        'Page/Filled_form/Filled_form_show_filled.js',
-        'Page/Filled_form/Filled_form_table.js',
-        'Page/Filled_form/Filled_form.js',
+        ,'Page/Form_stage/Form_stage_prototype.js'
+        ,'Page/Form_stage/Form_stage_department.js'
+        ,'Page/Form_stage/Form_stage_title.js'
+        ,'Page/Form_stage/Form_stage_preview.js'
+        ,'Page/Form/Form_creator_modal_prototype.js'
+        ,'Page/Form/Form_creator_hide.js'
+        ,'Page/Form/Form_creator_remove.js'
+        ,'Page/Form/Form_creator_save.js'
+        ,'Page/Form/Form_creator_buttons.js'
+        ,'Page/Form/Form_creator_chosen_list.js'
+        ,'Page/Form/Form_creator.js'
+        ,'Page/Filled_form/Filled_form_show_filled.js'
+        ,'Page/Filled_form/Filled_form_table.js'
+        ,'Page/Filled_form/Filled_form.js'
         
         ];
     public function __construct(){
