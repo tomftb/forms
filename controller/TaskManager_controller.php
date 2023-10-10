@@ -99,6 +99,10 @@ final class TaskManager_controller{
         array_push($this->modul,new \Form_stage_edit_controller());
         array_push($this->modul,new \Form_stage_create_controller());
         array_push($this->modul,new \Form_creator_controller());
+        array_push($this->modul,new \Form_creator_save_controller());
+        array_push($this->modul,new \Form_stage_get_controller());
+        array_push($this->modul,new \Form_hide_controller());
+        array_push($this->modul,new \Form_remove_controller());
     }
     public function loadMethod(mixed $method):void{
         $this->Log->log(0,"[".__METHOD__."]");
