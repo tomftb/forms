@@ -161,7 +161,8 @@ INSERT INTO `uprawnienia` (`ID`, `SKROT`, `NAZWA`, `OPIS`) VALUES
 (55, 'REMOVE_FORM_STAGE', 'REMOVE_FORM_STAGE', ''),
 (56, 'SHOW_PROJ_REPORT', 'Wyświetl podgląd raportu projektu.', ''),
 (57, 'SAVE_PROJ_REPORT', 'Zapis aktualnego stanu raportu projektu.', ''),
-(58, 'GEN_PROJ_REP_DOC', 'Wygenerowanie raportu projektu w formacie MS DOC.', '');
+(58, 'GEN_PROJ_REP_DOC', 'Wygenerowanie raportu projektu w formacie MS DOC.', ''),
+(59, 'CREATE_FORM', 'CREATE_FORM', '');
 
 --
 -- Struktura tabeli dla tabeli `upr_i_slo_rola`
@@ -3386,7 +3387,7 @@ ALTER TABLE `app_account_type`
 -- AUTO_INCREMENT for table `uprawnienia`
 --
 ALTER TABLE `uprawnienia`
-  MODIFY `ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 COMMIT;
 
 --
