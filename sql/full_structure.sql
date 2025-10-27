@@ -17,8 +17,204 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `autos_forms`
+-- Database: `forms`
 --
+
+CREATE DATABASE IF NOT EXISTS `forms`
+ DEFAULT CHARACTER SET = 'utf8' DEFAULT COLLATE 'utf8_general_ci';
+ 
+ USE forms;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `app_account_type`
+--
+
+CREATE TABLE `app_account_type` (
+  `id` int NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `code` varchar(100) NOT NULL,
+  `wsk_u` enum('0','1') NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `app_account_type`
+--
+
+INSERT INTO `app_account_type` (`id`, `name`,`code`,`wsk_u`) VALUES
+(1,'Database','database',0),
+(2,'Active Directory (AD)','ldap',0),
+(3,'Active Directory (AD)','ldapAutos',0);
+
+
+
+--
+-- Struktura tabeli dla tabeli `uzytkownik`
+--
+
+CREATE TABLE `uzytkownik` (
+  `id` int NOT NULL,
+  `imie` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `nazwisko` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `login` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `haslo` varchar(300) COLLATE utf8mb4_general_ci NOT NULL,
+  `email` varchar(300) COLLATE utf8mb4_general_ci NOT NULL,
+  `typ` int NOT NULL,
+  `city` varchar(300) COLLATE utf8mb4_general_ci NOT NULL,
+  `department` int NOT NULL,
+  `create_user_id` int NOT NULL,
+  `create_user_login` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `create_user_full_name` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `create_user_email` varchar(300) COLLATE utf8mb4_general_ci NOT NULL,
+  `create_date` datetime NOT NULL,
+  `create_host` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `mod_user_id` int NULL,
+  `mod_user_login` varchar(100) COLLATE utf8mb4_general_ci NULL,
+  `mod_user_full_name` varchar(200) COLLATE utf8mb4_general_ci NULL,
+  `mod_user_email` varchar(300) COLLATE utf8mb4_general_ci NULL,
+  `mod_date` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `mod_host` varchar(100) COLLATE utf8mb4_general_ci NULL,
+  `delete_status` enum('0','1') COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0',
+  `wsk_u` enum('0','1') COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0',
+  `id_rola` int NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+
+--
+-- Dumping data for table `uzytkownik`
+--
+
+INSERT INTO `uzytkownik` (`id`, `imie`,`nazwisko`,`login`,`haslo`,`email`,`typ`,`city`,`department`, `create_user_id`, `create_user_login`, `create_user_full_name`, `create_user_email`, `create_date`, `create_host`) VALUES
+(1,'Admin','', 'admin', '$2y$10$K5EUOPqsZkM8ehwsI26j/.2HVMOEdN7HRM6vhJeSJnb0NZJiLRsIS', 'admin@tomftb.pl', 1, 'Toruń', 1,1 ,'admin', 'Admin', 'admin@tomftb.pl', '2025-10-27 17:00:00', '127.0.0.1');
+
+
+--
+-- Struktura tabeli dla tabeli `uprawnienia`
+--
+
+CREATE TABLE `uprawnienia` (
+  `ID` int NOT NULL,
+  `SKROT` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `NAZWA` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `OPIS` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Zrzut danych tabeli `uprawnienia`
+--
+
+INSERT INTO `uprawnienia` (`ID`, `SKROT`, `NAZWA`, `OPIS`) VALUES
+(1, 'LOG_INTO_APP', 'LOG_INTO_APP', ''),
+(2, 'ADD_PROJ', 'ADD_PROJ', ''),
+(3, 'DEL_PROJ', 'DEL_PROJ', ''),
+(4, 'SHOW_TEAM_PROJ', 'SHOW_TEAM_PROJ', ''),
+(5, 'SHOW_PROJ', 'SHOW_PROJ', ''),
+(6, 'EDIT_TEAM_PROJ', 'EDIT_TEAM_PROJ', ''),
+(7, 'SHOW_DOK_PROJ', 'SHOW_DOK_PROJ', ''),
+(8, 'CLOSE_PROJ', 'CLOSE_PROJ', ''),
+(9, 'EDIT_DOK_PROJ', 'EDIT_DOK_PROJ', ''),
+(10, 'GEN_PDF_PROJ', 'GEN_PDF_PROJ', ''),
+(11, 'EMAIL_PROJ', 'EMAIL_PROJ', ''),
+(12, 'LOG_INTO_PARM', 'LOG_INTO_PARM', ''),
+(13, 'EDIT_PARM', 'EDIT_PARM', ''),
+(14, 'LOG_INTO_PERM', 'LOG_INTO_PERM', ''),
+(15, 'SHOW_PERM_USER', 'SHOW_PERM_USER', ''),
+(16, 'EDIT_PERM_USER', 'EDIT_PERM_USER', ''),
+(17, 'LOG_INTO_ROLE', 'LOG_INTO_ROLE', ''),
+(18, 'ADD_ROLE', 'ADD_ROLE', ''),
+(19, 'EDIT_ROLE', 'EDIT_ROLE', ''),
+(20, 'SHOW_ROLE', 'SHOW_ROLE', ''),
+(21, 'DEL_ROLE', 'DEL_ROLE', ''),
+(22, 'LOG_INTO_USER', 'LOG_INTO_USER', ''),
+(23, 'ADD_USER', 'ADD_USER', ''),
+(24, 'DEL_USER', 'DEL_USER', ''),
+(25, 'SHOW_USER', 'SHOW_USER', ''),
+(26, 'EDIT_USER', 'EDIT_USER', ''),
+(27, 'LOG_INTO_EMPL', 'LOG_INTO_EMPL', ''),
+(28, 'ADD_EMPL', 'ADD_EMPL', ''),
+(29, 'SHOW_PROJ_EMPL', 'SHOW_PROJ_EMPL', ''),
+(30, 'DEL_EMPL', 'DEL_EMPL', ''),
+(31, 'SHOW_ALLOC_EMPL', 'SHOW_ALLOC_EMPL', ''),
+(32, 'EDIT_ALLOC_EMPL', 'EDIT_ALLOC_EMPL', ''),
+(33, 'SHOW_EMPL', 'SHOW_EMPL', ''),
+(34, 'EDIT_EMPL', 'EDIT_EMPL', ''),
+(35, 'LOG_INTO_STAGE', 'LOG_INTO_STAGE', ''),
+(36, 'ADD_STAGE', 'ADD_STAGE', ''),
+(37, 'EDIT_STAGE', 'EDIT_STAGE', ''),
+(38, 'DEL_STAGE', 'DEL_STAGE', ''),
+(39, 'HIDE_STAGE', 'HIDE_STAGE', ''),
+(40, 'SHOW_STAGE', 'SHOW_STAGE', ''),
+(41, 'GEN_PROJECT_REPORT', 'GEN_PROJECT_REPORT', ''),
+(42, 'GEN_DOC_PROJ', 'GEN_DOC_PROJ', ''),
+(43, 'LOG_INTO_CLUSTR', 'LOG_INTO_CLUSTR', ''),
+(44, 'EDIT_CLUSTR', 'EDIT_CLUSTR', ''),
+(45, 'LOG_INTO_PROJ', 'LOG_INTO_PROJ', ''),
+(46, 'LOG_INTO_FORM', 'LOG_INTO_FORM', ''),
+(47, 'SHOW_LIST_FILLED_FORM', 'SHOW_LIST_FILLED_FORM', ''),
+(48, 'EXCEL_FILLED_FORM', 'EXCEL_FILLED_FORM', ''),
+(49, 'HIDE_FORM', 'HIDE_FORM', ''),
+(50, 'REMOVE_FORM', 'REMOVE_FORM', ''),
+(51, 'LOG_INTO_FORM_STAGE', 'LOG_INTO_FORM_STAGE', ''),
+(52, 'CREATE_FORM_STAGE', 'CREATE_FORM_STAGE', ''),
+(53, 'SHOW_FORM_STAGE', 'SHOW_FORM_STAGE', ''),
+(54, 'HIDE_FORM_STAGE', 'HIDE_FORM_STAGE', ''),
+(55, 'REMOVE_FORM_STAGE', 'REMOVE_FORM_STAGE', ''),
+(56, 'SHOW_PROJ_REPORT', 'Wyświetl podgląd raportu projektu.', ''),
+(57, 'SAVE_PROJ_REPORT', 'Zapis aktualnego stanu raportu projektu.', ''),
+(58, 'GEN_PROJ_REP_DOC', 'Wygenerowanie raportu projektu w formacie MS DOC.', '');
+
+--
+-- Struktura tabeli dla tabeli `upr_i_slo_rola`
+--
+
+CREATE TABLE `upr_i_slo_rola` (
+  `id_rola` int NOT NULL,
+  `id_upr` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+--
+-- Struktura tabeli dla tabeli `parametry`
+--
+
+CREATE TABLE `parametry` (
+  `ID` int NOT NULL,
+  `SKROT` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `NAZWA` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `OPIS` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `WARTOSC` varchar(300) COLLATE utf8mb4_general_ci NOT NULL,
+  `TYP` varchar(300) COLLATE utf8mb4_general_ci NOT NULL,  
+  `MOD_USER_ID` int NOT NULL,
+  `MOD_LOGIN` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `MOD_USER` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `mod_user_email` varchar(300) COLLATE utf8mb4_general_ci NOT NULL,
+  `MOD_DATE` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `MOD_HOST` varchar(100) COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+
+ALTER TABLE `parametry` CHANGE `ID` `ID` INT NOT NULL AUTO_INCREMENT, add PRIMARY KEY (`ID`);
+
+--
+-- Struktura tabeli dla tabeli `slo_rola`
+--
+
+CREATE TABLE `slo_rola` (
+  `ID` int NOT NULL,
+  `SKROT` varchar(100) NOT NULL,
+  `NAZWA` varchar(100) NOT NULL,
+  `OPIS` varchar(255) DEFAULT NULL,
+  `WSK_U` enum('0','1') COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0',
+  `create_user_id` int NOT NULL,
+  `create_user` int NOT NULL,
+  `create_user_full_name` int NOT NULL,
+  `create_user_email` int NOT NULL,
+  `create_host` int NOT NULL,
+  `mod_user_id` int DEFAULT NULL,
+  `mod_user_login` int DEFAULT NULL,
+  `mod_user_full_name` int DEFAULT NULL,
+  `mod_user_email` int DEFAULT NULL,
+  `mod_host` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
 
 -- --------------------------------------------------------
 
@@ -224,7 +420,7 @@ CREATE TABLE `form` (
 --
 
 INSERT INTO `form` (`id`, `name`, `create_user_id`, `create_user_login`, `create_user_full_name`, `create_user_email`, `create_date`, `create_host`, `mod_user_id`, `mod_user_login`, `mod_user_full_name`, `mod_user_email`, `mod_date`, `mod_host`, `delete_status`, `delete_date`, `delete_reason`) VALUES
-(1, 'Formularz dostawcy kwalifikowanego', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 09:04:45', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 09:05:43', '127.0.0.1', '0', NULL, NULL);
+(1, 'Formularz dostawcy kwalifikowanego', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 09:04:45', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 09:05:43', '127.0.0.1', '0', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -260,102 +456,102 @@ CREATE TABLE `form_col` (
 --
 
 INSERT INTO `form_col` (`id`, `id_parent`, `type`, `order`, `at_main_page`, `create_user_id`, `create_user_login`, `create_user_full_name`, `create_user_email`, `create_date`, `create_host`, `mod_user_id`, `mod_user_login`, `mod_user_full_name`, `mod_user_email`, `mod_date`, `mod_host`, `delete_status`, `delete_date`, `delete_reason`) VALUES
-(1, 2, 'i', 1, '1', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:59:31', '127.0.0.1', '0', NULL, NULL),
-(2, 2, 'i', 2, '1', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:00:19', '127.0.0.1', '0', NULL, NULL),
-(3, 3, 'i', 3, '1', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:00:32', '127.0.0.1', '0', NULL, NULL),
-(4, 5, 'i', 4, '1', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:00:44', '127.0.0.1', '0', NULL, NULL),
-(5, 6, 'i', 5, '1', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:00:55', '127.0.0.1', '0', NULL, NULL),
-(6, 6, 'i', 6, '1', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:01:03', '127.0.0.1', '0', NULL, NULL),
-(7, 7, 'i', 7, '1', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:02:01', '127.0.0.1', '0', NULL, NULL),
-(8, 7, 'i', 8, '1', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:02:09', '127.0.0.1', '0', NULL, NULL),
-(9, 8, 'i', 9, '1', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:02:24', '127.0.0.1', '0', NULL, NULL),
-(10, 8, 'i', 10, '1', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:02:31', '127.0.0.1', '0', NULL, NULL),
-(11, 9, 'i', 11, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:02:44', '127.0.0.1', '0', NULL, NULL),
-(12, 9, 'i', 12, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:02:50', '127.0.0.1', '0', NULL, NULL),
-(13, 10, 'i', 13, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:03:06', '127.0.0.1', '0', NULL, NULL),
-(14, 10, 'i', 14, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:03:12', '127.0.0.1', '0', NULL, NULL),
-(15, 11, 'p', 15, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:35:31', '127.0.0.1', '0', NULL, NULL),
-(16, 12, 'i', 16, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:37:53', '127.0.0.1', '0', NULL, NULL),
-(17, 13, 'i', 17, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:03', '127.0.0.1', '0', NULL, NULL),
-(18, 14, 'i', 18, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:03', '127.0.0.1', '0', NULL, NULL),
-(19, 15, 'i', 19, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:03', '127.0.0.1', '0', NULL, NULL),
-(20, 16, 'i', 20, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:03', '127.0.0.1', '0', NULL, NULL),
-(21, 17, 'i', 21, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(22, 18, 'i', 22, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(23, 19, 'i', 23, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(24, 20, 'i', 24, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(25, 21, 'i', 25, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(26, 22, 'i', 26, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(27, 23, 'i', 27, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(28, 24, 'i', 28, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(29, 25, 'i', 29, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(30, 26, 'i', 30, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(31, 27, 'i', 31, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(32, 28, 'i', 32, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(33, 29, 'i', 33, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(34, 30, 'i', 34, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(35, 31, 'i', 35, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(36, 32, 'i', 36, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(37, 33, 'i', 37, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(38, 34, 'i', 38, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(39, 35, 'i', 39, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(40, 36, 'i', 40, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(41, 37, 'i', 41, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
-(42, 38, 'i', 42, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
-(43, 39, 'i', 43, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
-(44, 40, 'i', 44, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
-(45, 41, 'i', 45, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
-(46, 42, 'i', 46, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
-(47, 43, 'i', 47, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
-(48, 44, 'i', 48, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
-(49, 45, 'i', 49, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
-(50, 46, 'i', 50, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
-(51, 47, 'i', 51, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
-(52, 48, 'i', 52, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
-(53, 49, 'i', 53, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
-(54, 50, 'i', 54, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
-(55, 51, 'i', 55, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
-(56, 52, 'i', 56, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
-(57, 53, 'i', 57, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
-(58, 54, 'i', 58, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
-(59, 55, 'i', 59, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(60, 56, 'i', 60, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(61, 57, 'i', 61, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(62, 58, 'i', 62, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(63, 59, 'i', 63, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(64, 60, 'i', 64, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(65, 61, 'i', 65, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(66, 62, 'i', 66, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(67, 63, 'i', 67, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(68, 64, 'i', 68, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(69, 65, 'i', 69, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(70, 66, 'i', 70, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(71, 67, 'i', 71, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(72, 68, 'i', 72, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(73, 69, 'i', 73, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(74, 70, 'i', 74, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(75, 71, 'i', 75, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
-(76, 72, 'i', 76, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:48', '127.0.0.1', '0', NULL, NULL),
-(77, 73, 'i', 77, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:48', '127.0.0.1', '0', NULL, NULL),
-(78, 74, 'i', 78, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:48', '127.0.0.1', '0', NULL, NULL),
-(79, 75, 'i', 79, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:58', '127.0.0.1', '0', NULL, NULL),
-(80, 76, 'i', 80, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(81, 77, 'i', 81, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(82, 78, 'i', 82, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(83, 79, 'i', 83, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(84, 80, 'i', 84, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(85, 81, 'i', 85, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(86, 82, 'i', 86, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(87, 83, 'i', 87, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(88, 84, 'i', 88, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(89, 85, 'i', 89, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(90, 86, 'i', 90, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(91, 87, 'i', 91, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(92, 88, 'i', 92, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(93, 89, 'i', 93, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(94, 90, 'i', 94, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(95, 91, 'i', 95, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
-(96, 92, 'i', 96, '0', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL);
+(1, 2, 'i', 1, '1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:59:31', '127.0.0.1', '0', NULL, NULL),
+(2, 2, 'i', 2, '1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:00:19', '127.0.0.1', '0', NULL, NULL),
+(3, 3, 'i', 3, '1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:00:32', '127.0.0.1', '0', NULL, NULL),
+(4, 5, 'i', 4, '1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:00:44', '127.0.0.1', '0', NULL, NULL),
+(5, 6, 'i', 5, '1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:00:55', '127.0.0.1', '0', NULL, NULL),
+(6, 6, 'i', 6, '1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:01:03', '127.0.0.1', '0', NULL, NULL),
+(7, 7, 'i', 7, '1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:02:01', '127.0.0.1', '0', NULL, NULL),
+(8, 7, 'i', 8, '1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:02:09', '127.0.0.1', '0', NULL, NULL),
+(9, 8, 'i', 9, '1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:02:24', '127.0.0.1', '0', NULL, NULL),
+(10, 8, 'i', 10, '1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:02:31', '127.0.0.1', '0', NULL, NULL),
+(11, 9, 'i', 11, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:02:44', '127.0.0.1', '0', NULL, NULL),
+(12, 9, 'i', 12, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:02:50', '127.0.0.1', '0', NULL, NULL),
+(13, 10, 'i', 13, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:03:06', '127.0.0.1', '0', NULL, NULL),
+(14, 10, 'i', 14, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:03:12', '127.0.0.1', '0', NULL, NULL),
+(15, 11, 'p', 15, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:35:31', '127.0.0.1', '0', NULL, NULL),
+(16, 12, 'i', 16, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:37:53', '127.0.0.1', '0', NULL, NULL),
+(17, 13, 'i', 17, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:03', '127.0.0.1', '0', NULL, NULL),
+(18, 14, 'i', 18, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:03', '127.0.0.1', '0', NULL, NULL),
+(19, 15, 'i', 19, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:03', '127.0.0.1', '0', NULL, NULL),
+(20, 16, 'i', 20, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:03', '127.0.0.1', '0', NULL, NULL),
+(21, 17, 'i', 21, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(22, 18, 'i', 22, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(23, 19, 'i', 23, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(24, 20, 'i', 24, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(25, 21, 'i', 25, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(26, 22, 'i', 26, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(27, 23, 'i', 27, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(28, 24, 'i', 28, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(29, 25, 'i', 29, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(30, 26, 'i', 30, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(31, 27, 'i', 31, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(32, 28, 'i', 32, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(33, 29, 'i', 33, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(34, 30, 'i', 34, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(35, 31, 'i', 35, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(36, 32, 'i', 36, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(37, 33, 'i', 37, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(38, 34, 'i', 38, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(39, 35, 'i', 39, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(40, 36, 'i', 40, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(41, 37, 'i', 41, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:04', '127.0.0.1', '0', NULL, NULL),
+(42, 38, 'i', 42, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
+(43, 39, 'i', 43, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
+(44, 40, 'i', 44, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
+(45, 41, 'i', 45, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
+(46, 42, 'i', 46, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
+(47, 43, 'i', 47, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
+(48, 44, 'i', 48, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
+(49, 45, 'i', 49, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:08', '127.0.0.1', '0', NULL, NULL),
+(50, 46, 'i', 50, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
+(51, 47, 'i', 51, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
+(52, 48, 'i', 52, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
+(53, 49, 'i', 53, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
+(54, 50, 'i', 54, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
+(55, 51, 'i', 55, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
+(56, 52, 'i', 56, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
+(57, 53, 'i', 57, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
+(58, 54, 'i', 58, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:31', '127.0.0.1', '0', NULL, NULL),
+(59, 55, 'i', 59, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(60, 56, 'i', 60, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(61, 57, 'i', 61, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(62, 58, 'i', 62, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(63, 59, 'i', 63, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(64, 60, 'i', 64, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(65, 61, 'i', 65, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(66, 62, 'i', 66, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(67, 63, 'i', 67, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(68, 64, 'i', 68, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(69, 65, 'i', 69, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(70, 66, 'i', 70, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(71, 67, 'i', 71, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(72, 68, 'i', 72, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(73, 69, 'i', 73, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(74, 70, 'i', 74, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(75, 71, 'i', 75, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:32', '127.0.0.1', '0', NULL, NULL),
+(76, 72, 'i', 76, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:48', '127.0.0.1', '0', NULL, NULL),
+(77, 73, 'i', 77, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:48', '127.0.0.1', '0', NULL, NULL),
+(78, 74, 'i', 78, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:48', '127.0.0.1', '0', NULL, NULL),
+(79, 75, 'i', 79, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:58', '127.0.0.1', '0', NULL, NULL),
+(80, 76, 'i', 80, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(81, 77, 'i', 81, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(82, 78, 'i', 82, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(83, 79, 'i', 83, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(84, 80, 'i', 84, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(85, 81, 'i', 85, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(86, 82, 'i', 86, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(87, 83, 'i', 87, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(88, 84, 'i', 88, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(89, 85, 'i', 89, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(90, 86, 'i', 90, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(91, 87, 'i', 91, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(92, 88, 'i', 92, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(93, 89, 'i', 93, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(94, 90, 'i', 94, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(95, 91, 'i', 95, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL),
+(96, 92, 'i', 96, '0', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 15:38:59', '127.0.0.1', '0', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -390,102 +586,102 @@ CREATE TABLE `form_col_property` (
 --
 
 INSERT INTO `form_col_property` (`id`, `id_parent`, `property`, `value`, `create_user_id`, `create_user_login`, `create_user_full_name`, `create_user_email`, `create_date`, `create_host`, `mod_user_id`, `mod_user_login`, `mod_user_full_name`, `mod_user_email`, `mod_date`, `mod_host`, `delete_status`, `delete_date`, `delete_reason`) VALUES
-(1, 1, 'label', 'Imię', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:08:32', '127.0.0.1', '0', NULL, NULL),
-(2, 2, 'label', 'Nazwisko', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:09:18', '127.0.0.1', '0', NULL, NULL),
-(3, 3, 'label', 'Stanowisko', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:10:31', '127.0.0.1', '0', NULL, NULL),
-(4, 4, 'label', 'Pełna nazwa firmy', 2, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 15:11:32', '127.0.0.1', '0', NULL, NULL),
-(5, 5, 'label', '*NIP', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:03:47', '127.0.0.1', '0', NULL, NULL),
-(6, 6, 'label', '*Ulica i numer', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:06:30', '127.0.0.1', '0', NULL, NULL),
-(7, 7, 'label', '*Kod pocztowy', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:06:40', '127.0.0.1', '0', NULL, NULL),
-(8, 8, 'label', '*Miasto', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:07:01', '127.0.0.1', '0', NULL, NULL),
-(9, 9, 'label', '*Rok założenia', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:07:08', '127.0.0.1', '0', NULL, NULL),
-(10, 10, 'label', '*Liczba pracowników', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:07:18', '127.0.0.1', '0', NULL, NULL),
-(11, 11, 'label', 'Kapitał zakładowy', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:11:33', '127.0.0.1', '0', NULL, NULL),
-(12, 12, 'label', '*Strona WWW', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:11:33', '127.0.0.1', '0', NULL, NULL),
-(13, 13, 'label', 'Podmiot powiązany', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:11:33', '127.0.0.1', '0', NULL, NULL),
-(14, 14, 'label', '*Dystrybutorzy w PL', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:11:33', '127.0.0.1', '0', NULL, NULL),
-(15, 15, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:19', '127.0.0.1', '0', NULL, NULL),
-(16, 16, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
-(17, 17, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
-(18, 18, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
-(19, 19, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
-(20, 20, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
-(21, 21, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
-(22, 22, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
-(23, 23, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(24, 24, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(25, 25, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(26, 26, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(27, 27, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(28, 28, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(29, 29, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(30, 30, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(31, 31, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(32, 32, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(33, 33, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(34, 34, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(35, 35, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(36, 36, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(37, 37, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(38, 38, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(39, 39, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(40, 40, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(41, 41, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(42, 42, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(43, 43, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(44, 44, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(45, 45, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(46, 46, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(47, 47, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(48, 48, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(49, 49, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(50, 50, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(51, 51, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(52, 52, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(53, 53, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(54, 54, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(55, 55, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(56, 56, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(57, 57, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(58, 58, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(59, 59, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(60, 60, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(61, 61, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(62, 62, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(63, 63, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(64, 64, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(65, 65, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(66, 66, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(67, 67, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(68, 68, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(69, 69, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(70, 70, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(71, 71, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(72, 72, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(73, 73, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(74, 74, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(75, 75, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(76, 76, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(77, 77, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(78, 78, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(79, 79, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(80, 80, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(81, 81, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(82, 82, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(83, 83, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(84, 84, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(85, 85, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(86, 86, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(87, 87, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(88, 88, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(89, 89, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(90, 90, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(91, 91, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(92, 92, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(93, 93, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(94, 94, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(95, 95, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
-(96, 96, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL);
+(1, 1, 'label', 'Imię', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:08:32', '127.0.0.1', '0', NULL, NULL),
+(2, 2, 'label', 'Nazwisko', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:09:18', '127.0.0.1', '0', NULL, NULL),
+(3, 3, 'label', 'Stanowisko', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:10:31', '127.0.0.1', '0', NULL, NULL),
+(4, 4, 'label', 'Pełna nazwa firmy', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 15:11:32', '127.0.0.1', '0', NULL, NULL),
+(5, 5, 'label', '*NIP', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:03:47', '127.0.0.1', '0', NULL, NULL),
+(6, 6, 'label', '*Ulica i numer', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:06:30', '127.0.0.1', '0', NULL, NULL),
+(7, 7, 'label', '*Kod pocztowy', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:06:40', '127.0.0.1', '0', NULL, NULL),
+(8, 8, 'label', '*Miasto', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:07:01', '127.0.0.1', '0', NULL, NULL),
+(9, 9, 'label', '*Rok założenia', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:07:08', '127.0.0.1', '0', NULL, NULL),
+(10, 10, 'label', '*Liczba pracowników', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:07:18', '127.0.0.1', '0', NULL, NULL),
+(11, 11, 'label', 'Kapitał zakładowy', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:11:33', '127.0.0.1', '0', NULL, NULL),
+(12, 12, 'label', '*Strona WWW', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:11:33', '127.0.0.1', '0', NULL, NULL),
+(13, 13, 'label', 'Podmiot powiązany', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:11:33', '127.0.0.1', '0', NULL, NULL),
+(14, 14, 'label', '*Dystrybutorzy w PL', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-21 08:11:33', '127.0.0.1', '0', NULL, NULL),
+(15, 15, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:19', '127.0.0.1', '0', NULL, NULL),
+(16, 16, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
+(17, 17, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
+(18, 18, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
+(19, 19, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
+(20, 20, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
+(21, 21, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
+(22, 22, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:28', '127.0.0.1', '0', NULL, NULL),
+(23, 23, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(24, 24, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(25, 25, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(26, 26, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(27, 27, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(28, 28, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(29, 29, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(30, 30, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(31, 31, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(32, 32, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(33, 33, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(34, 34, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(35, 35, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(36, 36, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(37, 37, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(38, 38, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(39, 39, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(40, 40, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(41, 41, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(42, 42, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(43, 43, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(44, 44, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(45, 45, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(46, 46, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(47, 47, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(48, 48, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(49, 49, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(50, 50, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(51, 51, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(52, 52, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(53, 53, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(54, 54, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(55, 55, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(56, 56, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(57, 57, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(58, 58, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(59, 59, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(60, 60, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(61, 61, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(62, 62, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(63, 63, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(64, 64, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(65, 65, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(66, 66, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(67, 67, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(68, 68, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(69, 69, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(70, 70, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(71, 71, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(72, 72, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(73, 73, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(74, 74, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(75, 75, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(76, 76, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(77, 77, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(78, 78, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(79, 79, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(80, 80, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(81, 81, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(82, 82, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(83, 83, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(84, 84, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(85, 85, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(86, 86, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(87, 87, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(88, 88, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(89, 89, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(90, 90, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(91, 91, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(92, 92, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(93, 93, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(94, 94, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(95, 95, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL),
+(96, 96, 'label', '-UPDATE-', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-21 08:01:56', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski87@gmail.com', '2023-08-22 15:49:38', '127.0.0.1', '0', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -575,98 +771,98 @@ CREATE TABLE `form_row` (
 --
 
 INSERT INTO `form_row` (`id`, `id_parent`, `type`, `create_user_id`, `create_user_login`, `create_user_full_name`, `create_user_email`, `create_date`, `create_host`, `mod_user_id`, `mod_user_login`, `mod_user_full_name`, `mod_user_email`, `mod_date`, `mod_host`, `delete_status`, `delete_date`, `delete_reason`) VALUES
-(1, 1, 'h', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:46:41', '127.0.0.1', '0', NULL, NULL),
-(2, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:47:35', '127.0.0.1', '0', NULL, NULL),
-(3, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:48:09', '127.0.0.1', '0', NULL, NULL),
-(4, 1, 'h', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
-(5, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
-(6, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
-(7, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
-(8, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
-(9, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
-(10, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
-(11, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
-(12, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:33', '127.0.0.1', '0', NULL, NULL),
-(13, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(14, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(15, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(16, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(17, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(18, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(19, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(20, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(21, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(22, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(23, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(24, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(25, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(26, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(27, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(28, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(29, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(30, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(31, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(32, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(33, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(34, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(35, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(36, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(37, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(38, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(39, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(40, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(41, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(42, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(43, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(44, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(45, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(46, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
-(47, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(48, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(49, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(50, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(51, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(52, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(53, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(54, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(55, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(56, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(57, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(58, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(59, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(60, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(61, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(62, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(63, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(64, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(65, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(66, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(67, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(68, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(69, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(70, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(71, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(72, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(73, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(74, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(75, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(76, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(77, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(78, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(79, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(80, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(81, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(82, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(83, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(84, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(85, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(86, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(87, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(88, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(89, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(90, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(91, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
-(92, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 't.borczynski@autos.com.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL);
+(1, 1, 'h', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:46:41', '127.0.0.1', '0', NULL, NULL),
+(2, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:47:35', '127.0.0.1', '0', NULL, NULL),
+(3, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:48:09', '127.0.0.1', '0', NULL, NULL),
+(4, 1, 'h', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
+(5, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
+(6, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
+(7, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
+(8, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
+(9, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
+(10, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
+(11, 1, 'i', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:48:36', '127.0.0.1', '0', NULL, NULL),
+(12, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:33', '127.0.0.1', '0', NULL, NULL),
+(13, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(14, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(15, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(16, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(17, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(18, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(19, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(20, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(21, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(22, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(23, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(24, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(25, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(26, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(27, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(28, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(29, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(30, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(31, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(32, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(33, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(34, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(35, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(36, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(37, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(38, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(39, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(40, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(41, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(42, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(43, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(44, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(45, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(46, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:49', '127.0.0.1', '0', NULL, NULL),
+(47, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(48, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(49, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(50, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(51, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(52, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(53, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(54, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(55, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(56, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(57, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(58, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(59, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(60, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(61, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(62, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(63, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(64, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(65, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(66, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(67, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(68, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(69, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(70, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(71, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(72, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(73, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(74, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(75, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(76, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(77, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(78, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(79, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(80, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(81, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(82, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(83, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(84, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(85, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(86, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(87, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(88, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(89, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(90, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(91, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL),
+(92, 1, 'p', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-18 14:45:54', '127.0.0.1', 1, 'tborczynski', 'Tomasz Borczyński', 'admin@tomftb.pl', '2023-08-22 13:56:50', '127.0.0.1', '0', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2537,6 +2733,83 @@ INSERT INTO `v_slo_u_spec` (`ID`, `NAZWA`, `DEFAULT`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Struktura tabeli dla tabeli `uzyt_i_upr`
+--
+
+CREATE TABLE `uzyt_i_upr` (
+  `id_uzytkownik` int(11) NOT NULL,
+  `id_uprawnienie` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+--
+-- Dumping data for table `uzyt_i_upr`
+--
+
+INSERT INTO `uzyt_i_upr` (`id_uzytkownik`, `id_uprawnienie`) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(1, 5),
+(1, 6),
+(1, 7),
+(1, 8),
+(1, 9),
+(1, 10),
+(1, 11),
+(1, 12),
+(1, 13),
+(1, 14),
+(1, 15),
+(1, 16),
+(1, 17),
+(1, 18),
+(1, 19),
+(1, 20),
+(1, 21),
+(1, 22),
+(1, 23),
+(1, 24),
+(1, 25),
+(1, 26),
+(1, 27),
+(1, 28),
+(1, 29),
+(1, 30),
+(1, 31),
+(1, 32),
+(1, 33),
+(1, 34),
+(1, 35),
+(1, 36),
+(1, 37),
+(1, 38),
+(1, 39),
+(1, 40),
+(1, 41),
+(1, 42),
+(1, 43),
+(1, 44),
+(1, 45),
+(1, 46),
+(1, 47),
+(1, 48),
+(1, 49),
+(1, 50),
+(1, 51),
+(1, 52),
+(1, 53),
+(1, 54),
+(1, 55),
+(1, 56),
+(1, 57),
+(1, 58);
+
+
+-- --------------------------------------------------------
+
+--
 -- Struktura tabeli dla tabeli `v_uzyt_i_upr`
 --
 
@@ -2548,11 +2821,23 @@ CREATE TABLE `v_uzyt_i_upr` (
 -- --------------------------------------------------------
 
 --
+-- Zastąpiona struktura widoku `v_uzyt_i_upr_v2`
+-- (See below for the actual view)
+--
+CREATE TABLE `v_uzyt_i_upr_v2` (
+`idUzytkownik` int(11)
+,`idUprawnienie` int(11)
+,`SKROT` varchar(100)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Struktura widoku `v_all_prac_v5`
 --
 DROP TABLE IF EXISTS `v_all_prac_v5`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`server101661_autos-forms`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_all_prac_v5`  AS SELECT `employee`.`id` AS `ID`, concat(`employee`.`imie`,' ',`employee`.`nazwisko`) AS `ImieNazwisko`, `employee`.`stanowisko` AS `Stanowisko`, '0' AS `Procent`, `employee`.`email` AS `Email` FROM `employee` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_all_prac_v5`  AS SELECT `employee`.`id` AS `ID`, concat(`employee`.`imie`,' ',`employee`.`nazwisko`) AS `ImieNazwisko`, `employee`.`stanowisko` AS `Stanowisko`, '0' AS `Procent`, `employee`.`email` AS `Email` FROM `employee` ;
 
 -- --------------------------------------------------------
 
@@ -2561,7 +2846,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`server101661_autos-forms`@`127.0.0.1` SQL SE
 --
 DROP TABLE IF EXISTS `v_all_user`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`server101661_autos-forms`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_all_user`  AS SELECT `u`.`id` AS `ID`, `u`.`imie` AS `Imie`, `u`.`nazwisko` AS `Nazwisko`, `u`.`login` AS `Login`, `u`.`email` AS `Email`, `u`.`wsk_u` AS `wskU`, `u`.`id_rola` AS `IdRola`, `u`.`typ` AS `TypKontaValue` FROM `uzytkownik` AS `u` WHERE (0 <> 1) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_all_user`  AS SELECT `u`.`id` AS `ID`, `u`.`imie` AS `Imie`, `u`.`nazwisko` AS `Nazwisko`, `u`.`login` AS `Login`, `u`.`email` AS `Email`, `u`.`wsk_u` AS `wskU`, `u`.`id_rola` AS `IdRola`, `u`.`typ` AS `TypKontaValue` FROM `uzytkownik` AS `u` WHERE (0 <> 1) ;
 
 -- --------------------------------------------------------
 
@@ -2570,7 +2855,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`server101661_autos-forms`@`127.0.0.1` SQL SE
 --
 DROP TABLE IF EXISTS `v_parm_v2`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`server101661_autos-forms`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_parm_v2`  AS SELECT `parametry`.`ID` AS `ID`, `parametry`.`SKROT` AS `Skrót`, `parametry`.`NAZWA` AS `Nazwa`, `parametry`.`OPIS` AS `Opis`, `parametry`.`WARTOSC` AS `Wartość`, `parametry`.`TYP` AS `Typ`, `parametry`.`MOD_DATE` AS `ModDat`, `parametry`.`MOD_USER` AS `ModUser` FROM `parametry` ORDER BY `parametry`.`ID` ASC ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_parm_v2`  AS SELECT `parametry`.`ID` AS `ID`, `parametry`.`SKROT` AS `Skrót`, `parametry`.`NAZWA` AS `Nazwa`, `parametry`.`OPIS` AS `Opis`, `parametry`.`WARTOSC` AS `Wartość`, `parametry`.`TYP` AS `Typ`, `parametry`.`MOD_DATE` AS `ModDat`, `parametry`.`MOD_USER` AS `ModUser` FROM `parametry` ORDER BY `parametry`.`ID` ASC ;
 
 -- --------------------------------------------------------
 
@@ -2579,7 +2864,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`server101661_autos-forms`@`127.0.0.1` SQL SE
 --
 DROP TABLE IF EXISTS `v_slo_rola`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`server101661_autos-forms`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_slo_rola`  AS SELECT `slo_rola`.`ID` AS `ID`, `slo_rola`.`NAZWA` AS `NAZWA` FROM `slo_rola` WHERE (`slo_rola`.`WSK_U` = '0') ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_slo_rola`  AS SELECT `slo_rola`.`ID` AS `ID`, `slo_rola`.`NAZWA` AS `NAZWA` FROM `slo_rola` WHERE (`slo_rola`.`WSK_U` = '0') ;
 
 -- --------------------------------------------------------
 
@@ -2588,7 +2873,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`server101661_autos-forms`@`127.0.0.1` SQL SE
 --
 DROP TABLE IF EXISTS `v_slo_rola_all`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`server101661_autos-forms`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_slo_rola_all`  AS SELECT `r`.`ID` AS `ID`, `r`.`NAZWA` AS `Nazwa`, `r`.`WSK_U` AS `WSK_U` FROM `slo_rola` AS `r` WHERE (0 <> 1) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_slo_rola_all`  AS SELECT `r`.`ID` AS `ID`, `r`.`NAZWA` AS `Nazwa`, `r`.`WSK_U` AS `WSK_U` FROM `slo_rola` AS `r` WHERE (0 <> 1) ;
 
 -- --------------------------------------------------------
 
@@ -2597,9 +2882,62 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`server101661_autos-forms`@`127.0.0.1` SQL SE
 --
 DROP TABLE IF EXISTS `v_slo_upr`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`server101661_autos-forms`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_slo_upr`  AS SELECT `u`.`ID` AS `ID`, `u`.`NAZWA` AS `NAZWA` FROM `uprawnienia` AS `u` WHERE (0 <> 1) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_slo_upr`  AS SELECT `u`.`ID` AS `ID`, `u`.`NAZWA` AS `NAZWA` FROM `uprawnienia` AS `u` WHERE (0 <> 1) ;
 
 -- --------------------------------------------------------
+
+--
+-- Struktura widoku `v_uzyt_i_upr`
+--
+DROP TABLE IF EXISTS `v_uzyt_i_upr`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_uzyt_i_upr`  AS SELECT `u`.`id_uzytkownik` AS `idUzytkownik`, `u`.`id_uprawnienie` AS `idUprawnienie` FROM `uzyt_i_upr` AS `u` WHERE (0 <> 1) ;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura widoku `v_uzyt_i_upr_v2`
+--
+DROP TABLE IF EXISTS `v_uzyt_i_upr_v2`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_uzyt_i_upr_v2`  AS SELECT `up`.`id_uzytkownik` AS `idUzytkownik`, `up`.`id_uprawnienie` AS `idUprawnienie`, `u`.`SKROT` AS `SKROT` FROM (`uzyt_i_upr` `up` join `uprawnienia` `u`) WHERE `up`.`id_uprawnienie` = `u`.`ID` ;
+
+
+-- --------------------------------------------------------
+
+--
+-- Indeksy dla tabeli `app_account_type`
+--
+ALTER TABLE `app_account_type`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeksy dla tabeli `uprawnienia`
+--
+ALTER TABLE `uprawnienia`
+  ADD PRIMARY KEY (`ID`),
+  ADD UNIQUE KEY `SKROT` (`SKROT`),
+  ADD UNIQUE KEY `NAZWA` (`NAZWA`);
+
+--
+-- Indeksy dla tabeli `uzyt_i_upr`
+--
+ALTER TABLE `uzyt_i_upr`
+  ADD UNIQUE KEY `UNIQUE_UzytUpr` (`id_uzytkownik`,`id_uprawnienie`),
+  ADD KEY `FK_UzytUprUprawnienie` (`id_uprawnienie`);
+
+--
+-- Indeksy dla tabeli `upr_i_slo_rola`
+--
+ALTER TABLE `upr_i_slo_rola`
+  ADD KEY `FK_UprSloRolaRola` (`id_rola`),
+  ADD KEY `FK_UprSloRolauprawnienie` (`id_upr`);
+
+--
+-- Indeksy dla tabeli `slo_rola`
+--
+ALTER TABLE `slo_rola`
+  ADD PRIMARY KEY (`ID`);
 
 --
 -- Indeksy dla tabeli `allocation`
@@ -2625,6 +2963,13 @@ ALTER TABLE `department`
 --
 ALTER TABLE `dictionary_measurement_units`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indeksy dla tabeli `uzytkownik`
+--
+ALTER TABLE `uzytkownik`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_AppAccountType` (`typ`);
 
 --
 -- Indeksy dla tabeli `employee`
@@ -3030,6 +3375,25 @@ ALTER TABLE `v_slo_u_spec`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT dla tabeli `app_account_type`
+--
+ALTER TABLE `app_account_type`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `uprawnienia`
+--
+ALTER TABLE `uprawnienia`
+  MODIFY `ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+COMMIT;
+
+--
+-- AUTO_INCREMENT dla tabeli `slo_rola`
+--
+ALTER TABLE `slo_rola`
+  MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `app_task`
@@ -3461,6 +3825,28 @@ ALTER TABLE `slo_project_stage_subsection_style`
   ADD CONSTRAINT `FK_SloSubsectionStyleCreateUser` FOREIGN KEY (`create_user_id`) REFERENCES `uzytkownik` (`id`),
   ADD CONSTRAINT `FK_SloSubsectionStyleModifyUser` FOREIGN KEY (`mod_user_id`) REFERENCES `uzytkownik` (`id`),
   ADD CONSTRAINT `FK_SloSubsectionStyleParent` FOREIGN KEY (`id_parent`) REFERENCES `slo_project_stage_subsection` (`id`);
+
+--
+-- Ograniczenia dla tabeli `upr_i_slo_rola`
+--
+ALTER TABLE `upr_i_slo_rola`
+  ADD CONSTRAINT `FK_UprSloRolaRola` FOREIGN KEY (`id_rola`) REFERENCES `slo_rola` (`ID`),
+  ADD CONSTRAINT `FK_UprSloRolauprawnienie` FOREIGN KEY (`id_upr`) REFERENCES `uprawnienia` (`ID`);
+
+--
+-- Ograniczenia dla tabeli `uzytkownik`
+--
+ALTER TABLE `uzytkownik`
+  ADD CONSTRAINT `FK_AppAccountType` FOREIGN KEY (`typ`) REFERENCES `app_account_type` (`id`);
+
+--
+-- Ograniczenia dla tabeli `uzyt_i_upr`
+--
+ALTER TABLE `uzyt_i_upr`
+  ADD CONSTRAINT `FK_UzytUprUprawnienie` FOREIGN KEY (`id_uprawnienie`) REFERENCES `uprawnienia` (`ID`),
+  ADD CONSTRAINT `FK_UzytUprUzytkownik` FOREIGN KEY (`id_uzytkownik`) REFERENCES `uzytkownik` (`id`);
+
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

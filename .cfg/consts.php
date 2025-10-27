@@ -4,7 +4,7 @@ define('HH',filter_input(INPUT_SERVER,"HTTP_HOST"));
 define('APP_NAME',"Formularze XXX");
 define('APP_TITLE',"Formularze XXX");
 define('APP_PORT',80);
-define('APP_URL','http://local.forms:'.APP_PORT);
+define('APP_URL','http://forms.local:'.APP_PORT);
 define('TMP_UPLOAD_DIR',APP_ROOT.'tmp_upload/');
 define('UPLOAD_DIR',APP_ROOT.'upload/');
 define('UPLOAD_PROJECT_DOC_DIR',UPLOAD_DIR.'project_doc/');

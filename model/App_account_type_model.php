@@ -15,13 +15,13 @@ class App_account_type_model extends Database_model {
     public function getNotDeletedShortList():array{
         return $this->Main->squery("SELECT a.`id`,a.`name` FROM `app_account_type` a WHERE a.`wsk_u`='0' ORDER BY a.`id`");
     }
-    public function getAccountNameById(string|int $id=0):string{ 
+    public function getAccountNameById(int $id=0):string{ 
         foreach($this->Main->squery("select `name` FROM `app_account_type` WHERE `id`=:id AND `wsk_u`='0'",[':id'=>[$id,'INT']]) as $account){
             return $account['name'];
         }
         Throw new Exception('ACCOUNT TYPE '.$id.' NOT EXIST IN DATABASE',1);
     }
-    public function getAccountIdByCode(string|int $code=''):string{ 
+    public function getAccountIdByCode(string $code=''):string{ 
         foreach($this->Main->squery("select `id` FROM `app_account_type` WHERE `code`=:code AND `wsk_u`='0'",[':code'=>[$code,'STR']]) as $account){
             return $account['id'];
         }

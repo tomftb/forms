@@ -7,6 +7,7 @@ class ManageUser
     private $Log;
     private $dbLink;
     private ?object $Model;
+    private Utilities $utilities;
     
     public function __construct(){
         $this->Log=Logger::init(__METHOD__);
