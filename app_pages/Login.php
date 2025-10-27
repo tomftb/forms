@@ -29,8 +29,8 @@ final class Login extends Page{
         }
     }
     public function setPage(){
-	$this->Log->log(0,"[".__METHOD__."]");
-	parent::setJs($this->js);
+	    $this->Log->log(0,"[".__METHOD__."]");
+	    parent::setJs($this->js);
         parent::setCSS($this->css);
         parent::setView($this->view);
         parent::setMeta($this->meta);
