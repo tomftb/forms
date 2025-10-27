@@ -25,12 +25,12 @@ abstract class Base_controller {
     public function __serialize() {
         Throw New \Exception(__METHOD__.'() Can not __serialize() class `'.__CLASS__.'`!\'');
     }
-    protected function returnJson(mixed $data=[],int $status=0,string $info=''){
+    protected function returnJson($data=[],int $status=0,string $info=''):void{
          echo json_encode([
                 'data'=>$data,
                 'status'=>$status,
                 'info'=>$info
-            ]);
+        ]);
     }
     protected function throwError(string $msg='',int $lvl=1):void{
         Throw New \Exception($msg,$lvl);
