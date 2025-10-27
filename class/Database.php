@@ -9,8 +9,7 @@ class Database {//extends PDO
 			'FETCH_ASSOC'=>PDO::FETCH_ASSOC,
 			'FETCH_BOTH '=>PDO::FETCH_BOTH ,
 			'FETCH_OBJ'=>PDO::FETCH_OBJ,
-                        'FETCH_DEFAULT'=>PDO::FETCH_DEFAULT,
-                        'FETCH_NUM'=>PDO::FETCH_NUM,
+            'FETCH_NUM'=>PDO::FETCH_NUM,
 		];
 	private ?object $PDO;
     private $pdoParam=[
