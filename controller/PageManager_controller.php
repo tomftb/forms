@@ -28,6 +28,7 @@ class PageManager_controller
         self::loadLoginPage();
         self::loadNoAccessPage($idPage);
         self::loadPage($idPage);
+        
     }
     private static function loadPage($idPage){
         self::$Log->log(0,"[".__METHOD__."] ID PAGE - ".strval($idPage));
@@ -73,7 +74,7 @@ class PageManager_controller
     }
     private static function loadLoginPage(){
         self::$Log->log(0,"[".__METHOD__."]");
-        New \Login();  
+        New \Login();
     }
     private static function loadNoAccessPage($idPage){
         self::$Log->log(0,"[".__METHOD__."]");
