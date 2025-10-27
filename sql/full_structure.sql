@@ -2822,6 +2822,18 @@ CREATE TABLE `v_uzyt_i_upr` (
 -- --------------------------------------------------------
 
 --
+-- Struktura tabeli dla tabeli `pracownia`
+--
+
+CREATE TABLE `pracownia` (
+  `id` int NOT NULL,
+  `nazwa` varchar(300) COLLATE utf8mb4_general_ci NOT NULL,
+  `WSK_U` int NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktura tabeli dla tabeli `klaster`
 --
 
@@ -3386,6 +3398,13 @@ ALTER TABLE `v_slo_u_spec`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indeksy dla tabeli `pracownia`
+--
+ALTER TABLE `pracownia`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_pracownia_name` (`nazwa`);
+
+--
 -- Indeksy dla tabeli `klaster`
 --
 ALTER TABLE `klaster`
@@ -3565,6 +3584,12 @@ ALTER TABLE `v_slo_um_proj`
 --
 ALTER TABLE `v_slo_u_spec`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `pracownia`
+--
+ALTER TABLE `pracownia`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT dla tabeli `klaster`
