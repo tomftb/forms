@@ -18,7 +18,7 @@ class Uzytkownik_model extends Database_model {
     public function getUserPerm(array $input=[':id'=>array(0,'INT')]){
         return $this->Main->squery("SELECT `SKROT` FROM `v_uzyt_i_upr_v2` WHERE `idUzytkownik`=:id",$input);
     }
-    public function getUserIdRole(string|int $id=0):int{
+    public function getUserIdRole(int $id=0):int{
         foreach($this->Main->squery("SELECT (CASE WHEN `id_rola` IS NULL THEN 0 ELSE `id_rola` END) as 'id_rola' FROM `uzytkownik` WHERE `wsk_u`='0' AND `id`=:id",[':id'=>[$id,'INT']]) as $role){
             return $role['id_rola'];
         }
@@ -60,7 +60,7 @@ class Uzytkownik_model extends Database_model {
         ];
     }
 
-    public function checkUserExists(string|int $id_uzytkownik=0,string $login='',string $imie='',string $nazwisko=''):void{
+    public function checkUserExists(int $id_uzytkownik=0,string $login='',string $imie='',string $nazwisko=''):void{
         $parm=[
             ':id'=>array($id_uzytkownik,'INT'),
             ':login'=>array($login,'STR'),
@@ -71,7 +71,7 @@ class Uzytkownik_model extends Database_model {
             Throw New \Exception("Istnieje już użytkownik o podanym loginie `".$user['login']."` lub imieniu `".$user['imie']."` i nazwisku `".$user['nazwisko']."`",0);
         }
     }
-    public function getUserIdByLogin(string|int $login=0):int{
+    public function getUserIdByLogin(int $login=0):int{
         foreach($this->Main->squery("select `id` FROM `uzytkownik` WHERE `login`=:login",[':login'=>array($login,'STR')]) as $user){
             return intval($user['id'],10);
         }
