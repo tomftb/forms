@@ -2,7 +2,7 @@
 /**
  * Description of file
  *
- * @author tborczynski
+ * @author tomftb
  */
 
 
@@ -45,10 +45,6 @@ class File extends FileLog {
     public function getUploadDir(){
         return $this->uploadDir; 
     }
-    public function getFileName(){
-        parent::log(__METHOD__);
-        return ($this->fileName);
-    }
     public function getUploadFiles(){
         parent::log(__METHOD__);
         return ($this->files);
@@ -75,7 +71,7 @@ class File extends FileLog {
     }
 
     private function setErr($m='',$err=''){
-        $this->logData.="[".$m."] ".$err;
+        parent::log("[".$m."] ".$err);
         $this->err.=$this->errDataRN.$err;
         $this->errDataRN="\r\n";
     }
@@ -165,4 +161,15 @@ class File extends FileLog {
         }
     }
     public function __destruct(){}
+    public static function loadFile(?string $path=null):void{
+        if(is_null($path)){
+            Throw new Exception(__METHOD__."() set path!");
+        }
+        $clearPath = ltrim($path);
+        if($clearPath === ''){
+            Throw new Exception(__METHOD__."() empty path!");
+        }
+        self::checkFile($path);
+        include($path);
+    }
 }
