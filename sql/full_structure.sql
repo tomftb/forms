@@ -2822,6 +2822,18 @@ CREATE TABLE `v_uzyt_i_upr` (
 -- --------------------------------------------------------
 
 --
+-- Struktura tabeli dla tabeli `klaster`
+--
+
+CREATE TABLE `klaster` (
+  `id` int(11) NOT NULL,
+  `nod` varchar(300) NOT NULL,
+  `pracownia` varchar(300) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Zastąpiona struktura widoku `v_uzyt_i_upr_v2`
 -- (See below for the actual view)
 --
@@ -3374,6 +3386,14 @@ ALTER TABLE `v_slo_u_spec`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indeksy dla tabeli `klaster`
+--
+ALTER TABLE `klaster`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_klaster_nod` (`nod`),
+  ADD UNIQUE KEY `unique_klaster_pracownia` (`pracownia`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -3545,6 +3565,12 @@ ALTER TABLE `v_slo_um_proj`
 --
 ALTER TABLE `v_slo_u_spec`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT dla tabeli `klaster`
+--
+ALTER TABLE `klaster`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
