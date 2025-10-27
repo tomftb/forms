@@ -66,7 +66,7 @@ class Utilities
             $this->Log->log(0,' KEY '.$k.' NOT EXIST IN ARRAY');
         }
     }
-    public function keyExistEmpty(string|int $k='',array $a=[]):void{
+    public function keyExistEmpty($k='',array $a=[]):void{
         $this->Log->log(0,"[".__METHOD__."] KEY => ".$k);
         $this->Log->logMultidimensional(0,$a,"L::".__LINE__."::".__METHOD__);
         if (!array_key_exists($k,$a)){
@@ -76,7 +76,7 @@ class Utilities
             Throw New \Exception("[".__METHOD__.'] Key `'.$k.'` trimed value `'.$a[$k].'` empty!',1);
         }
     }
-    public function keyExist(array $a=[],string|int $k=''):void{
+    public function keyExist(array $a=[],$k=''):void{
         if(!is_array($a)){
             Throw New Exception("[".__METHOD__.'] ARG 1 IS NOT ARRAY!',1);
         }
