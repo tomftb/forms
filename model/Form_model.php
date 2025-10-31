@@ -14,7 +14,7 @@ class Form_model extends Database_model {
     public function getAll(){
         return $this->Main->squery("SELECT `id` as `i`, `name` as `n`, `create_date` as `cd`, `mod_date` as `md` FROM `form` WHERE `delete_status`='0'");
     }
-    public function getById(string|int $id=0):array{
+    public function getById(int $id=0):array{
         foreach($this->Main->squery("SELECT "
                 . "`id` as `i`"
                 . ",`name` as `n`"
@@ -39,7 +39,7 @@ class Form_model extends Database_model {
         }
         Throw New Exception ('Formularz o id `'.$id.'` został usunięty.',0); 
     }
-    public function getById_2(string|int $id=0):array{
+    public function getById_2(int $id=0):array{
         return $this->Main->squery("SELECT "
                 . "`id` "//as `id_db`
                 . ",`name` "//as `title`

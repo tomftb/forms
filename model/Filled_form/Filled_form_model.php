@@ -14,7 +14,7 @@ class Filled_form_model extends Database_model {
     public function getAll(){
         return $this->Main->squery("SELECT `id` as `i`, `name` as `n`, `create_date` as `cd`, `mod_date` as `md` FROM `filled_form` WHERE `delete_status`='0'");
     }
-    public function getByIdForm(string|int $id_form=0):array{
+    public function getByIdForm(int $id_form=0):array{
         return $this->Main->squery("SELECT `id` as `i`, `name` as `n`, `create_date` as `cd`, `mod_date` as `md` FROM `filled_form` WHERE `delete_status`='0' AND `id_form`=:id_form",[':id_form'=>[$id_form,'INT']]);
     }
 }

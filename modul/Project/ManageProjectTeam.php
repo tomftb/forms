@@ -13,13 +13,22 @@ final class ManageProjectTeam implements ManageProjectTeamCommand{
     private $adminEmailList=array();
     const maxPercentPersToProj=100;
     private $Log;
-    //private $dbLink;
+    private Utilities $Utilities;
+    private ?array $inpArray=null;
     private ?object $Model;
+    private $infoArray=array
+            (
+                "err_mail"=>array
+                (
+                    "Projekt został utworzony/zaktualizowany.<br/>Niestety pojawił się błąd przy próbie wysłania powiadomienia e-mail.<br/>Zamknij to okno przyciskiem Anuluj.",
+                    "Pojawiły się błąd przy próbie wysłania powiadomienia e-mail.<br/> Zamknij to okno przyciskiem Anuluj i spróbuj póżniej."
+                )
+            );
+
     function __construct(){
         $this->Log=Logger::init(__METHOD__);
         $this->Log->log(0,"[".__METHOD__."]");
         $this->Utilities=NEW Utilities();
-        //$this->dbLink=LoadDb::load();
         $this->Model=new \stdClass();
         $this->Model->{'Employee'}=new \Employee_model();
         $this->Model->{'Project'}=new \Project_model();
@@ -69,7 +78,7 @@ final class ManageProjectTeam implements ManageProjectTeamCommand{
         self::setTeam();
         $this->Utilities->jsonResponse('','cModal');  
     }
-    public function getAvailableTeam(string|int $idProject=0){
+    public function getAvailableTeam(int $idProject=0){
         $this->Log->log(1,"[".__METHOD__."] ID Project => ".$idProject);
         (array) $team=[];
         foreach($this->Model->{'Employee_project'}->getTeamById($idProject) as $data)
@@ -271,14 +280,20 @@ final class ManageProjectTeam implements ManageProjectTeamCommand{
         return $recEmail;
     }
     private function sendNotify($p){
-        $this->Log->log(0,"[".__METHOD__."]");
-        $this->mail=NEW \Email();
-        $this->mail->sendMail(
-                                    'Zgłoszenie na aktualizację członków zespołu :: '.$p['klient'].', '.$p['temat_umowy'].', '.$p['typ'],
-                                    self::emailBody($p),
-                                    self::emailRecipient(),
-                                    'Uaktualniono członków zespołu. Niestety pojawiły się błędy w wysłaniu powiadomienia.',
-                                    true);
+        $this->Log->log(0,"[".__FILE__."][".__METHOD__."]");
+        $mail=NEW \Email();
+        try{
+            $mail->sendMail(
+                        'Zgłoszenie na aktualizację członków zespołu :: '.$p['klient'].', '.$p['temat_umowy'].', '.$p['typ'],
+                        self::emailBody($p),
+                        self::emailRecipient(),
+                        'Uaktualniono członków zespołu. Niestety pojawiły się błędy w wysłaniu powiadomienia.',
+                        true);
+        }
+        catch(\Exception $e){
+            $this->Log->log(0,"[".__FILE__."][".__METHOD__."] ERROR: ".$e->getMessage());
+            Throw New \Exception($this->infoArray['err_mail'][1],0);
+        }  
     }
     function __destruct(){}
 }

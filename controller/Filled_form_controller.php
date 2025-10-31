@@ -39,7 +39,7 @@ final  class Filled_form_controller extends Base_controller {
             ,'list'=>self::getList($id,$form_name_column)
             ]);
     }
-    private function getList(string|int $id=0, array $form_name_column=[]):array{
+    private function getList(int $id=0, array $form_name_column=[]):array{
         (array) $filled_form_col=[];
         foreach($this->Model->{'Filled_form'}->getByIdForm($id) as $lp => $filled_form){
             //$filled_form_col[] = array_merge($filled_form,$this->Model->{'Filled_form_field'}->getNotNullByIdForm($filled_form['i']));
@@ -47,7 +47,7 @@ final  class Filled_form_controller extends Base_controller {
         }
         return $filled_form_col;
     }
-    private function getListPosition(string|int $id_form=0,array $form_name_column=[]):array{
+    private function getListPosition(int $id_form=0,array $form_name_column=[]):array{
         (array) $position = [];
         foreach($form_name_column as $column){
                 //echo $column['i'];

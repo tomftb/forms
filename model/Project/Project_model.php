@@ -82,13 +82,13 @@ class Project_model extends Database_model {
             Throw New \Exception ($msg,0); 
         }
     }
-    public function getProjectData(string|int $id=0):array{
+    public function getProjectData(int $id=0):array{
         foreach($this->Main->squery("SELECT `id` as `i`, `temat_umowy` as `t`,`create_user_login` as `cu`,`create_user_full_name` as `cum`,`create_date` as `cd` FROM `project` WHERE `id`=:id",[':id'=>[$id,'INT']]) as $project){
             return $project;
         }
         Throw New Exception ('Nie istnieje projekt o id '.$id.'. Został usunięt?',0);
     }
-    public function getShortProjectData(string|int $id=0):array{
+    public function getShortProjectData(int $id=0):array{
         foreach($this->Main->squery("SELECT `numer_umowy`,`klient`,`temat_umowy`,`typ` FROM `project` WHERE id=:id",[':id'=>[$id,'INT']]) as $project){
              return $project;
         }
@@ -113,7 +113,7 @@ class Project_model extends Database_model {
                  FROM `project` WHERE `delete_status`=:delete_status AND (`id` LIKE (:f) OR `numer_umowy` LIKE (:f) OR `temat_umowy` LIKE (:f) OR `kier_grupy` LIKE (:f) OR `nadzor` LIKE (:f) OR `term_realizacji` LIKE (:f) OR `typ` LIKE (:f) OR `koniec_proj` LIKE (:f) OR `status` LIKE (:f) OR `klient` LIKE (:f)) ORDER BY `id` desc'
                 ,[':f'=>[$filter,'STR'],':delete_status'=>[$delete_status,'STR']]);
     }
-    public function getProjectById(string|int $id=0):array{
+    public function getProjectById(int $id=0):array{
         foreach($this->Main->squery('SELECT 
                         `id` as "i",
                         `numer_umowy` as "n",

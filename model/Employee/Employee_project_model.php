@@ -7,7 +7,7 @@ class Employee_project_model extends Database_model {
     public function __call($m,$a){
         Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
     }
-    public function getTeamById(string|int $idProject=0){
+    public function getTeamById(int $idProject=0){
         return $this->Main->squery("SELECT
 		`e`.`id`,
 		CONCAT(`e`.`imie`,' ',`e`.`nazwisko`) as 'ImieNazwisko',
@@ -18,7 +18,7 @@ class Employee_project_model extends Database_model {
             `e`.`delete_status`='0'
                 ",[':id'=>[$idProject,'INT']]);
     }
-    public function getAvaTeamMember(string|int $idEmployee=0,string|int $idProject=0):array{ 
+    public function getAvaTeamMember(int $idEmployee=0,int $idProject=0):array{ 
 	return $this->Main->squery("select 
                             `e`.`id` AS `id`,
                             (select (100 - cast(ifnull(sum(`ep`.`percentage`),0) as signed)) FROM `employee_project` as `ep` 
@@ -30,7 +30,7 @@ class Employee_project_model extends Database_model {
             ':idEmployee'=>[$idEmployee,'INT'],
         ]);
     }
-    public function add(string|int $id_employee=0,string|int $id_project=0,string $name='',string $surname='',int $percentage=0, string $start_date='',string $end_date=''):void{
+    public function add(int $id_employee=0,int $id_project=0,string $name='',string $surname='',int $percentage=0, string $start_date='',string $end_date=''):void{
         (array)$parm=[
              ":id_employee"=>[$id_employee,'INT']
             ,":id_project"=>[$id_project,'INT']
@@ -46,7 +46,7 @@ class Employee_project_model extends Database_model {
 		(:id_employee,:id_project,:name,:surname,:percentage,:start_date,:end_date,'.parent::getUserValue().')'
             ,array_merge($parm,parent::getUserParm()));  
     }
-    public function update(string|int $id_employee=0,string|int $id_project=0,string $name='',string $surname='',int $percentage=0, string $start_date='',string $end_date=''){
+    public function update(int $id_employee=0,int $id_project=0,string $name='',string $surname='',int $percentage=0, string $start_date='',string $end_date=''){
         (array)$parm=[
              ":id_employee"=>[$id_employee,'INT']
             ,":id_project"=>[$id_project,'INT']
@@ -71,7 +71,7 @@ class Employee_project_model extends Database_model {
                 . 'id_project=:id_project '
                 . 'AND id_employee=:id_employee',array_merge($parm,parent::getAlterUserParm()));
     }
-    public function remove(string|int $id_employee=0,string|int $id_project=0):void{
+    public function remove(int $id_employee=0,int $id_project=0):void{
         (array)$parm=[
              ":id_employee"=>[$id_employee,'INT']
             ,":id_project"=>[$id_project,'INT']
@@ -90,7 +90,7 @@ class Employee_project_model extends Database_model {
                 ,array_merge($parm,parent::getAlterUserParm())); 
             
     }
-    public function getTeamMember(string|int $id=0):array{  
+    public function getTeamMember(int $id=0):array{  
          return $this->Main->query('SELECT `id_employee` as `idPracownik`,CONCAT(`name`,\' \',`surname`) as `ImieNazwisko`,`percentage` as `procentUdzial`,`start_date` as `datOd`,`end_date` as `datDo` FROM `employee_project` WHERE `id_employee`=:id and `delete_status`=\'0\'',[':id'=>[$id,'INT']]);
          
     }

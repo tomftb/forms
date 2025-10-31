@@ -63,7 +63,7 @@ class Employee_model extends Database_model {
         }
         Throw New Exception ('Pracownik o id '.$id.' został usunięty.',0);
     }
-    public function getProjectTeam(string|int $idProject=0):array{
+    public function getProjectTeam(int $idProject=0):array{
         return $this->Main->squery("SELECT "
                 . "`id_employee` as 'pers'"
                 . ",'name' as `imie`"
@@ -76,10 +76,10 @@ class Employee_model extends Database_model {
                 . " WHERE "
                 . "`id_project`=:id",[':id'=>[$idProject,'INT']]);
     }
-    public function getTeam(string|int $idProject=0):array{
+    public function getTeam(int $idProject=0):array{
         return $this->Main->squery('SELECT `id_employee` as `idPracownik`, CONCAT(`name`,\' \',`surname`) as `ImieNazwisko`,`percentage` as `procentUdzial`,`start_date` as `datOd`,`end_date` as `datDo` FROM `employee_project` WHERE `id_project`=:id AND `delete_status`=\'0\'',[':id'=>[$idProject,'INT']]);
     }
-    public function getTeamInput(string|int $id_project=0){
+    public function getTeamInput(int $id_project=0){
          return $this->Main->squery("SELECT "
                  . "`id_employee` as `idPracownik`"
                  . ",CONCAT(`name`,' ',`surname`) as `ImieNazwisko`"
@@ -96,7 +96,7 @@ class Employee_model extends Database_model {
                 ]
         );
     }
-    public function getMemeber(string|int $id=0):array{
+    public function getMemeber(int $id=0):array{
         foreach($this->Main->squery('SELECT `imie`,`nazwisko`,`email` FROM `employee` WHERE `id`=:id',[':id'=>[$id,'INT']]) as $employee){
            return $employee;
         }

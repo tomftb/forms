@@ -189,13 +189,13 @@ final class UrlManager_controller{
     private function checkUrlFunction(){
         $this->Log->log(0,"[".__METHOD__."]");
         if(!array_key_exists($this->availableFunction["task"], $this->urlData)){  
-            $this->Log->logMulti(2,$this->urlGetData,__LINE__."::".__METHOD__." urlGetData");
+            $this->Log->logMulti(2,$this->urlData,__LINE__."::".__METHOD__." urlData");
             Throw New Exception("[".__METHOD__."] Wrong function to execute",0);
         }
     }
     private function checkUrlTask()
     {
-        $this->Log->log(0,"[".__METHOD__."]");
+        $this->Log->log(0,"[".__FILE__."][".__METHOD__."]");
         $found=false;
         foreach($this->availableTask as $task)
         {

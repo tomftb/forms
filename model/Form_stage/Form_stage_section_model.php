@@ -44,7 +44,7 @@ class Form_stage_section_model extends Database_model {
                 )
         );
     }
-    public function getByIdParent(string|int $id_parent=0):array{
+    public function getByIdParent(int $id_parent=0):array{
         return $this->Main->squery('SELECT '
                 . '`id` as `id_db`'
                 . ' FROM `form_stage_section` '
@@ -55,7 +55,7 @@ class Form_stage_section_model extends Database_model {
                 ]
                 ,'FETCH_OBJ','fetchAll');
     }
-    public function getNoIdDbByIdParent(string|int $id_parent=0):array{
+    public function getNoIdDbByIdParent(int $id_parent=0):array{
         return $this->Main->squery('SELECT '
                 . '`id` as `id`'
                 . ',\'\' as `id_db`'

@@ -215,7 +215,7 @@
         $this->Log->log(0,"[".__METHOD__."]");
         Throw New \Exception ($this->msg,$this->error_lvl);
     }
-    private function setId(mixed &$id=0):void{
+    private function setId(int &$id=0):void{
         $this->Log->log(0,"[".__METHOD__."]");        
         $type = gettype($id);
         $this->Log->log(0,"TYPE - ".$type);

@@ -6,6 +6,7 @@ class ManageRole
     protected $filter='';
     private $Log;
     private $dbLink;
+    private Utilities $utilities;
     function __construct()
     {
         $this->Log=Logger::init(__METHOD__);
@@ -75,10 +76,7 @@ class ManageRole
     }
     protected function addRole()
     {
-        //echo "<pre>";
-        //print_r($_SESSION);
-        //echo "</pre>";
-        //die();
+        $dateTime = date('Y-m-d H:i:s');
         try{
             $this->dbLink->beginTransaction(); //PHP 5.1 and new
             $sql=[
@@ -88,13 +86,9 @@ class ManageRole
                 ':create_user_full_name'=>[$_SESSION["nazwiskoImie"],'STR'],
                 ':create_user_email'=>[$_SESSION["mail"],'STR'],
                 ':create_host'=>[RA,'STR'],
-                ':mod_user_id'=>[$_SESSION["userid"],'INT'],
-                ':mod_user_login'=>[$_SESSION["username"],'STR'],
-                ':mod_user_full_name'=>[$_SESSION["nazwiskoImie"],'STR'],
-                ':mod_user_email'=>[$_SESSION["mail"],'STR'],
-                ':mod_host'=>[RA,'STR']
+                ':create_date'=>[$dateTime,'STR']
             ];
-            $this->dbLink->query("INSERT INTO `slo_rola` (`NAZWA`,`create_user_id`,`create_user`,`create_user_full_name`,`create_user_email`,`create_host`,`mod_user_id`,`mod_user_login`,`mod_user_full_name`,`mod_user_email`,`mod_host`) VALUES (:NAZWA,:create_user_id,:create_user,:create_user_full_name,:create_user_email,:create_host,:mod_user_id,:mod_user_login,:mod_user_full_name,:mod_user_email,:mod_host)",$sql);
+            $this->dbLink->query("INSERT INTO `slo_rola` (`NAZWA`,`create_user_id`,`create_user`,`create_user_full_name`,`create_user_email`,`create_host`,`create_date`) VALUES (:NAZWA,:create_user_id,:create_user,:create_user_full_name,:create_user_email,:create_host,:create_date)",$sql);
             // EDIT ROLE PERMISSION
             array_walk($this->inpArray,array('self', 'insertRolePerm'),$this->dbLink->lastInsertId());
             $this->dbLink->commit();  

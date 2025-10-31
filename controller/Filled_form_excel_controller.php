@@ -95,7 +95,7 @@ class Filled_form_excel_controller extends Base_controller {
         }
        // die();
     }
-    private function setExcelBodyPosition(int &$row=2,int &$i=0,int &$max=0,array &$tmpAlpha=[],string|int $id_form=0,array $form_column=[]){
+    private function setExcelBodyPosition(int &$row=2,int &$i=0,int &$max=0,array &$tmpAlpha=[],int $id_form=0,array $form_column=[]){
         $this->Log->log(0,__METHOD__."\r\nid_filled_form - ".$id_form);
         foreach($form_column as $column){
             $this->Log->log(0,"i - ".$i);

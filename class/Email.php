@@ -22,26 +22,27 @@ class Email
     private $sendAttempts=1;
     private $sendAttemptsTimeout=2;
     private ?object $Mailer;
+    private int $connectAttemptTimeout=0;
     
     function __construct(){
         $this->Log=Logger::init(__METHOD__);
-	$this->dbLink=LoadDb::load();
+	    $this->dbLink=LoadDb::load();
         $this->Mailer = new PHPMailer\PHPMailer(email['exception']);
-        $this->Log->log(0,"[".__METHOD__."]");
+        $this->Log->log(0,"[".__FILE__."][".__METHOD__."]");
         self::setConfig();
         $this->SN=filter_input(INPUT_SERVER,"SERVER_NAME");
     }
     public function setConfig():void{
-        //print(__METHOD__."\n");
+         $this->Log->log(0,"[".__FILE__."][".__METHOD__."]");
         if(!defined('email')){
             Throw New \Exception('Email config not set!');
         }
-	$this->Mailer->SMTPAuth   = email['SMTPAuth'];               // enable SMTP authentication
-	$this->Mailer->SMTPSecure = email['SMTPSecure'];              // sets the prefix to the servier
-	$this->Mailer->Host       = email['Host'];
-	$this->Mailer->Port       = email['Port'];
-	$this->Mailer->Username   = email['Username'];
-	$this->Mailer->Password   = email['Password'];
+        $this->Mailer->SMTPAuth   = email['SMTPAuth'];               // enable SMTP authentication
+        $this->Mailer->SMTPSecure = email['SMTPSecure'];              // sets the prefix to the servier
+        $this->Mailer->Host       = email['Host'];
+        $this->Mailer->Port       = email['Port'];
+        $this->Mailer->Username   = email['Username'];
+        $this->Mailer->Password   = email['Password'];
         $this->Mailer->CharSet    = email['CharSet'];
         $this->Mailer->SMTPKeepAlive = email['SMTPKeepAlive'];
         $this->Mailer->Timeout =  email['Timeout'];
@@ -89,8 +90,8 @@ class Email
           //  $this->Mailer->AddAddress($data[0],$data[1]);
        // }
         $this->Mailer->Subject = $subject;
-	$this->Mailer->AltBody = '';
-	$this->Mailer->MsgHTML($body.$this->getFooter($html));
+	    $this->Mailer->AltBody = '';
+	    $this->Mailer->MsgHTML($body.$this->getFooter($html));
         
        // parent::setFrom($this->Username, $this->Username);
         if(!self::setRecipientAddresses($recipient)){

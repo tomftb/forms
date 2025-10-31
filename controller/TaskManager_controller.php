@@ -104,7 +104,7 @@ final class TaskManager_controller{
         array_push($this->modul,new \Form_hide_controller());
         array_push($this->modul,new \Form_remove_controller());
     }
-    public function loadMethod(mixed $method):void{
+    public function loadMethod($method):void{
         $this->Log->log(0,"[".__METHOD__."]");
         self::setMethodName($method);
         self::findMethod();
@@ -136,7 +136,7 @@ final class TaskManager_controller{
             throw New \Exception("[".__METHOD__."] Task avaliable in more than one model `".$this->method."`",1);
         } 
     }
-    private function setMethodName(mixed $method):void{
+    private function setMethodName($method):void{
         if(gettype($method)!=='string'){
              throw New \Exception("[".__METHOD__."] Method name is not a string !",1);
         }

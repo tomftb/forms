@@ -7,7 +7,7 @@ class Form_chosen_stage_row_property_model extends Database_model {
         Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
     }
 
-    public function insertProperty(string|int $id_row=0, string $name='',string $value=''):void{
+    public function insertProperty(int $id_row=0, string $name='',string $value=''):void{
         $this->Main->query2(
                 "INSERT INTO `form_chosen_stage_row_property` (`id_row`,`name`,`value`) VALUES (:id_row,:name,:value);"
                 ,[
@@ -17,7 +17,7 @@ class Form_chosen_stage_row_property_model extends Database_model {
                 ]
         );
     }
-    public function deleteProperty(string|int $id_row=0):void{
+    public function deleteProperty(int $id_row=0):void{
         $this->Main->query2("DELETE FROM `form_chosen_stage_row_property` "
                 . " WHERE "
                 . "`id_row`=:id_row"
@@ -26,7 +26,7 @@ class Form_chosen_stage_row_property_model extends Database_model {
                 ]
         );
     }
-    public function getListByIdParent(string|int $id_parent=0):array{
+    public function getListByIdParent(int $id_parent=0):array{
         return $this->Main->squery('SELECT '
                 . '`name`'
                 . ',`value`'

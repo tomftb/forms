@@ -17,7 +17,7 @@
     public function __call($m,$a){
         Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
     }
-    public function get(string|int $id=0):object{
+    public function get(int $id=0):object{
         $this->Log->log(0,"[".__METHOD__."] id - ".$id);
         $form = new stdClass();
         //$this->Log->logMulti(0,$this->Model->{'Form'}->getById($id));
@@ -38,7 +38,7 @@
         return $form;
         //Throw New Exception ('Formularz o id `'.$id.'` został usunięty.',0); 
     }
-    private function getStage(string|int $id_parent=0):object{
+    private function getStage(int $id_parent=0):object{
         $this->Log->log(0,"[".__METHOD__."] id_parent - ".$id_parent);
         $stage = new stdClass();
         $tmp_k='';
@@ -59,7 +59,7 @@
         }
         return $stage;
     }
-    private function getSection(string|int $id_parent=0):object{
+    private function getSection(int $id_parent=0):object{
         $this->Log->log(0,"[".__METHOD__."] id_parent - ".$id_parent);
         (object) $section = new stdClass();
         (string) $tmp_k='';
@@ -76,7 +76,7 @@
         }
         return $section;
     }
-    private function getSubsection(string|int $id_parent=0):object{
+    private function getSubsection(int $id_parent=0):object{
         (object) $subsection = new stdClass();
         (string) $tmp_k='';
         foreach($this->Model->{'Form_chosen_stage_subsection'}->getListByIdParent($id_parent) as $k => $v){
@@ -92,7 +92,7 @@
         }
         return $subsection;
     }
-    private function getRow(string|int $id_parent=0):object{
+    private function getRow(int $id_parent=0):object{
         (object) $row = new stdClass();
         (string) $tmp_k='';
          foreach($this->Model->{'Form_chosen_stage_row'}->getListByIdParent($id_parent) as $k => $v){
@@ -113,7 +113,7 @@
         }
         return $row;
     }
-    private function getRowProperty(string|int $id_parent=0):object{
+    private function getRowProperty(int $id_parent=0):object{
         (object) $property = new stdClass();
         (string) $tmp_k='';
         foreach($this->Model->{'Form_chosen_stage_row_property'}->getListByIdParent($id_parent) as $k => $v){
@@ -124,7 +124,7 @@
         }
         return $property;
     }
-    private function getRowStyle(string|int $id_parent=0):object{
+    private function getRowStyle(int $id_parent=0):object{
         (object) $style = new stdClass();
         (string) $tmp_k='';
          foreach($this->Model->{'Form_chosen_stage_row_style'}->getListByIdParent($id_parent) as $k => $v){
@@ -143,10 +143,10 @@
         $this->Log->log(0,"[".__METHOD__."]");
         //$this->Model->{'Form_chosen_stage_row_glossary'}
         (object) $row->{'glossary'} = new stdClass();
-        $found = function(string|int $id_row=0){
+        $found = function(int $id_row=0){
             
         };
-        $not_found = function(string|int $id_row=0){
+        $not_found = function(int $id_row=0){
             Throw new \Exception(__METHOD__.' form_chosen_stage_row_glossary with id_row - `'.$id_row.'` not exists in database!',1);
         };
         $check = &$not_found;
@@ -166,10 +166,10 @@
     private function getRow_radio(object &$row):void{
         $this->Log->log(0,"[".__METHOD__."]");
         (object) $row->{'child'} = new stdClass();
-        $found = function(string|int $id_row=0){
+        $found = function(int $id_row=0){
             
         };
-        $not_found = function(string|int $id_row=0){
+        $not_found = function(int $id_row=0){
             Throw new \Exception(__METHOD__.' form_chosen_stage_row with id - `'.$id_row.'` not exists in database!',1);
         };
         $check = &$not_found;
@@ -188,10 +188,10 @@
         $this->Log->log(0,"[".__METHOD__."]");
         $this->Log->logMulti(0,$row);
         (object) $row->{'child'} = new stdClass();
-        $found = function(string|int $id_row=0){
+        $found = function(int $id_row=0){
             
         };
-        $not_found = function(string|int $id_row=0){
+        $not_found = function(int $id_row=0){
             Throw new \Exception(__METHOD__.' form_chosen_stage_row with id - `'.$id_row.'` not exists in database!',1);
         };
         $check = &$not_found;

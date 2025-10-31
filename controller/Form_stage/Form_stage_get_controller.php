@@ -12,7 +12,7 @@ final class Form_stage_get_controller extends Base_controller {
     public function __call($m,$a){
         Throw New \Exception(__METHOD__.'() Method `'.$m.'` not exists in this class `'.__CLASS__.'`!\nMethod call with arguments:\n'.serialize($a),1);
     }
-    public function get(string|int $id_db=0){
+    public function get(int $id_db=0){
         try{
             $this->id_db = $id_db;
             self::setStage();

@@ -9,6 +9,10 @@ class ManageProjectStage extends ManageProjectStageDatabase
     private $brTag='';
     private $Items;
     private $filter=array('getProjectStages','getProjectDeletedStages','getProjectHiddenStages','getProjectHiddenAndDeletedStages','getProjectAllStages');
+    private \stdClass $Model;
+    private Utilities $utilities;
+    private array $inpArray=[];
+
     function __construct(){
         parent::__construct();
         $this->Model=new \stdClass();
@@ -188,7 +192,7 @@ class ManageProjectStage extends ManageProjectStageDatabase
             }
         }
         if(!array_key_exists('id',$this->inpArray) || !array_key_exists('number',$this->inpArray) || !array_key_exists('title',$this->inpArray)){
-            throw new Exception(' KEY id|number|title|value NOT EXIST IN POST', 1, 0, __METHOD__, __LINE__);
+            throw new Exception(' KEY id|number|title|value NOT EXIST IN POST', 0);
         }
         if($fieldValue===false){
             throw new Exception('Należy wprowadzić wartość dla etapu projektu',0);
@@ -222,7 +226,7 @@ class ManageProjectStage extends ManageProjectStageDatabase
                 }
                 else{
                     /* NUMERIC WITHOUT DATA -> SETUP ERROR */
-                    throw new Exception('STAGE ERROR, NO LABEL FOR KEY => '.$tmp[0], 1, 0, __METHOD__, __LINE__);
+                    throw new Exception('STAGE ERROR, NO LABEL FOR KEY => '.$tmp[0], 0);
                 }
             }
             else{
@@ -254,7 +258,7 @@ class ManageProjectStage extends ManageProjectStageDatabase
         }
         else{
             /* WRONG DATA */  
-            throw new Exception("WRONG FIELD FOUND ".$field, 0, 0, __METHOD__, __LINE__);
+            throw new Exception("WRONG FIELD FOUND ".$field, 0);
            
         }
     }
@@ -289,7 +293,7 @@ class ManageProjectStage extends ManageProjectStageDatabase
     private function checkStageHead(){
         $this->Log->log(0,"COUNT HEAD => ".is_array($this->actProjectStageData['head']));
         if(!is_array($this->actProjectStageData['head'])){
-            throw new Exception(' STAGE '.$this->inpArray['id'].' WAS DELETED', 0, 0, __METHOD__, __LINE__);
+            throw new Exception(' STAGE '.$this->inpArray['id'].' WAS DELETED', 0);
         }
         if($this->actProjectStageData['head']['wu']==='1'){
             $this->response->setError(0,' Projekt został już usunięty przez '.$this->actProjectStageData['head']['du']);

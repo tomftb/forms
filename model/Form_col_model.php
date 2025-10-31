@@ -14,19 +14,19 @@ class Form_col_model extends Database_model {
     public function getAll(){
         return $this->Main->squery("SELECT `id` as `i`, `name` as `n`, `create_date` as `cd`, `mod_date` as `md` FROM `form` WHERE `delete_status`='0'");
     }
-    public function getById(string|int $id=0):array{
+    public function getById(int $id=0):array{
         foreach($this->Main->squery("SELECT `id` as `i`, `name` as `n`, `create_user_login` as `cul`, `create_user_full_name` as `cufn`,`create_date` as `cd`, `mod_date` as `md` FROM `form` WHERE `delete_status`='0' AND `id`=:id",[':id'=>[$id,'INT']]) as $form){
             return $form;
         }
         Throw New Exception ('Formularz o id `'.$id.'` został usunięty.',0); 
     }
-    public function getLabelByFormId(string|int $id=0, string $at_main_page='1'):array{
+    public function getLabelByFormId(int $id=0, string $at_main_page='1'):array{
         return self::getPropertyByFormId('label',$id,$at_main_page);
     }
-    public function getNameByFormId(string|int $id=0, string $at_main_page='1'):array{
+    public function getNameByFormId(int $id=0, string $at_main_page='1'):array{
         return self::getPropertyByFormId('name',$id,$at_main_page);
     }
-    public function getPropertyByFormId(string $property='label', string|int $id=0, string $at_main_page='1' ){
+    public function getPropertyByFormId(string $property='label', int $id=0, string $at_main_page='1' ){
         return $this->Main->squery("SELECT "
                 . "`fcp`.`id` as `i`"
                 . ",`fcp`.`value` as `v`"
@@ -52,12 +52,12 @@ class Form_col_model extends Database_model {
                     ,':property'=>[$property,'STR']
                 ]);
     }
-    public function getAllLabelByFormId(string|int $id=0):array{
+    public function getAllLabelByFormId(int $id=0):array{
         return self::getAllByFormId('label',$id);}
-    public function getAllNameByFormId(string|int $id=0):array{
+    public function getAllNameByFormId(int $id=0):array{
         return self::getAllByFormId('name',$id);
     }
-    public function getAllByFormId(string $property='label',string|int $id=0):array{
+    public function getAllByFormId(string $property='label',int $id=0):array{
         return $this->Main->squery("SELECT "
                 . "`fcp`.`id` as `i`"
                 . ",`fcp`.`value` as `v`"

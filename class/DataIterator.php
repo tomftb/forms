@@ -22,7 +22,7 @@ class DataIterator implements \Iterator
         next($this->values);
     }
 
-    public function current():mixed{
+    public function current(){
         return current($this->values);
     }
     public function key():mixed{

@@ -111,7 +111,7 @@ class Form_chosen_stage_model extends Database_model {
                 ,'fetchAll'
         );
     }
-    public function getListByIdParent(string|int $id_parent=0,string $hide_status='0',string $delete_status='0'):array{
+    public function getListByIdParent(int $id_parent=0,string $hide_status='0',string $delete_status='0'):array{
         return $this->Main->squery("SELECT "
                 . "`id`"
                 . ",`id_form_stage`"
@@ -175,13 +175,13 @@ class Form_chosen_stage_model extends Database_model {
                 ,'fetchAll'
         );
     }
-    public function exists(string|int $id=0):string{
+    public function exists(int $id=0):string{
         foreach($this->Main->squery('SELECT `id` as `id` FROM `form_chosen_stage` WHERE `id`=:id',[':id'=>[$id,'INT']]) as $form_stage){
             return $form_stage['id'];
         }
         Throw New \Exception('form_chosen_stage with id - `'.$id.'` not exists in database!',0);
     }
-    public function get(string|int $id=0):array{
+    public function get(int $id=0):array{
         return $this->Main->squery('SELECT '
                 . '`id` as `id_db`'
                 . ',`department_id`'
@@ -210,7 +210,7 @@ class Form_chosen_stage_model extends Database_model {
         //}
         //Throw New \Exception('form_stage with id - `'.$id.'` not exists in database!',0);
     }
-    public function getStageUserById(string|int $id=0):array{       
+    public function getStageUserById(int $id=0):array{       
         foreach($this->Main->squery('SELECT `create_user_login`,`create_user_email`,`create_date`,`mod_user_login`,`mod_user_email`,`mod_date` FROM `form_chosen_stage` WHERE `id`=:id',[':id'=>[$id,'INT']],'FETCH_OBJECT','fetchAll') as $form_stage_row_glossary){
             return $form_stage_row_glossary;
         }

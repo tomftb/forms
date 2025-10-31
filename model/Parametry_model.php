@@ -22,11 +22,11 @@ class Parametry_model extends Database_model {
     public function update(array $input=[':W'=>['','STR'],':MD'=>['','STR'],':ML'=>['','STR'],':MU'=>['','STR'],':MUI'=>['','STR'],':MH'=>['','STR'],':I'=>[0,'INT']]):void{
         try{
             $this->Main->beginTransaction(); //PHP 5.1 and new
-            $this->Main->execute('UPDATE `parametry` SET `WARTOSC`=:W,`MOD_DATE`=:MD,`MOD_LOGIN`=:ML,`MOD_USER`=:MU,`MOD_USER_ID`=:MUI,`MOD_HOST`=:MH WHERE `ID`=:I',$input);
+            $this->Main->execute('UPDATE `parametry` SET `WARTOSC`=:W,`MOD_DAT`=:MD,`MOD_LOGIN`=:ML,`MOD_USER`=:MU,`MOD_USER_ID`=:MUI,`MOD_HOST`=:MH WHERE `ID`=:I',$input);
             $this->Main->commit();  
         }
         catch (PDOException $e){
-            $this->dbLink->rollback();
+            $this->Main->rollback();
             Throw New \Exception ("[".__METHOD__."] Wystąpił błąd zapytania bazy danych: ".$e->getMessage(),1); 
         } 
     }
